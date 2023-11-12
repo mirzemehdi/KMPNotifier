@@ -12,10 +12,11 @@ plugins {
     alias(libs.plugins.kotlinx.binary.validator)
 }
 
-group = "io.github.mirzemehdi"
-version = "0.1.1"
+
 
 allprojects {
+    group = "io.github.mirzemehdi"
+    version = "0.1.2"
     val sonatypeUsername = gradleLocalProperties(rootDir).getProperty("sonatypeUsername")
     val sonatypePassword = gradleLocalProperties(rootDir).getProperty("sonatypePassword")
     val gpgKeySecret = gradleLocalProperties(rootDir).getProperty("gpgKeySecret")

@@ -59,7 +59,7 @@ jobs:
         run: ./gradlew ${{ matrix.config.tasks }}
 
   release:
-    if: ${{ github.event_name != 'pull_request' }}
+    if: startsWith(github.ref, 'refs/tags/')
     runs-on: macos-latest
     needs:
       - build
@@ -109,3 +109,11 @@ jobs:
       - name: Release to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
+
+      - name: Create new release from tag
+        env:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
+        with:
+          generate_release_notes: true
+          token: ${{ env.github_token }}
