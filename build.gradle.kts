@@ -13,7 +13,7 @@ plugins {
 }
 
 group = "io.github.mirzemehdi"
-version = "0.1.0-SNAPSHOT"
+version = "0.1.1"
 
 allprojects {
     val sonatypeUsername = gradleLocalProperties(rootDir).getProperty("sonatypeUsername")
@@ -55,6 +55,7 @@ allprojects {
             withType<MavenPublication> {
                 artifact(javadocJar)
                 pom {
+                    groupId="io.github.mirzemehdi"
                     name.set("KMPNotifier")
                     description.set(" Kotlin Multiplatform Notification Library targeting ios and android")
                     licenses {
@@ -87,6 +88,11 @@ allprojects {
     extensions.configure<SigningExtension> {
         useInMemoryPgpKeys(gpgKeySecret, gpgKeyPassword)
         sign(publishing.publications)
+    }
+
+    // TODO: remove after https://youtrack.jetbrains.com/issue/KT-46466 is fixed
+    project.tasks.withType(AbstractPublishToMaven::class.java).configureEach {
+        dependsOn(project.tasks.withType(Sign::class.java))
     }
 }
 
