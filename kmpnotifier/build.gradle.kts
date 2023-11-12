@@ -9,6 +9,7 @@ plugins {
 kotlin {
     explicitApi()
     androidTarget {
+        publishAllLibraryVariants()
         compilations.all {
             kotlinOptions {
                 jvmTarget = "1.8"
