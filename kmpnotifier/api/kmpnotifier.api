@@ -1,5 +1,4 @@
 public abstract class com/mmk/kmpnotifier/di/KMPKoinComponent : org/koin/core/component/KoinComponent {
-	public static final field $stable I
 	public fun <init> ()V
 	public fun getKoin ()Lorg/koin/core/Koin;
 }
@@ -8,8 +7,7 @@ public abstract interface class com/mmk/kmpnotifier/notification/Notifier {
 	public abstract fun notify (Ljava/lang/String;Ljava/lang/String;)V
 }
 
-public final class com/mmk/kmpnotifier/notification/NotifierFactory : com/mmk/kmpnotifier/di/KMPKoinComponent {
-	public static final field $stable I
+public final class com/mmk/kmpnotifier/notification/NotifierFactory {
 	public static final field INSTANCE Lcom/mmk/kmpnotifier/notification/NotifierFactory;
 	public final fun create ()Lcom/mmk/kmpnotifier/notification/Notifier;
 	public final fun initialize (Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration;)V
@@ -19,7 +17,6 @@ public abstract interface class com/mmk/kmpnotifier/notification/configuration/N
 }
 
 public final class com/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Android : com/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration {
-	public static final field $stable I
 	public fun <init> (ILjava/lang/Integer;Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Android$NotificationChannelData;)V
 	public synthetic fun <init> (ILjava/lang/Integer;Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Android$NotificationChannelData;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getNotificationChannelData ()Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Android$NotificationChannelData;
@@ -28,7 +25,6 @@ public final class com/mmk/kmpnotifier/notification/configuration/NotificationPl
 }
 
 public final class com/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Android$NotificationChannelData {
-	public static final field $stable I
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -38,7 +34,6 @@ public final class com/mmk/kmpnotifier/notification/configuration/NotificationPl
 }
 
 public final class com/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Ios : com/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration {
-	public static final field $stable I
 	public static final field INSTANCE Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Ios;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
@@ -46,7 +41,6 @@ public final class com/mmk/kmpnotifier/notification/configuration/NotificationPl
 }
 
 public final class com/mmk/kmpnotifier/permission/AndroidPermissionUtil {
-	public static final field $stable I
 	public fun <init> (Landroidx/activity/ComponentActivity;)V
 	public final fun askNotificationPermission (Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun askNotificationPermission$default (Lcom/mmk/kmpnotifier/permission/AndroidPermissionUtil;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
