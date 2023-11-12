@@ -16,7 +16,7 @@ concurrency:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: read
+  contents: read write
   pages: write
   id-token: write
 
