@@ -8,9 +8,11 @@ on:
     branches: [ "main" ]
 
 
-#concurrency:
-#  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
-#  cancel-in-progress: true
+
+
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
@@ -62,7 +64,6 @@ jobs:
         run: ./gradlew ${{ matrix.config.tasks }}
 
   release:
-    if: startsWith(github.ref, 'refs/tags/')
     runs-on: macos-latest
     needs:
       - build
@@ -98,6 +99,7 @@ jobs:
           GPG_KEY_SECRET: ${{ secrets.GPG_KEY_SECRET }}
 
       - name: Release to sonatype
+        if: startsWith(github.ref, 'refs/tags/')
         run: ./gradlew publishAllPublicationsToMavenRepository
 
       - name: Generate docs with dokka
@@ -113,6 +115,7 @@ jobs:
         uses: actions/deploy-pages@v1
 
       - name: Create new release from tag
+        if: startsWith(github.ref, 'refs/tags/')
         env:
           github_token: ${{ secrets.GITHUB_TOKEN }}
         uses: softprops/action-gh-release@v1
