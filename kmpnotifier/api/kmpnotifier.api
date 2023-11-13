@@ -2,10 +2,23 @@ public abstract interface class com/mmk/kmpnotifier/notification/Notifier {
 	public abstract fun notify (Ljava/lang/String;Ljava/lang/String;)V
 }
 
-public final class com/mmk/kmpnotifier/notification/NotifierFactory {
-	public static final field INSTANCE Lcom/mmk/kmpnotifier/notification/NotifierFactory;
-	public final fun create ()Lcom/mmk/kmpnotifier/notification/Notifier;
+public final class com/mmk/kmpnotifier/notification/NotifierManager {
+	public static final field INSTANCE Lcom/mmk/kmpnotifier/notification/NotifierManager;
+	public final fun addListener (Lcom/mmk/kmpnotifier/notification/NotifierManager$Listener;)V
+	public final fun getLocalNotifier ()Lcom/mmk/kmpnotifier/notification/Notifier;
+	public final fun getPushNotifier ()Lcom/mmk/kmpnotifier/notification/PushNotifier;
 	public final fun initialize (Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration;)V
+}
+
+public abstract interface class com/mmk/kmpnotifier/notification/NotifierManager$Listener {
+	public abstract fun onNewToken (Ljava/lang/String;)V
+}
+
+public abstract interface class com/mmk/kmpnotifier/notification/PushNotifier {
+	public abstract fun deleteMyToken (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getToken (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun subscribeToTopic (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun unSubscribeFromTopic (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class com/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration {
