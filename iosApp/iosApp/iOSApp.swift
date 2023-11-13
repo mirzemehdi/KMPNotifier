@@ -3,11 +3,12 @@ import sample
 
 @main
 struct iOSApp: App {
+    
     init() {
-        NotifierFactory.shared.initialize(configuration: NotificationPlatformConfigurationIos.shared)
+            NotifierManager.shared.initialize(configuration: NotificationPlatformConfigurationIos.shared)
     }
-
-    var body: some Scene {
+    
+	var body: some Scene {
 		WindowGroup {
 			ContentView()
 		}

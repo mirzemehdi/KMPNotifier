@@ -1,8 +1,8 @@
-import org.jetbrains.compose.ExperimentalComposeLibrary
-
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.kotlinNativeCocoaPods)
+
 }
 
 kotlin {
@@ -15,17 +15,26 @@ kotlin {
             }
         }
     }
-    
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach { iosTarget ->
-        iosTarget.binaries.framework {
+
+
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
+
+
+    cocoapods {
+        ios.deploymentTarget = "11.0"
+        framework {
             baseName = "KMPNotifier"
             isStatic = true
         }
+        noPodspec()
+        pod("FirebaseMessaging") {
+            version = "10.12.0"
+        }
     }
+
+
 
     sourceSets {
 
