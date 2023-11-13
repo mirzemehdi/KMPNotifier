@@ -2,12 +2,13 @@ package com.mmk.kmpnotifier.di
 
 import android.content.Context
 import androidx.startup.Initializer
+import com.mmk.kmpnotifier.firebase.FirebasePushNotifierImpl
 import com.mmk.kmpnotifier.notification.AndroidNotifier
 import com.mmk.kmpnotifier.notification.NotificationChannelFactory
 import com.mmk.kmpnotifier.notification.Notifier
+import com.mmk.kmpnotifier.notification.PushNotifier
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import com.mmk.kmpnotifier.permission.AndroidMockPermissionUtil
-import com.mmk.kmpnotifier.permission.AndroidPermissionUtil
 import com.mmk.kmpnotifier.permission.PermissionUtil
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
@@ -45,6 +46,7 @@ internal actual val platformModule = module {
         )
     } bind Notifier::class
 
+    factoryOf(::FirebasePushNotifierImpl) bind PushNotifier::class
 
 }
 

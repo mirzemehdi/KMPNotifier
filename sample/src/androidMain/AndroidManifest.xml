@@ -21,16 +21,20 @@
             </intent-filter>
         </activity>
 
-        <provider
-            android:name="androidx.startup.InitializationProvider"
-            android:authorities="${applicationId}.androidx-startup"
-            android:exported="false"
-            tools:node="merge">
-            <!-- This entry makes ExampleLoggerInitializer discoverable. -->
-            <meta-data  android:name="com.mmk.kmpnotifier.di.ContextInitializer"
-                android:value="androidx.startup" />
-        </provider>
 
+<!--        Optional-->
+
+        <!-- Set custom default icon. This is used when no icon is set for incoming notification messages.
+            -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_launcher_foreground" />
+
+        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message.  -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@android:color/holo_blue_light" />
     </application>
 
 </manifest>

@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.mmk.kmpnotifier.notification.NotifierFactory
+import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import com.mmk.kmpnotifier.permission.AndroidPermissionUtil
 import com.mmk.kmpnotifier.permission.permissionUtil
@@ -15,7 +15,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         permissionUtil.askNotificationPermission()
-        NotifierFactory.initialize(
+        NotifierManager.initialize(
             configuration = NotificationPlatformConfiguration.Android(
                 R.drawable.ic_launcher_foreground,
             )

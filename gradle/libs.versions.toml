@@ -19,6 +19,7 @@ junit = "4.13.2"
 koin = "3.5.0"
 kotlinx-binary-validator = "0.13.2"
 dokka = "1.9.10"
+firebase-messaging = "23.3.0"
 
 
 [libraries]
@@ -41,6 +42,9 @@ androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref
 androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "androidx-startup-runtime" }
 
 koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
+
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging-ktx" ,version.ref="firebase-messaging"}
+
 
 
 [plugins]

@@ -10,13 +10,15 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform) apply false
     alias(libs.plugins.dokka) apply false
     alias(libs.plugins.kotlinx.binary.validator)
+
+    id("com.google.gms.google-services") version "4.4.0" apply false
 }
 
 
 
 allprojects {
     group = "io.github.mirzemehdi"
-    version = "0.1.6"
+    version = "0.1.7"
     val sonatypeUsername = gradleLocalProperties(rootDir).getProperty("sonatypeUsername")
     val sonatypePassword = gradleLocalProperties(rootDir).getProperty("sonatypePassword")
     val gpgKeySecret = gradleLocalProperties(rootDir).getProperty("gpgKeySecret")

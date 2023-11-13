@@ -5,18 +5,37 @@ import com.mmk.kmpnotifier.di.LibDependencyInitializer
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import org.koin.core.component.get
 
-internal object NotifierFactoryImpl : KMPKoinComponent() {
+internal object NotifierManagerImpl : KMPKoinComponent() {
+
+    private val listeners = mutableListOf<NotifierManager.Listener>()
 
     fun initialize(configuration: NotificationPlatformConfiguration) {
         LibDependencyInitializer.initialize(configuration)
     }
 
-    fun create(): Notifier {
+    fun getLocalNotifier(): Notifier {
+        requireInitialization()
+        return get()
+    }
+
+    fun getPushNotifier(): PushNotifier {
+        requireInitialization()
+        return get()
+    }
+
+    fun addListener(listener: NotifierManager.Listener) {
+        listeners.add(listener)
+    }
+
+    fun onNewToken(token: String) {
+        listeners.forEach { it.onNewToken(token) }
+    }
+
+    private fun requireInitialization() {
         if (LibDependencyInitializer.isInitialized().not()) throw IllegalStateException(
             "NotifierFactory is not initialized. " +
                     "Please, initialize NotifierFactory by calling #initialize method"
         )
-        return get()
     }
 
 }
