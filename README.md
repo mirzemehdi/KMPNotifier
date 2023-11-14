@@ -56,7 +56,7 @@ https://firebase.google.com/docs/cloud-messaging/ios/client
 
 for easy setup
 FirebaseAppDelegateProxyEnabled YES in info.plist
-or if you set NO
+
 
 
 add FIrebaseMessaging and FirebaseCore to your project (for some reason otherwise it has some errors)

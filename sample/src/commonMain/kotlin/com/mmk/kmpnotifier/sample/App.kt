@@ -30,7 +30,7 @@ fun App() {
                 println("onNewToken: $token")
             }
         })
-        myPushNotificationToken = NotifierManager.getPushNotifier().getToken() ?: ""
+//        myPushNotificationToken = NotifierManager.getPushNotifier().getToken() ?: ""
     }
 
     MaterialTheme {

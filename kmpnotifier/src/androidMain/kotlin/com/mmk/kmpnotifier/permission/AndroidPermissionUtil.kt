@@ -21,6 +21,9 @@ public fun ComponentActivity.permissionUtil(): Lazy<AndroidPermissionUtil> = laz
     AndroidPermissionUtil(this)
 }
 
+/**
+ * Android notification utility class for making it easier to ask permission from user.
+ */
 public class AndroidPermissionUtil(private val activity: ComponentActivity)  {
 
     private var mOnResult: ((Boolean) -> Unit)? = null
@@ -30,6 +33,10 @@ public class AndroidPermissionUtil(private val activity: ComponentActivity)  {
             mOnResult?.invoke(isGranted)
         }
 
+    /**
+     * Asks notification permission from user
+     * @param onResult lambda is called when notification permission is returned
+     */
     public fun askNotificationPermission(onResult: (Boolean) -> Unit = {}) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             askIfNotHasPermission(permission = Manifest.permission.POST_NOTIFICATIONS, onResult = onResult)

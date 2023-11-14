@@ -19,7 +19,7 @@ plugins {
 
 allprojects {
     group = "io.github.mirzemehdi"
-    version = "0.1.7"
+    version = "0.1.8"
     val sonatypeUsername = gradleLocalProperties(rootDir).getProperty("sonatypeUsername")
     val sonatypePassword = gradleLocalProperties(rootDir).getProperty("sonatypePassword")
     val gpgKeySecret = gradleLocalProperties(rootDir).getProperty("gpgKeySecret")
@@ -61,7 +61,7 @@ allprojects {
                 pom {
                     groupId="io.github.mirzemehdi"
                     name.set("KMPNotifier")
-                    description.set(" Kotlin Multiplatform Notification Library targeting ios and android")
+                    description.set(" Kotlin Multiplatform Push Notification Library targeting ios and android")
                     licenses {
                         license {
                             name.set("Apache-2.0")

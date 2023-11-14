@@ -6,7 +6,7 @@ import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfig
 public object NotifierManager {
 
     /**
-     * Call initialize function on App Start.
+     * Call initialize function on Application Start.
      * @param configuration pass either ios or android configuration depending on platform
      * @see NotificationPlatformConfiguration.Ios
      * @see NotificationPlatformConfiguration.Android
@@ -23,18 +23,25 @@ public object NotifierManager {
     }
 
     /**
-     * Creates push Notifier instance
+     * Creates push Notifier instance (Firebase Push Notification)
      */
     public fun getPushNotifier(): PushNotifier {
         return NotifierManagerImpl.getPushNotifier()
     }
 
+    /**
+     * For listening updates such as push notification token changes
+     */
     public fun addListener(listener: Listener) {
         NotifierManagerImpl.addListener(listener)
     }
 
 
     public interface Listener {
+        /**
+         * Called when push notification token is updated, or initialized first time
+         * @param token Push Notification token
+         */
         public fun onNewToken(token: String)
     }
 

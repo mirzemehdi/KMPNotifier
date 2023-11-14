@@ -5,6 +5,10 @@ import com.mmk.kmpnotifier.notification.PushNotifier
 import kotlinx.coroutines.tasks.asDeferred
 
 internal class FirebasePushNotifierImpl : PushNotifier {
+
+    init {
+        println("FirebasePushNotifier is initialized")
+    }
     override suspend fun getToken(): String? {
         return FirebaseMessaging.getInstance().token.asDeferred().await()
     }
