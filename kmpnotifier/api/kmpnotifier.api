@@ -16,14 +16,9 @@ public abstract interface class com/mmk/kmpnotifier/notification/NotifierManager
 
 public abstract interface class com/mmk/kmpnotifier/notification/PushNotifier {
 	public abstract fun deleteMyToken (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun doAfterInitialization ()V
 	public abstract fun getToken (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun subscribeToTopic (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun unSubscribeFromTopic (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
-public final class com/mmk/kmpnotifier/notification/PushNotifier$DefaultImpls {
-	public static fun doAfterInitialization (Lcom/mmk/kmpnotifier/notification/PushNotifier;)V
 }
 
 public abstract interface class com/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration {
