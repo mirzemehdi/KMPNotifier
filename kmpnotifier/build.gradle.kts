@@ -29,9 +29,7 @@ kotlin {
             isStatic = true
         }
         noPodspec()
-        pod("FirebaseMessaging") {
-            version = "10.12.0"
-        }
+        pod("FirebaseMessaging")
     }
 
 

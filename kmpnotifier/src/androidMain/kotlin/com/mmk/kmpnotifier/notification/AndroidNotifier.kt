@@ -20,7 +20,6 @@ internal class AndroidNotifier(
     private val permissionUtil: PermissionUtil,
 ) : Notifier {
 
-
     override fun notify(title: String, body: String) {
         permissionUtil.hasNotificationPermission {
             if (it.not())

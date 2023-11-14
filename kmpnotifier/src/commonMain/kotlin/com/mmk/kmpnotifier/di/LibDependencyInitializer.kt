@@ -1,6 +1,7 @@
 package com.mmk.kmpnotifier.di
 
 
+import com.mmk.kmpnotifier.notification.PushNotifier
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import com.mmk.kmpnotifier.permission.PermissionUtil
 import org.koin.core.Koin
@@ -35,9 +36,14 @@ internal object LibDependencyInitializer {
 private fun Koin.onLibraryInitialized() {
     println("Library is initialized")
     val permissionUtil by inject<PermissionUtil>()
+    val pushNotifier by inject<PushNotifier>()
 
     //In Android platform permission should be asked in activity
     if (isAndroidPlatform().not())
         permissionUtil.askNotificationPermission()
+
+    pushNotifier.doAfterInitialization()
+
+
 }
 

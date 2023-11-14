@@ -10,9 +10,12 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import platform.UserNotifications.UNUserNotificationCenter
 
+
+
 internal actual fun isAndroidPlatform(): Boolean = false
 
 internal actual val platformModule = module {
+
     factory { IosPermissionUtil(notificationCenter = UNUserNotificationCenter.currentNotificationCenter()) } bind PermissionUtil::class
     factory {
         IosNotifier(
@@ -24,4 +27,7 @@ internal actual val platformModule = module {
     factory {
         FirebasePushNotifierImpl()
     } bind PushNotifier::class
+
+
+
 }

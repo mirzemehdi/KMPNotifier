@@ -16,6 +16,7 @@ internal class IosNotifier(
     private val permissionUtil: IosPermissionUtil,
     private val notificationCenter: UNUserNotificationCenter,
 ) : Notifier {
+
     override fun notify(title: String, body: String) {
         permissionUtil.askNotificationPermission {
             val notificationContent = UNMutableNotificationContent().apply {
@@ -31,20 +32,21 @@ internal class IosNotifier(
             )
 
             notificationCenter.addNotificationRequest(notificationRequest) { error ->
-                println("Error showing notification: $error")
+                error?.let { println("Error showing notification: $error") }
             }
         }
 
-        //For showing notification in foreground too
-        UNUserNotificationCenter.currentNotificationCenter().delegate = NotificationDelegate()
     }
 
-    private class NotificationDelegate : UNUserNotificationCenterDelegateProtocol, NSObject() {
+    internal class NotificationDelegate : UNUserNotificationCenterDelegateProtocol, NSObject() {
         override fun userNotificationCenter(
             center: UNUserNotificationCenter,
             didReceiveNotificationResponse: UNNotificationResponse,
             withCompletionHandler: () -> Unit,
         ) {
+//            FIRMessaging.messaging()
+//                .appDidReceiveMessage(didReceiveNotificationResponse.notification.request.content.userInfo)
+
             withCompletionHandler()
         }
 
@@ -53,6 +55,8 @@ internal class IosNotifier(
             willPresentNotification: UNNotification,
             withCompletionHandler: (UNNotificationPresentationOptions) -> Unit,
         ) {
+//            FIRMessaging.messaging()
+//                .appDidReceiveMessage(didReceiveNotificationResponse.notification.request.content.userInfo)
             withCompletionHandler(IosPermissionUtil.NOTIFICATION_PERMISSIONS)
         }
     }

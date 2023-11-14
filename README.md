@@ -47,3 +47,46 @@ id("com.google.gms.google-services")
 ...
 
 }
+
+
+ios
+setup
+https://firebase.google.com/docs/ios/setup
+https://firebase.google.com/docs/cloud-messaging/ios/client
+
+for easy setup
+FirebaseAppDelegateProxyEnabled YES in info.plist
+or if you set NO
+
+
+add FIrebaseMessaging and FirebaseCore to your project (for some reason otherwise it has some errors)
+
+on Application start call initialize
+FirebaseApp.configure()
+and initialize
+
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+
+func application(_ application: UIApplication,
+didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+
+      FirebaseApp.configure()
+      AppInitializer.shared.initialize(
+          isDebug: true, onKoinStart: { _ in })
+    return true
+}
+
+}
+
+@main
+struct iOSApp: App {
+
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    
+	var body: some Scene {
+		WindowGroup {
+            ContentView()
+        }
+	}
+}
