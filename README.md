@@ -85,50 +85,78 @@ permissionUtil.askNotificationPermission() //this will ask permission in Android
   <summary>iOS</summary>
 
   ### iOS Setup
-	In progress ....
-   ios
-setup
-https://firebase.google.com/docs/ios/setup
-https://firebase.google.com/docs/cloud-messaging/ios/client
+  First you just need to include FirebaseMessaging library to your ios app from Xcode. Then on application start you need to call both FirebaseApp initialization and NotifierManager initialization methods as below. Don't forget to add Push Notifications and Background Modes (Remote Notifications) signing capability in Xcode.
 
-for easy setup
-FirebaseAppDelegateProxyEnabled YES in info.plist
-
-
-
-add FIrebaseMessaging and FirebaseCore to your project (for some reason otherwise it has some errors)
-
-on Application start call initialize
-FirebaseApp.configure()
-and initialize
-
+```swift
+import SwiftUI
+import shared
+import FirebaseCore
+import FirebaseMessaging
 
 class AppDelegate: NSObject, UIApplicationDelegate {
 
-func application(_ application: UIApplication,
-didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+  func application(_ application: UIApplication,
+                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
 
-      FirebaseApp.configure()
-      AppInitializer.shared.initialize(
-          isDebug: true, onKoinStart: { _ in })
+      FirebaseApp.configure() //important
+      NotifierManager.shared.initialize(configuration: NotificationPlatformConfigurationIos.shared)
+      
     return true
-}
-
+  }
+    
 }
 
 @main
 struct iOSApp: App {
-
+    
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
-	var body: some Scene {
-		WindowGroup {
+    var body: some Scene {
+        WindowGroup {
             ContentView()
         }
-	}
+    }
 }
+
+
+```
+
+
+
  
 </details>
+
+## Usage
+You can send either local or push notification.
+
+### Local Notification
+```kotlin
+val notifier = NotifierManager.getLocalNotifier()
+notifier.notify("Title", "Body")
+
+```
+
+### Push Notification
+
+#### Listen for push notification token changes
+In this method you can send notification token to the server.
+
+```kotlin
+NotifierManager.addListener(object : NotifierManager.Listener {
+  override fun onNewToken(token: String) {
+    println("onNewToken: $token") //Update user token in the server if needed
+  }
+})
+```
+
+#### Other functions
+```kotlin
+NotifierManager.getPushNotifier().getToken() //Get current user push notification token
+NotifierManager.getPushNotifier().deleteMyToken() //Delete user's token for example when user logs out 
+NotifierManager.getPushNotifier().subscribeToTopic("new_users") 
+NotifierManager.getPushNotifier().unSubscribeFromTopic("new_users") 
+```
+
 
 
 
