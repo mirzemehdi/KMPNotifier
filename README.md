@@ -85,7 +85,7 @@ permissionUtil.askNotificationPermission() //this will ask permission in Android
   <summary>iOS</summary>
 
   ### iOS Setup
-  First you just need to include FirebaseMessaging library to your ios app from Xcode. Then on application start you need to call both FirebaseApp initialization and NotifierManager initialization methods as below. Don't forget to add Push Notifications and Background Modes (Remote Notifications) signing capability in Xcode.
+  First you just need to include FirebaseMessaging library to your ios app from Xcode. Then on application start you need to call both FirebaseApp initialization and NotifierManager initialization methods, and apnsToken setting as below. Don't forget to add Push Notifications and Background Modes (Remote Notifications) signing capability in Xcode.
 
 ```swift
 import SwiftUI
@@ -102,6 +102,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
       NotifierManager.shared.initialize(configuration: NotificationPlatformConfigurationIos.shared)
       
     return true
+  }
+
+  func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        Messaging.messaging().apnsToken = deviceToken
   }
     
 }
