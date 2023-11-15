@@ -23,7 +23,6 @@ internal class FirebasePushNotifierImpl : PushNotifier {
 
 
     override suspend fun getToken(): String? = suspendCoroutine { cont ->
-
         FIRMessaging.messaging().tokenWithCompletion { token, error ->
             cont.resume(token)
             error?.let { println("Error while getting token: $error") }

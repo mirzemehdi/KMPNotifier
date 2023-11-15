@@ -17,6 +17,7 @@ plugins {
 
 
 
+
 allprojects {
     group = "io.github.mirzemehdi"
     version = "0.1.8"

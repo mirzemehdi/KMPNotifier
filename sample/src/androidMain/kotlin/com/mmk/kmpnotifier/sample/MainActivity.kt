@@ -14,10 +14,11 @@ class MainActivity : ComponentActivity() {
     private val permissionUtil: AndroidPermissionUtil by permissionUtil()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val permissionUtil by permissionUtil()
         permissionUtil.askNotificationPermission()
         NotifierManager.initialize(
             configuration = NotificationPlatformConfiguration.Android(
-                R.drawable.ic_launcher_foreground,
+                notificationIconResId = R.drawable.ic_launcher_foreground,
             )
         )
         setContent {

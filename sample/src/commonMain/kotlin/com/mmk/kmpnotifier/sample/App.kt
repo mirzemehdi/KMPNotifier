@@ -13,12 +13,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.mmk.kmpnotifier.notification.NotifierManager
+import kotlinx.coroutines.launch
 
 @Composable
 fun App() {
@@ -27,17 +29,21 @@ fun App() {
     LaunchedEffect(true) {
         NotifierManager.addListener(object : NotifierManager.Listener {
             override fun onNewToken(token: String) {
+                myPushNotificationToken = token
                 println("onNewToken: $token")
             }
         })
         myPushNotificationToken = NotifierManager.getPushNotifier().getToken() ?: ""
     }
 
+
+
     MaterialTheme {
         Column (Modifier.fillMaxSize().padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
             Button(onClick = {
                 val notifier = NotifierManager.getLocalNotifier()
                 notifier.notify("Title", "bodyMessage")
+
             }) {
                 Text("Send Local Notification")
             }
