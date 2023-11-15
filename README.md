@@ -150,7 +150,7 @@ NotifierManager.addListener(object : NotifierManager.Listener {
   override fun onNewToken(token: String) {
     println("onNewToken: $token") //Update user token in the server if needed
   }
-})
+}) 
 ```
 
 #### Other functions
