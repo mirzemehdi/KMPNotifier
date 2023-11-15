@@ -31,11 +31,11 @@ repositories {
 }
 ```
 
-Then in your shared module you add dependency in `commonMain`. Latest version: [![Maven Central](https://img.shields.io/maven-central/v/io.github.mirzemehdi/kmpnotifier?color=blue)](https://search.maven.org/search?q=g:io.github.mirzemehdi)
+Then in your shared module you add dependency in `commonMain`. Latest version: [![Maven Central](https://img.shields.io/maven-central/v/io.github.mirzemehdi/kmpnotifier?color=blue)](https://search.maven.org/search?q=g:io.github.mirzemehdi). In iOS framework part export this library as well.
 ```kotlin
 sourceSets {
   commonMain.dependencies {
-    implementation("io.github.mirzemehdi:kmpnotifier:<version>") 
+    api("io.github.mirzemehdi:kmpnotifier:<version>") // in iOS export this library
   }
 }
 ```
