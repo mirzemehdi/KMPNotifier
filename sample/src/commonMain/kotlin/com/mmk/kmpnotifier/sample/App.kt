@@ -1,7 +1,6 @@
 package com.mmk.kmpnotifier.sample
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -13,18 +12,18 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.mmk.kmpnotifier.notification.NotifierManager
-import kotlinx.coroutines.launch
+import com.mmk.kmpnotifier.notification.PayloadData
 
 @Composable
 fun App() {
     var myPushNotificationToken by remember { mutableStateOf("") }
+    var pushNotificationDataPayload by remember { mutableStateOf("") }
 
     LaunchedEffect(true) {
         NotifierManager.addListener(object : NotifierManager.Listener {
@@ -32,14 +31,21 @@ fun App() {
                 myPushNotificationToken = token
                 println("onNewToken: $token")
             }
+
+            override fun onPayloadData(data: PayloadData) {
+                pushNotificationDataPayload = data.toString()
+            }
         })
         myPushNotificationToken = NotifierManager.getPushNotifier().getToken() ?: ""
     }
 
 
-
     MaterialTheme {
-        Column (Modifier.fillMaxSize().padding(20.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+        Column(
+            Modifier.fillMaxSize().padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
             Button(onClick = {
                 val notifier = NotifierManager.getLocalNotifier()
                 notifier.notify("Title", "bodyMessage")
@@ -50,6 +56,13 @@ fun App() {
             Text(
                 modifier = Modifier.padding(20.dp),
                 text = "FirebaseToken: $myPushNotificationToken",
+                style = MaterialTheme.typography.body1,
+                textAlign = TextAlign.Start,
+            )
+
+            Text(
+                modifier = Modifier.padding(20.dp),
+                text = "Push Notification Data payload: $pushNotificationDataPayload",
                 style = MaterialTheme.typography.body1,
                 textAlign = TextAlign.Start,
             )

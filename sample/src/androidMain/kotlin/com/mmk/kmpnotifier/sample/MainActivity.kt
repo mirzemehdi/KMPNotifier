@@ -1,5 +1,6 @@
 package com.mmk.kmpnotifier.sample
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,11 +12,11 @@ import com.mmk.kmpnotifier.permission.AndroidPermissionUtil
 import com.mmk.kmpnotifier.permission.permissionUtil
 
 class MainActivity : ComponentActivity() {
-    private val permissionUtil: AndroidPermissionUtil by permissionUtil()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val permissionUtil by permissionUtil()
         permissionUtil.askNotificationPermission()
+        onPushNotificationData(intent.extras)
         NotifierManager.initialize(
             configuration = NotificationPlatformConfiguration.Android(
                 notificationIconResId = R.drawable.ic_launcher_foreground,
@@ -23,6 +24,17 @@ class MainActivity : ComponentActivity() {
         )
         setContent {
             App()
+        }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        onPushNotificationData(intent?.extras)
+    }
+
+    private fun onPushNotificationData(extras: Bundle?){
+        extras?.keySet()?.forEach {key->
+            println("PushNotification Data key: $key, value: ${extras.get(key)}")
         }
     }
 }

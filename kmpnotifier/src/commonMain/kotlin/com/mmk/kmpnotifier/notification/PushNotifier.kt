@@ -1,10 +1,11 @@
 package com.mmk.kmpnotifier.notification
 
+public typealias PayloadData = Map<String, *>
+
 /**
  * Class represents push notification such as Firebase Push Notification
  */
 public interface PushNotifier {
-
 
     /**
      * @return current push notification token

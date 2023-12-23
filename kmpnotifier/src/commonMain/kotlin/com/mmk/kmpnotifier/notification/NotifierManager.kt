@@ -43,6 +43,12 @@ public object NotifierManager {
          * @param token Push Notification token
          */
         public fun onNewToken(token: String)
+
+        /**
+         * Called when push notification data is available
+         * @param data Push Notification Payload Data
+         */
+        public fun onPayloadData(data:PayloadData) {}
     }
 
 

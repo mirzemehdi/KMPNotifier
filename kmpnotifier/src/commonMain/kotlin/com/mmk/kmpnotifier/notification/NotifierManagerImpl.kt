@@ -31,6 +31,11 @@ internal object NotifierManagerImpl : KMPKoinComponent() {
         listeners.forEach { it.onNewToken(token) }
     }
 
+    fun onPushPayloadData(data: PayloadData) {
+        println("Received Push Notification payload data")
+        listeners.forEach { it.onPayloadData(data) }
+    }
+
     private fun requireInitialization() {
         if (LibDependencyInitializer.isInitialized().not()) throw IllegalStateException(
             "NotifierFactory is not initialized. " +

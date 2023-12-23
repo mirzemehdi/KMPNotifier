@@ -20,5 +20,8 @@ internal class MyFirebaseMessagingService : FirebaseMessagingService() {
         message.notification?.let {
             notifier.notify(it.title ?: "", it.body ?: "")
         }
+        if (message.data.isNotEmpty()){
+            notifierFactory.onPushPayloadData(message.data)
+        }
     }
 }
