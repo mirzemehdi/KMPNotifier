@@ -1,5 +1,6 @@
 package com.mmk.kmpnotifier.notification
 
+import com.mmk.kmpnotifier.extensions.onApplicationDidReceiveRemoteNotification
 import com.mmk.kmpnotifier.permission.IosPermissionUtil
 import platform.UserNotifications.UNMutableNotificationContent
 import platform.UserNotifications.UNNotification
@@ -47,6 +48,8 @@ internal class IosNotifier(
 //            FIRMessaging.messaging()
 //                .appDidReceiveMessage(didReceiveNotificationResponse.notification.request.content.userInfo)
 
+            val userInfo = didReceiveNotificationResponse.notification.request.content.userInfo
+            NotifierManager.onApplicationDidReceiveRemoteNotification(userInfo)
             withCompletionHandler()
         }
 
