@@ -23,17 +23,11 @@ import com.mmk.kmpnotifier.notification.PayloadData
 @Composable
 fun App() {
     var myPushNotificationToken by remember { mutableStateOf("") }
-    var pushNotificationDataPayload by remember { mutableStateOf("") }
-
     LaunchedEffect(true) {
         NotifierManager.addListener(object : NotifierManager.Listener {
             override fun onNewToken(token: String) {
                 myPushNotificationToken = token
                 println("onNewToken: $token")
-            }
-
-            override fun onPayloadData(data: PayloadData) {
-                pushNotificationDataPayload = data.toString()
             }
         })
         myPushNotificationToken = NotifierManager.getPushNotifier().getToken() ?: ""
@@ -56,13 +50,6 @@ fun App() {
             Text(
                 modifier = Modifier.padding(20.dp),
                 text = "FirebaseToken: $myPushNotificationToken",
-                style = MaterialTheme.typography.body1,
-                textAlign = TextAlign.Start,
-            )
-
-            Text(
-                modifier = Modifier.padding(20.dp),
-                text = "Push Notification Data payload: $pushNotificationDataPayload",
                 style = MaterialTheme.typography.body1,
                 textAlign = TextAlign.Start,
             )
