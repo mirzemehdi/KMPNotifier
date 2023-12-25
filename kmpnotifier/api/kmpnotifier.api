@@ -1,3 +1,7 @@
+public final class com/mmk/kmpnotifier/extensions/NotifierManagerExtKt {
+	public static final fun onCreateOrOnNewIntent (Lcom/mmk/kmpnotifier/notification/NotifierManager;Landroid/content/Intent;)V
+}
+
 public abstract interface class com/mmk/kmpnotifier/notification/Notifier {
 	public abstract fun notify (Ljava/lang/String;Ljava/lang/String;)V
 }
@@ -12,6 +16,12 @@ public final class com/mmk/kmpnotifier/notification/NotifierManager {
 
 public abstract interface class com/mmk/kmpnotifier/notification/NotifierManager$Listener {
 	public abstract fun onNewToken (Ljava/lang/String;)V
+	public abstract fun onPayloadData (Ljava/util/Map;)V
+}
+
+public final class com/mmk/kmpnotifier/notification/NotifierManager$Listener$DefaultImpls {
+	public static fun onNewToken (Lcom/mmk/kmpnotifier/notification/NotifierManager$Listener;Ljava/lang/String;)V
+	public static fun onPayloadData (Lcom/mmk/kmpnotifier/notification/NotifierManager$Listener;Ljava/util/Map;)V
 }
 
 public abstract interface class com/mmk/kmpnotifier/notification/PushNotifier {

@@ -153,6 +153,43 @@ NotifierManager.addListener(object : NotifierManager.Listener {
 }) 
 ```
 
+
+
+#### Receive data payload
+```kotlin
+NotifierManager.addListener(object : NotifierManager.Listener {
+  override fun onPayloadData(data: PayloadData) {
+    println("Push Notification payloadData: $data") //PayloadData is just typeAlias for Map<String,*>.
+  }
+}) 
+```
+And you need to call below platform-specific functions in order to receive payload data properly.
+##### Android
+Call `NotifierManager.onCreateOrOnNewIntent(intent)` on launcher Activity's `onCreate` and `onNewIntent` methods.
+```kotlin
+override fun onCreate(savedInstanceState: Bundle?) {
+   super.onCreate(savedInstanceState)
+      NotifierManager.onCreateOrOnNewIntent(intent)
+      ...
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        NotifierManager.onCreateOrOnNewIntent(intent)
+    }
+
+```
+##### iOS
+Call `NotifierManager.onApplicationDidReceiveRemoteNotification(userInfo: userInfo)` on application's `didReceiveRemoteNotification` method.
+
+```
+ func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) async -> UIBackgroundFetchResult {
+      NotifierManager.shared.onApplicationDidReceiveRemoteNotification(userInfo: userInfo)
+      return UIBackgroundFetchResult.newData
+ }
+
+```
+
 #### Other functions
 ```kotlin
 NotifierManager.getPushNotifier().getToken() //Get current user push notification token
