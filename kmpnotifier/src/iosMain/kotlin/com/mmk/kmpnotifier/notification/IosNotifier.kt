@@ -60,6 +60,8 @@ internal class IosNotifier(
         ) {
 //            FIRMessaging.messaging()
 //                .appDidReceiveMessage(didReceiveNotificationResponse.notification.request.content.userInfo)
+            val userInfo =willPresentNotification.request.content.userInfo
+            NotifierManager.onApplicationDidReceiveRemoteNotification(userInfo)
             withCompletionHandler(IosPermissionUtil.NOTIFICATION_PERMISSIONS)
         }
     }
