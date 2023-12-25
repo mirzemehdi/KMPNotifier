@@ -5,6 +5,32 @@ import androidx.core.os.bundleOf
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.NotifierManagerImpl
 
+
+/***
+ * In order to receive notification data payload this functions needs to be called in
+ * Android side in launcher Activity #onCreate and #onNewIntent methods.
+ *
+ * Example:
+ *
+ * ```
+ * class MainActivity : ComponentActivity() {
+ *     override fun onCreate(savedInstanceState: Bundle?) {
+ *         super.onCreate(savedInstanceState)
+ *         NotifierManager.onCreateOrOnNewIntent(intent)
+ *         setContent {
+ *             App()
+ *         }
+ *     }
+ *
+ *     override fun onNewIntent(intent: Intent?) {
+ *         super.onNewIntent(intent)
+ *         NotifierManager.onCreateOrOnNewIntent(intent)
+ *     }
+ *
+ * }
+ *
+ * ```
+ */
 public fun NotifierManager.onCreateOrOnNewIntent(intent: Intent?) {
     if (intent == null) return
     val extras = intent.extras ?: bundleOf()

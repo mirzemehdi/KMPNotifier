@@ -165,6 +165,7 @@ NotifierManager.addListener(object : NotifierManager.Listener {
 ```
 And you need to call below platform-specific functions in order to receive payload data properly.
 ##### Android
+Call `NotifierManager.onCreateOrOnNewIntent(intent)` on launcher Activity's `onCreate` and `onNewIntent` methods.
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
    super.onCreate(savedInstanceState)
@@ -179,6 +180,8 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
 ```
 ##### iOS
+Call `NotifierManager.onApplicationDidReceiveRemoteNotification(userInfo: userInfo)` on application's `didReceiveRemoteNotification` method.
+
 ```
  func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) async -> UIBackgroundFetchResult {
       NotifierManager.shared.onApplicationDidReceiveRemoteNotification(userInfo: userInfo)
