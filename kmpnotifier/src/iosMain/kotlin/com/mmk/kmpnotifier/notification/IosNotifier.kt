@@ -12,13 +12,21 @@ import platform.UserNotifications.UNTimeIntervalNotificationTrigger
 import platform.UserNotifications.UNUserNotificationCenter
 import platform.UserNotifications.UNUserNotificationCenterDelegateProtocol
 import platform.darwin.NSObject
+import kotlin.random.Random
 
 internal class IosNotifier(
     private val permissionUtil: IosPermissionUtil,
     private val notificationCenter: UNUserNotificationCenter,
 ) : Notifier {
 
-    override fun notify(title: String, body: String) {
+
+    override fun notify(title: String, body: String): Int {
+        val notificationID = Random.nextInt()
+        notify(notificationID, title, body)
+        return notificationID
+    }
+
+    override fun notify(id: Int, title: String, body: String) {
         permissionUtil.askNotificationPermission {
             val notificationContent = UNMutableNotificationContent().apply {
                 setTitle(title)
@@ -27,7 +35,7 @@ internal class IosNotifier(
             }
             val trigger = UNTimeIntervalNotificationTrigger.triggerWithTimeInterval(1.0, false)
             val notificationRequest = UNNotificationRequest.requestWithIdentifier(
-                identifier = "general-notification-id",
+                identifier = id.toString(),
                 content = notificationContent,
                 trigger = trigger
             )
@@ -36,7 +44,13 @@ internal class IosNotifier(
                 error?.let { println("Error showing notification: $error") }
             }
         }
+    }
 
+    override fun hide(id: Int) {
+        notificationCenter
+            .removeDeliveredNotificationsWithIdentifiers(
+                listOf(id.toString())
+            )
     }
 
     internal class NotificationDelegate : UNUserNotificationCenterDelegateProtocol, NSObject() {
@@ -60,7 +74,7 @@ internal class IosNotifier(
         ) {
 //            FIRMessaging.messaging()
 //                .appDidReceiveMessage(didReceiveNotificationResponse.notification.request.content.userInfo)
-            val userInfo =willPresentNotification.request.content.userInfo
+            val userInfo = willPresentNotification.request.content.userInfo
             NotifierManager.onApplicationDidReceiveRemoteNotification(userInfo)
             withCompletionHandler(IosPermissionUtil.NOTIFICATION_PERMISSIONS)
         }

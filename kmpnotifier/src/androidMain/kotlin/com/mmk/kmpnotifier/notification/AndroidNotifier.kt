@@ -20,11 +20,19 @@ internal class AndroidNotifier(
     private val permissionUtil: PermissionUtil,
 ) : Notifier {
 
-    override fun notify(title: String, body: String) {
+    override fun notify(title: String, body: String): Int {
+        val notificationID = Random.nextInt()
+        notify(notificationID, title, body)
+        return notificationID
+    }
+
+    override fun notify(id: Int, title: String, body: String) {
         permissionUtil.hasNotificationPermission {
             if (it.not())
-                Log.w("AndroidNotifier", "You need to ask runtime " +
-                        "notification permission (Manifest.permission.POST_NOTIFICATIONS) in your activity")
+                Log.w(
+                    "AndroidNotifier", "You need to ask runtime " +
+                            "notification permission (Manifest.permission.POST_NOTIFICATIONS) in your activity"
+                )
         }
         val notificationManager = context.notificationManager ?: return
         val pendingIntent = getPendingIntent()
@@ -44,9 +52,12 @@ internal class AndroidNotifier(
             }
         }.build()
 
+        notificationManager.notify(id, notification)
+    }
 
-        val notificationID = Random.nextInt()
-        notificationManager.notify(notificationID, notification)
+    override fun hide(id: Int) {
+        val notificationManager = context.notificationManager ?: return
+        notificationManager.cancel(id)
     }
 
     private fun getPendingIntent(deepLink: String = ""): PendingIntent? {
