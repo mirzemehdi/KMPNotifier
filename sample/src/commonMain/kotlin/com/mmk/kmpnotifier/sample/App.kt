@@ -46,13 +46,17 @@ fun App() {
             }) {
                 Text("Send Local Notification")
             }
-            if (notificationId != 0) {
-                Button(onClick = {
-                    notifier.hide(notificationId)
-                }) {
-                    Text("Hide Notification #$notificationId")
-                }
+            Button(onClick = {notifier.removeAll()}) {
+                Text("Remove all notifications")
             }
+
+            Button(enabled = notificationId != 0, onClick = {
+                notifier.remove(notificationId)
+                notificationId = 0
+            }) {
+                Text("Remove NotificationID #$notificationId")
+            }
+
             Text(
                 modifier = Modifier.padding(20.dp),
                 text = "FirebaseToken: $myPushNotificationToken",

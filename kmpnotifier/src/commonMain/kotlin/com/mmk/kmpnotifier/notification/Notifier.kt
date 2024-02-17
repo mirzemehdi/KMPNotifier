@@ -24,8 +24,14 @@ public interface Notifier {
 
 
     /**
-     * Hide notification by id
+     * Remove notification by id
      * @param id notification id
      */
-    public fun hide(id:Int)
+    public fun remove(id:Int)
+
+    /**
+     * Removes all previously shown notifications
+     * @see remove(id) for removing specific notification.
+     */
+    public fun removeAll()
 }

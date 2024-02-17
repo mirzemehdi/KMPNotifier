@@ -21,7 +21,7 @@ internal class AndroidNotifier(
 ) : Notifier {
 
     override fun notify(title: String, body: String): Int {
-        val notificationID = Random.nextInt()
+        val notificationID = Random.nextInt(0,Int.MAX_VALUE)
         notify(notificationID, title, body)
         return notificationID
     }
@@ -55,9 +55,14 @@ internal class AndroidNotifier(
         notificationManager.notify(id, notification)
     }
 
-    override fun hide(id: Int) {
+    override fun remove(id: Int) {
         val notificationManager = context.notificationManager ?: return
         notificationManager.cancel(id)
+    }
+
+    override fun removeAll() {
+        val notificationManager = context.notificationManager ?: return
+        notificationManager.cancelAll()
     }
 
     private fun getPendingIntent(deepLink: String = ""): PendingIntent? {

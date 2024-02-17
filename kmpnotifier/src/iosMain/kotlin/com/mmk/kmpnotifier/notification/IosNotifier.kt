@@ -21,7 +21,7 @@ internal class IosNotifier(
 
 
     override fun notify(title: String, body: String): Int {
-        val notificationID = Random.nextInt()
+        val notificationID = Random.nextInt(0, Int.MAX_VALUE)
         notify(notificationID, title, body)
         return notificationID
     }
@@ -46,11 +46,12 @@ internal class IosNotifier(
         }
     }
 
-    override fun hide(id: Int) {
-        notificationCenter
-            .removeDeliveredNotificationsWithIdentifiers(
-                listOf(id.toString())
-            )
+    override fun remove(id: Int) {
+        notificationCenter.removeDeliveredNotificationsWithIdentifiers(listOf(id.toString()))
+    }
+
+    override fun removeAll() {
+        notificationCenter.removeAllDeliveredNotifications()
     }
 
     internal class NotificationDelegate : UNUserNotificationCenterDelegateProtocol, NSObject() {
