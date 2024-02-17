@@ -17,6 +17,12 @@ You can check out [Documentation](https://mirzemehdi.github.io/KMPNotifier) for 
 ## Installation
 Before starting you need to setup basic setup using Firebase official guideline (like initializing project in Firebase, adding `google-services.json` to android, `GoogleService-Info.plist` to iOS).
 
+## Minimum Requirements
+
+- **Android:** `minSdkVersion 21`
+- **iOS:** `iOS 14.1`
+
+
 ### Gradle Setup
 KMPNotifier is available on Maven Central. In your root project `build.gradle.kts` file (or `settings.gradle` file) add `mavenCentral()` to repositories, and  add `google-services` plugin to plugins.
 

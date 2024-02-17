@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.mmk.kmpnotifier.notification.NotifierManager
-import com.mmk.kmpnotifier.notification.PayloadData
 
 @Composable
 fun App() {
@@ -40,13 +39,24 @@ fun App() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            val notifier = remember { NotifierManager.getLocalNotifier() }
+            var notificationId by remember { mutableStateOf(0) }
             Button(onClick = {
-                val notifier = NotifierManager.getLocalNotifier()
-                notifier.notify("Title", "bodyMessage")
-
+                notificationId = notifier.notify("Title", "bodyMessage")
             }) {
                 Text("Send Local Notification")
             }
+            Button(onClick = {notifier.removeAll()}) {
+                Text("Remove all notifications")
+            }
+
+            Button(enabled = notificationId != 0, onClick = {
+                notifier.remove(notificationId)
+                notificationId = 0
+            }) {
+                Text("Remove NotificationID #$notificationId")
+            }
+
             Text(
                 modifier = Modifier.padding(20.dp),
                 text = "FirebaseToken: $myPushNotificationToken",

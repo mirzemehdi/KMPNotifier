@@ -11,8 +11,10 @@ public final class com/mmk/kmpnotifier/sample/AppKt {
 public final class com/mmk/kmpnotifier/sample/ComposableSingletons$AppKt {
 	public static final field INSTANCE Lcom/mmk/kmpnotifier/sample/ComposableSingletons$AppKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function3;
+	public static field lambda-2 Lkotlin/jvm/functions/Function3;
 	public fun <init> ()V
 	public final fun getLambda-1$sample_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda-2$sample_release ()Lkotlin/jvm/functions/Function3;
 }
 
 public final class com/mmk/kmpnotifier/sample/ComposableSingletons$MainActivityKt {

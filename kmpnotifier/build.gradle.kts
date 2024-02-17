@@ -23,7 +23,7 @@ kotlin {
 
 
     cocoapods {
-        ios.deploymentTarget = "11.0"
+        ios.deploymentTarget = "14.1"
         framework {
             baseName = "KMPNotifier"
             isStatic = true
