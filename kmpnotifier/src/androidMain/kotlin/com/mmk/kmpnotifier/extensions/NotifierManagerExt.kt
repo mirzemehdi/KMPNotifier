@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.core.os.bundleOf
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.NotifierManagerImpl
+import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 
 
 /***
@@ -40,4 +41,10 @@ public fun NotifierManager.onCreateOrOnNewIntent(intent: Intent?) {
         value?.let { payloadData[key] = value }
     }
     if (extras.containsKey("google.sent_time")) NotifierManagerImpl.onPushPayloadData(payloadData)
+}
+
+internal fun NotifierManagerImpl.shouldShowNotification(): Boolean {
+    val configuration =
+        NotifierManagerImpl.getConfiguration() as? NotificationPlatformConfiguration.Android
+    return configuration?.showPushNotification ?: true
 }

@@ -20,11 +20,13 @@ public final class com/mmk/kmpnotifier/notification/NotifierManager {
 public abstract interface class com/mmk/kmpnotifier/notification/NotifierManager$Listener {
 	public abstract fun onNewToken (Ljava/lang/String;)V
 	public abstract fun onPayloadData (Ljava/util/Map;)V
+	public abstract fun onPushNotification (Ljava/lang/String;Ljava/lang/String;)V
 }
 
 public final class com/mmk/kmpnotifier/notification/NotifierManager$Listener$DefaultImpls {
 	public static fun onNewToken (Lcom/mmk/kmpnotifier/notification/NotifierManager$Listener;Ljava/lang/String;)V
 	public static fun onPayloadData (Lcom/mmk/kmpnotifier/notification/NotifierManager$Listener;Ljava/util/Map;)V
+	public static fun onPushNotification (Lcom/mmk/kmpnotifier/notification/NotifierManager$Listener;Ljava/lang/String;Ljava/lang/String;)V
 }
 
 public abstract interface class com/mmk/kmpnotifier/notification/PushNotifier {
@@ -38,11 +40,12 @@ public abstract interface class com/mmk/kmpnotifier/notification/configuration/N
 }
 
 public final class com/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Android : com/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration {
-	public fun <init> (ILjava/lang/Integer;Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Android$NotificationChannelData;)V
-	public synthetic fun <init> (ILjava/lang/Integer;Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Android$NotificationChannelData;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (ILjava/lang/Integer;Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Android$NotificationChannelData;Z)V
+	public synthetic fun <init> (ILjava/lang/Integer;Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Android$NotificationChannelData;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getNotificationChannelData ()Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Android$NotificationChannelData;
 	public final fun getNotificationIconColorResId ()Ljava/lang/Integer;
 	public final fun getNotificationIconResId ()I
+	public final fun getShowPushNotification ()Z
 }
 
 public final class com/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Android$NotificationChannelData {
@@ -55,8 +58,14 @@ public final class com/mmk/kmpnotifier/notification/configuration/NotificationPl
 }
 
 public final class com/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Ios : com/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration {
-	public static final field INSTANCE Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Ios;
+	public fun <init> ()V
+	public fun <init> (Z)V
+	public synthetic fun <init> (ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Z
+	public final fun copy (Z)Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Ios;
+	public static synthetic fun copy$default (Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Ios;ZILjava/lang/Object;)Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Ios;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getShowPushNotification ()Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

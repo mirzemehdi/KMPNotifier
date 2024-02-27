@@ -1,6 +1,6 @@
 # KMPNotifier - Kotlin Multiplatform Push Notification
 [![Build](https://github.com/mirzemehdi/KMPNotifier/actions/workflows/build.yml/badge.svg)](https://github.com/mirzemehdi/KMPNotifier/actions/workflows/build.yml) 
-[![Kotlin](https://img.shields.io/badge/Kotlin-1.9.21-blue.svg?style=flat&logo=kotlin)](https://kotlinlang.org)
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.9.22-blue.svg?style=flat&logo=kotlin)](https://kotlinlang.org)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.mirzemehdi/kmpnotifier?color=blue)](https://search.maven.org/search?q=g:io.github.mirzemehdi)
 
 ![badge-android](http://img.shields.io/badge/platform-android-6EDB8D.svg?style=flat)
@@ -70,9 +70,15 @@ NotifierManager.initialize(NotificationPlatformConfiguration) //passing android 
 class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
+        /**
+         * By default showPushNotification value is true.
+         * When set showPushNotification to false foreground push  notification will not be shown to user.
+         * You can still get notification content using #onPushNotification listener method.
+         */
         NotifierManager.initialize(
             configuration = NotificationPlatformConfiguration.Android(
                 notificationIconResId = R.drawable.ic_launcher_foreground,
+                showPushNotification = true,
             )
         )
     }
@@ -106,7 +112,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
 
       FirebaseApp.configure() //important
-      NotifierManager.shared.initialize(configuration: NotificationPlatformConfigurationIos.shared)
+      
+      //By default showPushNotification value is true.
+      //When set showPushNotification to false foreground push  notification will not be shown.
+      //You can still get notification content using #onPushNotification listener method.
+      NotifierManager.shared.initialize(configuration: NotificationPlatformConfigurationIos(showPushNotification: true))
       
     return true
   }
@@ -141,9 +151,24 @@ struct iOSApp: App {
 You can send either local or push notification.
 
 ### Local Notification
+
+#### Send notification
+
 ```kotlin
 val notifier = NotifierManager.getLocalNotifier()
-notifier.notify("Title", "Body")
+val notificationId = notifier.notify("Title", "Body") 
+// or you can use below to specify ID yourself
+notifier.notify(1, "Title", "Body")
+
+
+```
+
+#### Remove notification by Id or all notifications
+
+```kotlin
+notifer.remove(notificationId) //Removes notification by Id  
+
+notifier.removeAll() //Removes all notification
 
 ```
 
@@ -160,6 +185,14 @@ NotifierManager.addListener(object : NotifierManager.Listener {
 }) 
 ```
 
+#### Receive notification type messages  
+```kotlin
+NotifierManager.addListener(object : NotifierManager.Listener {
+  override fun onPushNotification(title:String?,body:String?) {
+    println("Push Notification notification title: $title")
+  }
+}) 
+```
 
 
 #### Receive data payload
