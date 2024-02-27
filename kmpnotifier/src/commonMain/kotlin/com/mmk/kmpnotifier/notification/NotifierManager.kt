@@ -42,13 +42,22 @@ public object NotifierManager {
          * Called when push notification token is updated, or initialized first time
          * @param token Push Notification token
          */
-        public fun onNewToken(token: String){}
+        public fun onNewToken(token: String) {}
 
         /**
-         * Called when push notification data is available
+         * Called when "Push Notification" data type message is available
+         * @see onPushNotification for receiving "Push Notification" notification type message.
          * @param data Push Notification Payload Data
          */
-        public fun onPayloadData(data:PayloadData) {}
+        public fun onPayloadData(data: PayloadData) {}
+
+        /**
+         * Called when "Push Notification" notification type message is received.
+         * @see onPayloadData for receiving "Push Notification" data type message.
+         * @param title Notification title
+         * @param body Notification body message
+         */
+        public fun onPushNotification(title:String?,body:String?) {}
     }
 
 

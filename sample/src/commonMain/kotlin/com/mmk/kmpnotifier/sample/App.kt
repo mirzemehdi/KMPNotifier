@@ -23,6 +23,7 @@ import com.mmk.kmpnotifier.notification.NotifierManager
 fun App() {
     var myPushNotificationToken by remember { mutableStateOf("") }
     LaunchedEffect(true) {
+        println("LaunchedEffectApp is called")
         NotifierManager.addListener(object : NotifierManager.Listener {
             override fun onNewToken(token: String) {
                 myPushNotificationToken = token

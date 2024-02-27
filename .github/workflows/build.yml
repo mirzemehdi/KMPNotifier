@@ -4,6 +4,8 @@ on:
     branches: [ "main" ]
     tags:
       - 'v*'
+    paths-ignore:
+      - '**/README.md'
   pull_request:
     branches: [ "main" ]
 

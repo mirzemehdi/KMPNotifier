@@ -1,9 +1,12 @@
 package com.mmk.kmpnotifier.notification
 
 import com.mmk.kmpnotifier.extensions.onApplicationDidReceiveRemoteNotification
+import com.mmk.kmpnotifier.extensions.onUserNotification
+import com.mmk.kmpnotifier.extensions.shouldShowNotification
 import com.mmk.kmpnotifier.permission.IosPermissionUtil
 import platform.UserNotifications.UNMutableNotificationContent
 import platform.UserNotifications.UNNotification
+import platform.UserNotifications.UNNotificationContent
 import platform.UserNotifications.UNNotificationPresentationOptions
 import platform.UserNotifications.UNNotificationRequest
 import platform.UserNotifications.UNNotificationResponse
@@ -60,12 +63,9 @@ internal class IosNotifier(
             didReceiveNotificationResponse: UNNotificationResponse,
             withCompletionHandler: () -> Unit,
         ) {
-//            FIRMessaging.messaging()
-//                .appDidReceiveMessage(didReceiveNotificationResponse.notification.request.content.userInfo)
-
-            val userInfo = didReceiveNotificationResponse.notification.request.content.userInfo
-            NotifierManager.onApplicationDidReceiveRemoteNotification(userInfo)
-            withCompletionHandler()
+            val notificationContent = didReceiveNotificationResponse.notification.request.content
+            NotifierManager.onUserNotification(notificationContent)
+            if (NotifierManager.shouldShowNotification(notificationContent)) withCompletionHandler()
         }
 
         override fun userNotificationCenter(
@@ -73,11 +73,9 @@ internal class IosNotifier(
             willPresentNotification: UNNotification,
             withCompletionHandler: (UNNotificationPresentationOptions) -> Unit,
         ) {
-//            FIRMessaging.messaging()
-//                .appDidReceiveMessage(didReceiveNotificationResponse.notification.request.content.userInfo)
-            val userInfo = willPresentNotification.request.content.userInfo
-            NotifierManager.onApplicationDidReceiveRemoteNotification(userInfo)
-            withCompletionHandler(IosPermissionUtil.NOTIFICATION_PERMISSIONS)
+            val notificationContent = willPresentNotification.request.content
+            NotifierManager.onUserNotification(notificationContent)
+            if (NotifierManager.shouldShowNotification(notificationContent)) withCompletionHandler(IosPermissionUtil.NOTIFICATION_PERMISSIONS)
         }
     }
 }

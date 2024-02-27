@@ -13,6 +13,8 @@ internal object NotifierManagerImpl : KMPKoinComponent() {
         LibDependencyInitializer.initialize(configuration)
     }
 
+    fun getConfiguration(): NotificationPlatformConfiguration = get()
+
     fun getLocalNotifier(): Notifier {
         requireInitialization()
         return get()
@@ -35,6 +37,12 @@ internal object NotifierManagerImpl : KMPKoinComponent() {
         println("Received Push Notification payload data")
         if (listeners.size == 0) println("There is no listener to notify onPushPayloadData")
         listeners.forEach { it.onPayloadData(data) }
+    }
+
+    fun onPushNotification(title: String?, body: String?) {
+        println("Received Push Notification notification type message")
+        if (listeners.size == 0) println("There is no listener to notify onPushNotification")
+        listeners.forEach { it.onPushNotification(title = title, body = body) }
     }
 
     private fun requireInitialization() {
