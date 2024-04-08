@@ -19,12 +19,14 @@ public final class com/mmk/kmpnotifier/notification/NotifierManager {
 
 public abstract interface class com/mmk/kmpnotifier/notification/NotifierManager$Listener {
 	public abstract fun onNewToken (Ljava/lang/String;)V
+	public abstract fun onNotificationClicked (Ljava/util/Map;)V
 	public abstract fun onPayloadData (Ljava/util/Map;)V
 	public abstract fun onPushNotification (Ljava/lang/String;Ljava/lang/String;)V
 }
 
 public final class com/mmk/kmpnotifier/notification/NotifierManager$Listener$DefaultImpls {
 	public static fun onNewToken (Lcom/mmk/kmpnotifier/notification/NotifierManager$Listener;Ljava/lang/String;)V
+	public static fun onNotificationClicked (Lcom/mmk/kmpnotifier/notification/NotifierManager$Listener;Ljava/util/Map;)V
 	public static fun onPayloadData (Lcom/mmk/kmpnotifier/notification/NotifierManager$Listener;Ljava/util/Map;)V
 	public static fun onPushNotification (Lcom/mmk/kmpnotifier/notification/NotifierManager$Listener;Ljava/lang/String;Ljava/lang/String;)V
 }

@@ -1,7 +1,9 @@
 package com.mmk.kmpnotifier.extensions
 
+import com.mmk.kmpnotifier.Constants.KEY_IOS_FIREBASE_NOTIFICATION
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.NotifierManagerImpl
+import com.mmk.kmpnotifier.notification.PayloadData
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import platform.UserNotifications.UNMutableNotificationContent
 import platform.UserNotifications.UNNotificationContent
@@ -20,12 +22,9 @@ import platform.UserNotifications.UNNotificationContent
  * ```
  */
 public fun NotifierManager.onApplicationDidReceiveRemoteNotification(userInfo: Map<Any?, *>) {
-    val payloadData = userInfo.keys
-        .filterNotNull()
-        .filterIsInstance<String>()
-        .associateWith { key -> userInfo[key] }
-
-    if (payloadData.containsKey("gcm.message_id")) NotifierManagerImpl.onPushPayloadData(payloadData)
+    val payloadData = userInfo.asPayloadData()
+    if (payloadData.containsKey(KEY_IOS_FIREBASE_NOTIFICATION))
+        NotifierManagerImpl.onPushPayloadData(payloadData)
 }
 
 internal fun NotifierManager.onUserNotification(notificationContent: UNNotificationContent) {
@@ -35,6 +34,10 @@ internal fun NotifierManager.onUserNotification(notificationContent: UNNotificat
         body = notificationContent.body
     )
     NotifierManager.onApplicationDidReceiveRemoteNotification(userInfo)
+}
+
+internal fun NotifierManager.onNotificationClicked(notificationContent: UNNotificationContent) {
+    NotifierManagerImpl.onNotificationClicked(notificationContent.userInfo.asPayloadData())
 }
 
 internal fun NotifierManager.shouldShowNotification(notificationContent: UNNotificationContent): Boolean {
@@ -47,6 +50,14 @@ internal fun NotifierManager.shouldShowNotification(notificationContent: UNNotif
     }
 }
 
+
+internal fun Map<Any?, *>.asPayloadData(): PayloadData {
+    return this.keys
+        .filterNotNull()
+        .filterIsInstance<String>()
+        .associateWith { key -> this[key] }
+}
+
 private fun UNNotificationContent.isPushNotification(): Boolean {
-    return userInfo.containsKey("gcm.message_id")
+    return userInfo.containsKey(KEY_IOS_FIREBASE_NOTIFICATION)
 }

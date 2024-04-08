@@ -21,6 +21,11 @@ object AppInitializer {
                 super.onPayloadData(data)
                 println("Push Notification payloadData: $data")
             }
+
+            override fun onNotificationClicked(data: PayloadData) {
+                super.onNotificationClicked(data)
+                println("Notification clicked, Notification payloadData: $data")
+            }
         })
     }
 }

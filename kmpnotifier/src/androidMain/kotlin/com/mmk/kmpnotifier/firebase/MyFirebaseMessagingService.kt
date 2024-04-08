@@ -2,6 +2,7 @@ package com.mmk.kmpnotifier.firebase
 
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.mmk.kmpnotifier.Constants
 import com.mmk.kmpnotifier.extensions.shouldShowNotification
 import com.mmk.kmpnotifier.notification.Notifier
 import com.mmk.kmpnotifier.notification.NotifierManager
@@ -27,7 +28,8 @@ internal class MyFirebaseMessagingService : FirebaseMessagingService() {
             notifierManager.onPushNotification(title = it.title, body = it.body)
         }
         if (message.data.isNotEmpty()) {
-            notifierManager.onPushPayloadData(message.data)
+            val data = message.data + mapOf( Constants.ACTION_NOTIFICATION_CLICK to Constants.ACTION_NOTIFICATION_CLICK)
+            notifierManager.onPushPayloadData(data)
         }
     }
 }
