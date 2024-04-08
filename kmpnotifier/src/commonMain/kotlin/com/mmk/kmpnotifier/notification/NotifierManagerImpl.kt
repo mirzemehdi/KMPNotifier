@@ -6,7 +6,6 @@ import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfig
 import org.koin.core.component.get
 
 internal object NotifierManagerImpl : KMPKoinComponent() {
-
     private val listeners = mutableListOf<NotifierManager.Listener>()
 
     fun initialize(configuration: NotificationPlatformConfiguration) {
@@ -43,6 +42,12 @@ internal object NotifierManagerImpl : KMPKoinComponent() {
         println("Received Push Notification notification type message")
         if (listeners.size == 0) println("There is no listener to notify onPushNotification")
         listeners.forEach { it.onPushNotification(title = title, body = body) }
+    }
+
+    fun onNotificationClicked(data: PayloadData) {
+        println("Notification is clicked")
+        if (listeners.size == 0) println("There is no listener to notify onPushPayloadData")
+        listeners.forEach { it.onNotificationClicked(data) }
     }
 
     private fun requireInitialization() {

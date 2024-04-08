@@ -58,6 +58,12 @@ public object NotifierManager {
          * @param body Notification body message
          */
         public fun onPushNotification(title:String?,body:String?) {}
+
+        /**
+         * Called when notification is clicked
+         * @param data Push Notification Payload Data
+         */
+        public fun onNotificationClicked(data: PayloadData) {}
     }
 
 

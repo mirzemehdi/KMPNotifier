@@ -2,6 +2,8 @@ package com.mmk.kmpnotifier.extensions
 
 import android.content.Intent
 import androidx.core.os.bundleOf
+import com.mmk.kmpnotifier.Constants.ACTION_NOTIFICATION_CLICK
+import com.mmk.kmpnotifier.Constants.KEY_ANDROID_FIREBASE_NOTIFICATION
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.NotifierManagerImpl
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
@@ -36,11 +38,22 @@ public fun NotifierManager.onCreateOrOnNewIntent(intent: Intent?) {
     if (intent == null) return
     val extras = intent.extras ?: bundleOf()
     val payloadData = mutableMapOf<String, Any>()
+
+    val isNotificationClicked =
+        extras.containsKey(ACTION_NOTIFICATION_CLICK)
+                || extras.containsKey(KEY_ANDROID_FIREBASE_NOTIFICATION)
+                || payloadData.containsKey(ACTION_NOTIFICATION_CLICK)
+
     extras.keySet().forEach { key ->
         val value = extras.get(key)
-        value?.let { payloadData[key] = value }
+        value?.let { payloadData[key] = it }
     }
-    if (extras.containsKey("google.sent_time")) NotifierManagerImpl.onPushPayloadData(payloadData)
+
+
+    if (extras.containsKey(KEY_ANDROID_FIREBASE_NOTIFICATION))
+        NotifierManagerImpl.onPushPayloadData(payloadData.minus(ACTION_NOTIFICATION_CLICK))
+    if (isNotificationClicked)
+        NotifierManagerImpl.onNotificationClicked(payloadData.minus(ACTION_NOTIFICATION_CLICK))
 }
 
 internal fun NotifierManagerImpl.shouldShowNotification(): Boolean {

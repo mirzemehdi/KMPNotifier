@@ -64,6 +64,8 @@ internal class IosNotifier(
             withCompletionHandler: () -> Unit,
         ) {
             val notificationContent = didReceiveNotificationResponse.notification.request.content
+            val actionIdentifier = didReceiveNotificationResponse.actionIdentifier
+            println("ActionIdentifier: $actionIdentifier")
             NotifierManager.onUserNotification(notificationContent)
             if (NotifierManager.shouldShowNotification(notificationContent)) withCompletionHandler()
         }

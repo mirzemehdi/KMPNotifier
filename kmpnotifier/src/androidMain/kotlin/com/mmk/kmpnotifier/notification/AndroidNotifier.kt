@@ -7,6 +7,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.mmk.kmpnotifier.Constants.ACTION_NOTIFICATION_CLICK
 import com.mmk.kmpnotifier.extensions.notificationManager
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import com.mmk.kmpnotifier.permission.PermissionUtil
@@ -21,7 +22,7 @@ internal class AndroidNotifier(
 ) : Notifier {
 
     override fun notify(title: String, body: String): Int {
-        val notificationID = Random.nextInt(0,Int.MAX_VALUE)
+        val notificationID = Random.nextInt(0, Int.MAX_VALUE)
         notify(notificationID, title, body)
         return notificationID
     }
@@ -66,7 +67,9 @@ internal class AndroidNotifier(
     }
 
     private fun getPendingIntent(deepLink: String = ""): PendingIntent? {
-        val intent = getLauncherActivityIntent()
+        val intent = getLauncherActivityIntent()?.apply {
+            putExtra(ACTION_NOTIFICATION_CLICK, ACTION_NOTIFICATION_CLICK)
+        }
         intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
         val flags =

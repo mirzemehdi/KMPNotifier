@@ -1,5 +1,6 @@
 package com.mmk.kmpnotifier.extensions
 
+import com.mmk.kmpnotifier.Constants.KEY_IOS_FIREBASE_NOTIFICATION
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.NotifierManagerImpl
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
@@ -25,7 +26,7 @@ public fun NotifierManager.onApplicationDidReceiveRemoteNotification(userInfo: M
         .filterIsInstance<String>()
         .associateWith { key -> userInfo[key] }
 
-    if (payloadData.containsKey("gcm.message_id")) NotifierManagerImpl.onPushPayloadData(payloadData)
+    if (payloadData.containsKey(KEY_IOS_FIREBASE_NOTIFICATION)) NotifierManagerImpl.onPushPayloadData(payloadData)
 }
 
 internal fun NotifierManager.onUserNotification(notificationContent: UNNotificationContent) {
@@ -48,5 +49,5 @@ internal fun NotifierManager.shouldShowNotification(notificationContent: UNNotif
 }
 
 private fun UNNotificationContent.isPushNotification(): Boolean {
-    return userInfo.containsKey("gcm.message_id")
+    return userInfo.containsKey(KEY_IOS_FIREBASE_NOTIFICATION)
 }
