@@ -1,6 +1,7 @@
 package com.mmk.kmpnotifier.notification
 
 import com.mmk.kmpnotifier.extensions.onApplicationDidReceiveRemoteNotification
+import com.mmk.kmpnotifier.extensions.onNotificationClicked
 import com.mmk.kmpnotifier.extensions.onUserNotification
 import com.mmk.kmpnotifier.extensions.shouldShowNotification
 import com.mmk.kmpnotifier.permission.IosPermissionUtil
@@ -64,9 +65,8 @@ internal class IosNotifier(
             withCompletionHandler: () -> Unit,
         ) {
             val notificationContent = didReceiveNotificationResponse.notification.request.content
-            val actionIdentifier = didReceiveNotificationResponse.actionIdentifier
-            println("ActionIdentifier: $actionIdentifier")
             NotifierManager.onUserNotification(notificationContent)
+            NotifierManager.onNotificationClicked(notificationContent)
             if (NotifierManager.shouldShowNotification(notificationContent)) withCompletionHandler()
         }
 
