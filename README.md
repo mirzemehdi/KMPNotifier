@@ -219,6 +219,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
     }
 
 ```
+
 ##### iOS
 Call `NotifierManager.onApplicationDidReceiveRemoteNotification(userInfo: userInfo)` on application's `didReceiveRemoteNotification` method.
 
@@ -228,7 +229,20 @@ Call `NotifierManager.onApplicationDidReceiveRemoteNotification(userInfo: userIn
       return UIBackgroundFetchResult.newData
  }
 
-```
+```  
+
+
+#### Detecting notification click and get payload data
+Make sure you follow previous step for getting payload data properly.
+```kotlin
+NotifierManager.addListener(object : NotifierManager.Listener {
+    override fun onNotificationClicked(data: PayloadData) {
+        super.onNotificationClicked(data)
+        println("Notification clicked, Notification payloadData: $data")
+    }
+}) 
+```   
+
 
 #### Other functions
 ```kotlin
