@@ -120,7 +120,7 @@ jobs:
       - id: create
         uses: nexus-actions/create-nexus-staging-repo@v1.3.0
         with:
-          username: mirzemehdi
+          username: ${{ secrets.SONATYPE_USERNAME }}
           password: ${{ secrets.SONATYPE_PASSWORD }}
           staging_profile_id: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
           description: Created by GitHub Actions
@@ -150,7 +150,7 @@ jobs:
           echo gpgKeySecret="${GPG_KEY_SECRET}" >> "local.properties"
         env:
           SONATYPE_REPOSITORY_ID: ${{ needs.create-staging-repository.outputs.repository_id }}
-          SONATYPE_USERNAME: mirzemehdi
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
           GPG_KEY_PASSWORD: ${{ secrets.GPG_KEY_PASSWORD }}
           GPG_KEY_SECRET: ${{ secrets.GPG_KEY_SECRET }}
@@ -167,7 +167,7 @@ jobs:
       - name: Close staging repository
         uses: nexus-actions/release-nexus-staging-repo@6632a81bfab63557b2717e8423b0a620ae5aa414
         with:
-          username: mirzemehdi
+          username: ${{ secrets.SONATYPE_USERNAME }}
           password: ${{ secrets.SONATYPE_PASSWORD }}
           staging_repository_id: ${{ needs.create-staging-repository.outputs.repository_id }}
           base_url: https://s01.oss.sonatype.org/service/local/
