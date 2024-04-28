@@ -24,18 +24,19 @@ internal class IosNotifier(
 ) : Notifier {
 
 
-    override fun notify(title: String, body: String): Int {
+    override fun notify(title: String, body: String, payloadData: Map<String, String>): Int {
         val notificationID = Random.nextInt(0, Int.MAX_VALUE)
-        notify(notificationID, title, body)
+        notify(notificationID, title, body, payloadData)
         return notificationID
     }
 
-    override fun notify(id: Int, title: String, body: String) {
+    override fun notify(id: Int, title: String, body: String, payloadData: Map<String, String>) {
         permissionUtil.askNotificationPermission {
             val notificationContent = UNMutableNotificationContent().apply {
                 setTitle(title)
                 setBody(body)
                 setSound(UNNotificationSound.defaultSound)
+                setUserInfo(userInfo + payloadData)
             }
             val trigger = UNTimeIntervalNotificationTrigger.triggerWithTimeInterval(1.0, false)
             val notificationRequest = UNNotificationRequest.requestWithIdentifier(
@@ -77,7 +78,9 @@ internal class IosNotifier(
         ) {
             val notificationContent = willPresentNotification.request.content
             NotifierManager.onUserNotification(notificationContent)
-            if (NotifierManager.shouldShowNotification(notificationContent)) withCompletionHandler(IosPermissionUtil.NOTIFICATION_PERMISSIONS)
+            if (NotifierManager.shouldShowNotification(notificationContent)) withCompletionHandler(
+                IosPermissionUtil.NOTIFICATION_PERMISSIONS
+            )
         }
     }
 }

@@ -21,13 +21,13 @@ internal class AndroidNotifier(
     private val permissionUtil: PermissionUtil,
 ) : Notifier {
 
-    override fun notify(title: String, body: String): Int {
+    override fun notify(title: String, body: String, payloadData: Map<String, String>): Int {
         val notificationID = Random.nextInt(0, Int.MAX_VALUE)
-        notify(notificationID, title, body)
+        notify(notificationID, title, body, payloadData)
         return notificationID
     }
 
-    override fun notify(id: Int, title: String, body: String) {
+    override fun notify(id: Int, title: String, body: String, payloadData: Map<String, String>) {
         permissionUtil.hasNotificationPermission {
             if (it.not())
                 Log.w(
@@ -36,7 +36,7 @@ internal class AndroidNotifier(
                 )
         }
         val notificationManager = context.notificationManager ?: return
-        val pendingIntent = getPendingIntent()
+        val pendingIntent = getPendingIntent(payloadData)
         notificationChannelFactory.createChannels()
         val notification = NotificationCompat.Builder(
             context,
@@ -66,21 +66,15 @@ internal class AndroidNotifier(
         notificationManager.cancelAll()
     }
 
-    private fun getPendingIntent(deepLink: String = ""): PendingIntent? {
+    private fun getPendingIntent(payloadData: Map<String, String>): PendingIntent? {
         val intent = getLauncherActivityIntent()?.apply {
             putExtra(ACTION_NOTIFICATION_CLICK, ACTION_NOTIFICATION_CLICK)
+            payloadData.forEach { putExtra(it.key, it.value) }
         }
         intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
-        val flags =
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        if (deepLink.isBlank().not() && intent != null) {
-            with(intent) {
-                action = Intent.ACTION_VIEW
-                data = Uri.parse(deepLink)
-                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            }
-        }
+        val flags = PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+
 
         return PendingIntent.getActivity(context, 0, intent, flags)
     }
