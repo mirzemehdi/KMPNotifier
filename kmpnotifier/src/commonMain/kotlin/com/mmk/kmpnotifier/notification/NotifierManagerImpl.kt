@@ -3,6 +3,7 @@ package com.mmk.kmpnotifier.notification
 import com.mmk.kmpnotifier.di.KMPKoinComponent
 import com.mmk.kmpnotifier.di.LibDependencyInitializer
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
+import com.mmk.kmpnotifier.permission.PermissionUtil
 import org.koin.core.component.get
 
 internal object NotifierManagerImpl : KMPKoinComponent() {
@@ -20,6 +21,11 @@ internal object NotifierManagerImpl : KMPKoinComponent() {
     }
 
     fun getPushNotifier(): PushNotifier {
+        requireInitialization()
+        return get()
+    }
+
+    fun getPermissionUtil(): PermissionUtil {
         requireInitialization()
         return get()
     }
