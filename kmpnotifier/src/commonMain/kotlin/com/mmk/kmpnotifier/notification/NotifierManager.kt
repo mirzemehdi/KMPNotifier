@@ -1,6 +1,7 @@
 package com.mmk.kmpnotifier.notification
 
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
+import com.mmk.kmpnotifier.permission.PermissionUtil
 
 
 public object NotifierManager {
@@ -34,6 +35,20 @@ public object NotifierManager {
      */
     public fun addListener(listener: Listener) {
         NotifierManagerImpl.addListener(listener)
+    }
+
+    /**
+     *
+     * Returns permission util that can be used to check and ask notification permission
+     * However in Android you need to use in Activity like below:
+     *
+     * val permissionUtil by permissionUtil()
+     * permissionUtil.askNotificationPermission() //this will ask permission in Android 13(API Level 33) or above, otherwise permission will be granted.
+     *
+     * @return PermissionUtil class instance
+     */
+    public fun getPermissionUtil(): PermissionUtil {
+        return NotifierManagerImpl.getPermissionUtil()
     }
 
 

@@ -41,13 +41,14 @@ fun App() {
             verticalArrangement = Arrangement.Center
         ) {
             val notifier = remember { NotifierManager.getLocalNotifier() }
+            val permissionUtil = remember { NotifierManager.getPermissionUtil() }
             var notificationId by remember { mutableStateOf(0) }
             Button(onClick = {
                 notificationId = notifier.notify("Title", "bodyMessage")
             }) {
                 Text("Send Local Notification")
             }
-            Button(onClick = {notifier.removeAll()}) {
+            Button(onClick = { notifier.removeAll() }) {
                 Text("Remove all notifications")
             }
 
@@ -64,6 +65,15 @@ fun App() {
                 style = MaterialTheme.typography.body1,
                 textAlign = TextAlign.Start,
             )
+
+
+            Button(onClick = {
+                permissionUtil.askNotificationPermission {
+                    println("Permission is granted")
+                }
+            }) {
+                Text("Ask permission")
+            }
         }
     }
 }
