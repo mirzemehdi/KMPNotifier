@@ -36,12 +36,19 @@ internal object LibDependencyInitializer {
 private fun Koin.onLibraryInitialized() {
     println("Library is initialized")
     val permissionUtil by inject<PermissionUtil>()
+    val platform by inject<Platform>()
+    val configuration by inject<NotificationPlatformConfiguration>()
+
     get<PushNotifier>() //This will make sure that that when lib is initialized, init method is called
 
-    //In Android platform permission should be asked in activity
-    if (isAndroidPlatform().not())
-        permissionUtil.askNotificationPermission()
-
-
+    when (platform) {
+        Platform.Android -> Unit //In Android platform permission should be asked in activity
+        Platform.Ios -> {
+            val askNotificationPermissionOnStart =
+                (configuration as? NotificationPlatformConfiguration.Ios)?.askNotificationPermissionOnStart
+                    ?: true
+            if (askNotificationPermissionOnStart) permissionUtil.askNotificationPermission()
+        }
+    }
 }
 

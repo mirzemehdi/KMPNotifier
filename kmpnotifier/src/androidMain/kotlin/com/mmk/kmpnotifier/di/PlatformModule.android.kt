@@ -28,8 +28,8 @@ internal class ContextInitializer : Initializer<Unit> {
 }
 
 
-internal actual fun isAndroidPlatform(): Boolean = true
 internal actual val platformModule = module {
+    factory { Platform.Android } bind Platform::class
     single { applicationContext }
     factoryOf(::AndroidMockPermissionUtil) bind PermissionUtil::class
     factory {
