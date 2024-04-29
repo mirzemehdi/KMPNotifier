@@ -13,6 +13,7 @@ public final class com/mmk/kmpnotifier/notification/NotifierManager {
 	public static final field INSTANCE Lcom/mmk/kmpnotifier/notification/NotifierManager;
 	public final fun addListener (Lcom/mmk/kmpnotifier/notification/NotifierManager$Listener;)V
 	public final fun getLocalNotifier ()Lcom/mmk/kmpnotifier/notification/Notifier;
+	public final fun getPermissionUtil ()Lcom/mmk/kmpnotifier/permission/PermissionUtil;
 	public final fun getPushNotifier ()Lcom/mmk/kmpnotifier/notification/PushNotifier;
 	public final fun initialize (Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration;)V
 }
@@ -61,12 +62,14 @@ public final class com/mmk/kmpnotifier/notification/configuration/NotificationPl
 
 public final class com/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Ios : com/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration {
 	public fun <init> ()V
-	public fun <init> (Z)V
-	public synthetic fun <init> (ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (ZZ)V
+	public synthetic fun <init> (ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Z
-	public final fun copy (Z)Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Ios;
-	public static synthetic fun copy$default (Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Ios;ZILjava/lang/Object;)Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Ios;
+	public final fun component2 ()Z
+	public final fun copy (ZZ)Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Ios;
+	public static synthetic fun copy$default (Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Ios;ZZILjava/lang/Object;)Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Ios;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAskNotificationPermissionOnStart ()Z
 	public final fun getShowPushNotification ()Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -80,5 +83,15 @@ public final class com/mmk/kmpnotifier/permission/AndroidPermissionUtil {
 
 public final class com/mmk/kmpnotifier/permission/AndroidPermissionUtilKt {
 	public static final fun permissionUtil (Landroidx/activity/ComponentActivity;)Lkotlin/Lazy;
+}
+
+public abstract interface class com/mmk/kmpnotifier/permission/PermissionUtil {
+	public abstract fun askNotificationPermission (Lkotlin/jvm/functions/Function0;)V
+	public abstract fun hasNotificationPermission (Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class com/mmk/kmpnotifier/permission/PermissionUtil$DefaultImpls {
+	public static synthetic fun askNotificationPermission$default (Lcom/mmk/kmpnotifier/permission/PermissionUtil;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
+	public static synthetic fun hasNotificationPermission$default (Lcom/mmk/kmpnotifier/permission/PermissionUtil;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 }
 
