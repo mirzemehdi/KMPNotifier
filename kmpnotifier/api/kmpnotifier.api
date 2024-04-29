@@ -3,10 +3,15 @@ public final class com/mmk/kmpnotifier/extensions/NotifierManagerExtKt {
 }
 
 public abstract interface class com/mmk/kmpnotifier/notification/Notifier {
-	public abstract fun notify (ILjava/lang/String;Ljava/lang/String;)V
-	public abstract fun notify (Ljava/lang/String;Ljava/lang/String;)I
+	public abstract fun notify (ILjava/lang/String;Ljava/lang/String;Ljava/util/Map;)V
+	public abstract fun notify (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)I
 	public abstract fun remove (I)V
 	public abstract fun removeAll ()V
+}
+
+public final class com/mmk/kmpnotifier/notification/Notifier$DefaultImpls {
+	public static synthetic fun notify$default (Lcom/mmk/kmpnotifier/notification/Notifier;ILjava/lang/String;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)V
+	public static synthetic fun notify$default (Lcom/mmk/kmpnotifier/notification/Notifier;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)I
 }
 
 public final class com/mmk/kmpnotifier/notification/NotifierManager {
