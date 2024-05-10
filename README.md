@@ -45,6 +45,13 @@ sourceSets {
     api("io.github.mirzemehdi:kmpnotifier:<version>") // in iOS export this library
   }
 }
+
+listOf(iosX64(),iosArm64(),iosSimulatorArm64()).forEach { iosTarget ->
+  iosTarget.binaries.framework {
+    export(project(":kmpnotifier"))
+    ...
+  }
+}
 ```
 
 And in androidApp `build.gradle.kts` file you apply `google-services` plugin  
