@@ -48,7 +48,7 @@ sourceSets {
 
 listOf(iosX64(),iosArm64(),iosSimulatorArm64()).forEach { iosTarget ->
   iosTarget.binaries.framework {
-    export(project(":kmpnotifier"))
+    export("io.github.mirzemehdi:kmpnotifier:<version>")
     ...
   }
 }
