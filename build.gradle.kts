@@ -5,6 +5,7 @@ plugins {
     // this is necessary to avoid the plugins to be loaded multiple times
     // in each subproject's classloader
     alias(libs.plugins.jetbrainsCompose) apply false
+    alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.androidApplication) apply false
     alias(libs.plugins.androidLibrary) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
@@ -20,7 +21,7 @@ plugins {
 
 allprojects {
     group = "io.github.mirzemehdi"
-    version = "0.6.0"
+    version = "1.0.0"
     val sonatypeUsername = gradleLocalProperties(rootDir).getProperty("sonatypeUsername")
     val sonatypePassword = gradleLocalProperties(rootDir).getProperty("sonatypePassword")
     val gpgKeySecret = gradleLocalProperties(rootDir).getProperty("gpgKeySecret")
