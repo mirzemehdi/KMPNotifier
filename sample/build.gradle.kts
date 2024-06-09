@@ -1,4 +1,5 @@
 import org.jetbrains.compose.ExperimentalComposeLibrary
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -17,6 +18,7 @@ kotlin {
             }
         }
     }
+    jvm("desktop")
     listOf(
         iosX64(),
         iosArm64(),
@@ -29,6 +31,7 @@ kotlin {
         }
     }
     sourceSets {
+        val desktopMain by getting
 
         androidMain.dependencies {
             implementation(libs.compose.ui)
@@ -42,6 +45,9 @@ kotlin {
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
             api(project(":kmpnotifier"))
+        }
+        desktopMain.dependencies {
+            implementation(compose.desktop.currentOs)
         }
     }
 }
@@ -80,6 +86,17 @@ android {
     }
     dependencies {
         debugImplementation(libs.compose.ui.tooling)
+    }
+}
+compose.desktop {
+    application {
+        mainClass = "MainKt"
+
+        nativeDistributions {
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            packageName = "com.mmk.kmpnotifierdesktop"
+            packageVersion = "1.0.0"
+        }
     }
 }
 
