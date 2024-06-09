@@ -55,4 +55,9 @@ public sealed interface NotificationPlatformConfiguration {
         public val showPushNotification: Boolean = true,
         public val askNotificationPermissionOnStart: Boolean = true
     ) : NotificationPlatformConfiguration
+
+
+    public data class Desktop(
+        public val showPushNotification: Boolean = true
+    ) : NotificationPlatformConfiguration
 }
