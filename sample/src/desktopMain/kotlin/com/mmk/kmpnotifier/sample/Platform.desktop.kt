@@ -6,6 +6,6 @@ import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfig
 actual fun onApplicationStartPlatformSpecific() {
     println("Desktop app is initialized")
     NotifierManager.initialize(
-        NotificationPlatformConfiguration.Desktop(showPushNotification = true)
+        NotificationPlatformConfiguration.Desktop(showPushNotification = true, notificationIconPath = "icon-notification.png")
     )
 }

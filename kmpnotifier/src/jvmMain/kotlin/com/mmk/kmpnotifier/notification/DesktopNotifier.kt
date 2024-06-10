@@ -1,23 +1,58 @@
 package com.mmk.kmpnotifier.notification
 
-internal class DesktopNotifier:Notifier {
+import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
+import org.jetbrains.compose.resources.painterResource
+import java.awt.Image
+import java.awt.SystemTray
+import java.awt.Toolkit
+import java.awt.TrayIcon
+import java.io.File
+import kotlin.random.Random
+
+internal class DesktopNotifier(private val desktopNotificationConfiguration: NotificationPlatformConfiguration.Desktop) :
+    Notifier {
     override fun notify(title: String, body: String, payloadData: Map<String, String>): Int {
-        println("$title, $body")
-        return 1
+        if (isTraySupported.not()) return -1
+
+        val notificationID = Random.nextInt(0, Int.MAX_VALUE)
+        notify(notificationID, title, body, payloadData)
+        return notificationID
     }
 
     override fun notify(id: Int, title: String, body: String, payloadData: Map<String, String>) {
-        println("$title, $body")
+//        val root = File(System.getProperty("compose.application.resources.dir"))
+//        val canoncialPath = root.canonicalPath
+//        val iconPath = canoncialPath + File.separator + desktopNotificationConfiguration.notificationIconPath
+        val iconPath = desktopNotificationConfiguration.notificationIconPath
+        val icon: Image = Toolkit.getDefaultToolkit().getImage(iconPath)
+        val trayIcon = TrayIcon(icon).apply {
+            isImageAutoSize = true
+            addActionListener {
+                println("onNotification action event $it")
+            }
+        }
+        SystemTray.getSystemTray().add(trayIcon)
+        trayIcon.displayMessage(title, body, TrayIcon.MessageType.INFO)
 
     }
 
     override fun remove(id: Int) {
-        println("removed")
-
+        removeAll()
     }
 
     override fun removeAll() {
-        println("remove all")
-
+        val systemTray = SystemTray.getSystemTray()
+        systemTray.trayIcons.forEach {
+            systemTray.remove(it)
+        }
     }
+
+    private val isTraySupported: Boolean
+        get() = SystemTray.isSupported().also {
+            if (it.not()) System.err.println(
+                "Tray is not supported on the current platform. " +
+                        "Use the global property `isTraySupported` to check."
+            )
+        }
+
 }
