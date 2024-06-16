@@ -1,5 +1,6 @@
 package com.mmk.kmpnotifier.notification
 
+import com.mmk.kmpnotifier.extensions.getDesktopPlatformType
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import java.awt.SystemTray
 import java.awt.Toolkit
@@ -9,6 +10,9 @@ import kotlin.random.Random
 
 internal class DesktopNotifier(private val desktopNotificationConfiguration: NotificationPlatformConfiguration.Desktop) :
     Notifier {
+        init {
+            println("CurrentDesktopPlatform: ${getDesktopPlatformType()}")
+        }
     override fun notify(title: String, body: String, payloadData: Map<String, String>): Int {
         if (isTraySupported.not()) return -1
 
@@ -18,10 +22,12 @@ internal class DesktopNotifier(private val desktopNotificationConfiguration: Not
     }
 
     override fun notify(id: Int, title: String, body: String, payloadData: Map<String, String>) {
-       val iconPath = kotlin.runCatching {
+        if (isTraySupported.not()) return
+
+        val iconPath = kotlin.runCatching {
             val resourcesDirectory = File(System.getProperty("compose.application.resources.dir"))
-            val canoncialPath = resourcesDirectory.canonicalPath
-            canoncialPath + File.separator + desktopNotificationConfiguration.notificationIconPath
+            val canonicalPath = resourcesDirectory.canonicalPath
+            canonicalPath + File.separator + desktopNotificationConfiguration.notificationIconPath
         }.getOrNull()
 
         val icon = Toolkit.getDefaultToolkit().getImage(iconPath)
@@ -36,6 +42,7 @@ internal class DesktopNotifier(private val desktopNotificationConfiguration: Not
 
     }
 
+    //TODO for now all notifications are deleted
     override fun remove(id: Int) {
         removeAll()
     }
@@ -54,5 +61,6 @@ internal class DesktopNotifier(private val desktopNotificationConfiguration: Not
                         "Use the global property `isTraySupported` to check."
             )
         }
+
 
 }
