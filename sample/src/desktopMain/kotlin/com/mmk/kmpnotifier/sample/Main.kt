@@ -1,7 +1,7 @@
 package com.mmk.kmpnotifier.sample
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-
+import androidx.compose.ui.window.rememberTrayState
 
 
 fun main() = application {

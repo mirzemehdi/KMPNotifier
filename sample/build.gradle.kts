@@ -47,6 +47,7 @@ kotlin {
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
+            implementation(compose.desktop.common)
         }
     }
 }
@@ -89,11 +90,10 @@ android {
 }
 compose.desktop {
     application {
-        mainClass = "MainKt"
-
+        mainClass = "com.mmk.kmpnotifier.sample.MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.mmk.kmpnotifierdesktop"
+            packageName = "KMPNotifier"
             packageVersion = "1.0.0"
             appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))
         }

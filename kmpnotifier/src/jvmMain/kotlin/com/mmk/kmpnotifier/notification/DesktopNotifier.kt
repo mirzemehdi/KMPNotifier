@@ -1,8 +1,6 @@
 package com.mmk.kmpnotifier.notification
 
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
-import org.jetbrains.compose.resources.painterResource
-import java.awt.Image
 import java.awt.SystemTray
 import java.awt.Toolkit
 import java.awt.TrayIcon
@@ -20,11 +18,13 @@ internal class DesktopNotifier(private val desktopNotificationConfiguration: Not
     }
 
     override fun notify(id: Int, title: String, body: String, payloadData: Map<String, String>) {
-//        val root = File(System.getProperty("compose.application.resources.dir"))
-//        val canoncialPath = root.canonicalPath
-//        val iconPath = canoncialPath + File.separator + desktopNotificationConfiguration.notificationIconPath
-        val iconPath = desktopNotificationConfiguration.notificationIconPath
-        val icon: Image = Toolkit.getDefaultToolkit().getImage(iconPath)
+       val iconPath = kotlin.runCatching {
+            val resourcesDirectory = File(System.getProperty("compose.application.resources.dir"))
+            val canoncialPath = resourcesDirectory.canonicalPath
+            canoncialPath + File.separator + desktopNotificationConfiguration.notificationIconPath
+        }.getOrNull()
+
+        val icon = Toolkit.getDefaultToolkit().getImage(iconPath)
         val trayIcon = TrayIcon(icon).apply {
             isImageAutoSize = true
             addActionListener {

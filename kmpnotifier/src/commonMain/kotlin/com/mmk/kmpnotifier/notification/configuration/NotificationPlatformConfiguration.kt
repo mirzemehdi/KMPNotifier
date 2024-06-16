@@ -1,6 +1,5 @@
 package com.mmk.kmpnotifier.notification.configuration
 
-import org.jetbrains.compose.resources.DrawableResource
 
 /**
  * You can configure some customization for notifications depending on the platform
@@ -61,6 +60,6 @@ public sealed interface NotificationPlatformConfiguration {
 
     public data class Desktop(
         public val showPushNotification: Boolean = true,
-        public val notificationIconPath: String
+        public val notificationIconPath: String? = null
     ) : NotificationPlatformConfiguration
 }
