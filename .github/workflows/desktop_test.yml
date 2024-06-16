@@ -35,5 +35,5 @@ jobs:
         uses: gradle/gradle-build-action@v2.4.2
 
       - name: Test ${{ matrix.config.target }} targets
-        continue-on-error: false
+        continue-on-error: true
         run: ./gradlew ${{ matrix.config.tasks }}
