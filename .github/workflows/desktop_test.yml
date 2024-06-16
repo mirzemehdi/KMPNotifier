@@ -18,8 +18,8 @@ jobs:
       matrix:
         config: [
           { target: macos, os: macos-latest, tasks: jvmTest},
-          { target: linux, os: ubuntu-latest, tasks: jvmTest iosSimulatorArm64Test},
-          { target: windows, os: windows-latest, tasks: jvmTest iosSimulatorArm64Test},
+          { target: linux, os: ubuntu-latest, tasks: jvmTest},
+          { target: windows, os: windows-latest, tasks: jvmTest},
         ]
     runs-on: ${{ matrix.config.os }}
     name: Testing on ${{ matrix.config.target }}
