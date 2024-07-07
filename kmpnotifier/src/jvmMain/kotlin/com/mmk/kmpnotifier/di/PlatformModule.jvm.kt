@@ -1,7 +1,7 @@
 package com.mmk.kmpnotifier.di
 
 import com.mmk.kmpnotifier.firebase.FirebaseDesktopPushNotifier
-import com.mmk.kmpnotifier.notification.DesktopNotifier
+import com.mmk.kmpnotifier.notification.DesktopNotifierFactory
 import com.mmk.kmpnotifier.notification.Notifier
 import com.mmk.kmpnotifier.notification.PushNotifier
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
@@ -18,7 +18,7 @@ internal actual val platformModule: Module = module {
     factory {
         val configuration =
             get<NotificationPlatformConfiguration>() as NotificationPlatformConfiguration.Desktop
-        DesktopNotifier(desktopNotificationConfiguration = configuration)
+        DesktopNotifierFactory.getNotifier(configuration = configuration)
     } bind Notifier::class
     factoryOf(::DesktopPermissionUtil) bind PermissionUtil::class
     factoryOf(::FirebaseDesktopPushNotifier) bind PushNotifier::class
