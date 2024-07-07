@@ -21,7 +21,7 @@ plugins {
 
 allprojects {
     group = "io.github.mirzemehdi"
-    version = "1.0.0"
+    version = "1.0.1"
     val sonatypeUsername = gradleLocalProperties(rootDir).getProperty("sonatypeUsername")
     val sonatypePassword = gradleLocalProperties(rootDir).getProperty("sonatypePassword")
     val gpgKeySecret = gradleLocalProperties(rootDir).getProperty("gpgKeySecret")
