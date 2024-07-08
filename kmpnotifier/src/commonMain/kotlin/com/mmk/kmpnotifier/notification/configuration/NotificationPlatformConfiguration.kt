@@ -1,5 +1,6 @@
 package com.mmk.kmpnotifier.notification.configuration
 
+
 /**
  * You can configure some customization for notifications depending on the platform
  */
@@ -54,5 +55,11 @@ public sealed interface NotificationPlatformConfiguration {
     public data class Ios(
         public val showPushNotification: Boolean = true,
         public val askNotificationPermissionOnStart: Boolean = true
+    ) : NotificationPlatformConfiguration
+
+
+    public data class Desktop(
+        public val showPushNotification: Boolean = true,
+        public val notificationIconPath: String? = null
     ) : NotificationPlatformConfiguration
 }

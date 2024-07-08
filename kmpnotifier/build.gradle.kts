@@ -16,7 +16,7 @@ kotlin {
         }
     }
 
-
+    jvm()
     iosX64()
     iosArm64()
     iosSimulatorArm64()
@@ -47,6 +47,11 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.kotlinx.coroutine)
         }
+
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+        }
+
     }
 }
 
