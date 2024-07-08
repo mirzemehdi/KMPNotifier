@@ -5,6 +5,8 @@
 
 ![badge-android](http://img.shields.io/badge/platform-android-6EDB8D.svg?style=flat)
 ![badge-ios](http://img.shields.io/badge/platform-ios-CDCDCD.svg?style=flat)
+![badge-desktop](https://img.shields.io/badge/platform-desktop-3474eb.svg?style=flat)
+
 
 Simple and easy to use Kotlin Multiplatform Push Notification library (using Firebase Cloud Messaging) targeting ios and android.  
 This library is used in [FindTravelNow](https://github.com/mirzemehdi/FindTravelNow-KMM/) production KMP project.
@@ -12,7 +14,7 @@ You can check out [Documentation](https://mirzemehdi.github.io/KMPNotifier) for 
 
 ## Features
   - 🔔 Local and Push Notification (Firebase Cloud Messaging)
-  - 📱 Multiplatform (android and iOS)
+  - 📱 Multiplatform (android, iOS and desktop(alpha)) (Desktop supports only local notification for now)
 
 ## Installation
 Before starting you need to setup basic setup using Firebase official guideline (like initializing project in Firebase, adding `google-services.json` to android, `GoogleService-Info.plist` to iOS).
@@ -64,7 +66,7 @@ plugins {
 
 
 ### Platform Setup
-In both platforms on Application Start you need to initialize library using 
+In all platforms on Application Start you need to initialize library using 
 ```kotlin 
 NotifierManager.initialize(NotificationPlatformConfiguration) //passing android or ios configuration depending on the platform
 ```
@@ -152,6 +154,39 @@ struct iOSApp: App {
 
 
  
+</details>
+
+<details>
+  <summary>Desktop</summary>
+
+### Desktop Setup
+You need to put notification icon into resources/common folder. For more information:  
+[Compose Desktop Resources](https://github.com/JetBrains/compose-multiplatform/blob/master/tutorials/Native_distributions_and_local_execution/README.md#packaging-resources)
+ ```kotlin
+fun main() = application {
+
+    NotifierManager.initialize(
+        NotificationPlatformConfiguration.Desktop(
+            showPushNotification = true,
+            notificationIconPath = composeDesktopResourcesPath() + File.separator + "ic_notification.png"
+        )
+    )
+    
+    AppInitializer.onApplicationStart()
+    Window(
+        onCloseRequest = ::exitApplication,
+        title = "KMPNotifier Desktop",
+    ) {
+        println("Desktop app is started")
+        App()
+
+    }
+}
+```
+
+
+
+
 </details>
 
 ## Usage
