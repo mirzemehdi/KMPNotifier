@@ -1,13 +1,13 @@
 package com.mmk.kmpnotifier.permission
 
-internal class DesktopPermissionUtil:PermissionUtil {
+internal class EmptyPermissionUtilImpl : PermissionUtil {
     override fun hasNotificationPermission(onPermissionResult: (Boolean) -> Unit) {
-        println("Desktop has permission result")
+        println("Not implemented: has permission result: true")
         onPermissionResult(true)
     }
 
     override fun askNotificationPermission(onPermissionGranted: () -> Unit) {
-        println("Desktop ask permission")
+        println("Not implemented: granted permission by default")
         onPermissionGranted()
     }
 }
