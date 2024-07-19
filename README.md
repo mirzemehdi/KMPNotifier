@@ -210,6 +210,8 @@ fun main()  {
     
 }
 ```
+**Note:**
+If you are using mac make sure you also allow notifications for browser from system system settings in order to see web notifications.  
 
 
 
