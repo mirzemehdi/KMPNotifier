@@ -189,7 +189,9 @@ fun main() = application {
     }
 }
 ```
-
+</details>
+<details>
+  <summary>Web</summary>
 ### Web Setup (Js and Wasm)
 On 
  ```kotlin
