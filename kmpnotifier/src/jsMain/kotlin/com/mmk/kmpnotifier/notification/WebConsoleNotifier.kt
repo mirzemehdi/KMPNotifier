@@ -1,5 +1,6 @@
 package com.mmk.kmpnotifier.notification
 
+import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import com.mmk.kmpnotifier.permission.PermissionUtil
 import kotlinx.browser.window
 import org.w3c.notifications.Notification
@@ -7,7 +8,10 @@ import org.w3c.notifications.NotificationOptions
 import kotlin.random.Random
 
 
-internal class WebConsoleNotifier(private val permissionUtil: PermissionUtil) : Notifier {
+internal class WebConsoleNotifier(
+    private val permissionUtil: PermissionUtil,
+    private val configuration: NotificationPlatformConfiguration.Web
+) : Notifier {
 
     override fun notify(title: String, body: String, payloadData: Map<String, String>): Int {
         val notificationID = Random.nextInt(0, Int.MAX_VALUE)
@@ -39,7 +43,7 @@ internal class WebConsoleNotifier(private val permissionUtil: PermissionUtil) : 
     }
 
     private fun showNotification(title: String, body: String) {
-        val options = NotificationOptions(body = body)
+        val options = NotificationOptions(body = body, icon = configuration.notificationIconPath)
         Notification(title, options)
     }
 
@@ -47,7 +51,7 @@ internal class WebConsoleNotifier(private val permissionUtil: PermissionUtil) : 
         window.alert(message)
     }
 
-    private fun isNotificationSupported(): Boolean{
+    private fun isNotificationSupported(): Boolean {
         return js("typeof Notification !== 'undefined'").unsafeCast<Boolean>()
     }
 

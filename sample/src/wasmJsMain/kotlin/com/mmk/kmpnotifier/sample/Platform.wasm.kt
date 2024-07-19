@@ -6,6 +6,9 @@ import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfig
 actual fun onApplicationStartPlatformSpecific() {
     println("Web app is initialized")
     NotifierManager.initialize(
-        NotificationPlatformConfiguration.Web()
+        NotificationPlatformConfiguration.Web(
+            askNotificationPermissionOnStart = true,
+            notificationIconPath = null
+        )
     )
 }

@@ -58,12 +58,34 @@ public sealed interface NotificationPlatformConfiguration {
     ) : NotificationPlatformConfiguration
 
 
+    /**
+     * Desktop notification customization.
+     *
+     * @param showPushNotification Default value is true,
+     * by default when push notification is received it will be shown to user.
+     * When set to false, it will not be shown to user, but you can still get notification content using
+     * @see com.mmk.kmpnotifier.notification.NotifierManager.Listener.onPushNotification
+     *
+     * @param  notificationIconPath Notification icon path
+
+     */
     public data class Desktop(
         public val showPushNotification: Boolean = true,
         public val notificationIconPath: String? = null
     ) : NotificationPlatformConfiguration
 
+    /**
+     * Web notification customization.
+     *
+     * @param askNotificationPermissionOnStart Default value is true, when library is initialized it
+     * will ask notification permission automatically from the user.
+     * By setting askNotificationPermissionOnStart false, you can customize to ask permission whenever you want.
+     *
+     *@param  notificationIconPath Notification icon path
+     *
+     */
     public class Web(
-        public val askNotificationPermissionOnStart: Boolean = true
+        public val askNotificationPermissionOnStart: Boolean = true,
+        public val notificationIconPath: String? = null
     ) : NotificationPlatformConfiguration
 }
