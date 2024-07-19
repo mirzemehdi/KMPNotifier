@@ -42,10 +42,17 @@ private fun Koin.onLibraryInitialized() {
     get<PushNotifier>() //This will make sure that that when lib is initialized, init method is called
 
     when (platform) {
-        Platform.Android, Platform.Desktop, Platform.Web -> Unit //In Android platform permission should be asked in activity
+        Platform.Android, Platform.Desktop -> Unit //In Android platform permission should be asked in activity
         Platform.Ios -> {
             val askNotificationPermissionOnStart =
                 (configuration as? NotificationPlatformConfiguration.Ios)?.askNotificationPermissionOnStart
+                    ?: true
+            if (askNotificationPermissionOnStart) permissionUtil.askNotificationPermission()
+        }
+
+        Platform.Web -> {
+            val askNotificationPermissionOnStart =
+                (configuration as? NotificationPlatformConfiguration.Web)?.askNotificationPermissionOnStart
                     ?: true
             if (askNotificationPermissionOnStart) permissionUtil.askNotificationPermission()
         }

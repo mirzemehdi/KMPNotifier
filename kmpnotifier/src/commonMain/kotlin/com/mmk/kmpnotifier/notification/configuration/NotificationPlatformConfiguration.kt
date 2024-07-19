@@ -63,5 +63,7 @@ public sealed interface NotificationPlatformConfiguration {
         public val notificationIconPath: String? = null
     ) : NotificationPlatformConfiguration
 
-    public class Web() : NotificationPlatformConfiguration
+    public class Web(
+        public val askNotificationPermissionOnStart: Boolean = true
+    ) : NotificationPlatformConfiguration
 }
