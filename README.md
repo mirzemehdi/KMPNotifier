@@ -6,6 +6,10 @@
 ![badge-android](http://img.shields.io/badge/platform-android-6EDB8D.svg?style=flat)
 ![badge-ios](http://img.shields.io/badge/platform-ios-CDCDCD.svg?style=flat)
 ![badge-desktop](https://img.shields.io/badge/platform-desktop-3474eb.svg?style=flat)
+![badge-js](https://img.shields.io/badge/platform-js-fcba03.svg?style=flat)
+![badge-wasm](https://img.shields.io/badge/platform-wasm-331f06.svg?style=flat)
+
+
 
 
 Simple and easy to use Kotlin Multiplatform Push Notification library (using Firebase Cloud Messaging) targeting ios and android.  
@@ -13,8 +17,9 @@ This library is used in [FindTravelNow](https://github.com/mirzemehdi/FindTravel
 You can check out [Documentation](https://mirzemehdi.github.io/KMPNotifier) for full library api information.
 
 ## Features
-  - 🔔 Local and Push Notification (Firebase Cloud Messaging)
-  - 📱 Multiplatform (android, iOS and desktop(alpha)) (Desktop supports only local notification for now)
+  - 🔔 Local Notification (android, ios, desktop, js and wasm targets)  
+  - 🔔 Push Notification (Firebase Cloud Messaging) (android and ios only)  
+  - 📱 Multiplatform (android, iOS, desktop and web (js and wasm))  
 
 ## Installation
 Before starting you need to setup basic setup using Firebase official guideline (like initializing project in Firebase, adding `google-services.json` to android, `GoogleService-Info.plist` to iOS).
@@ -68,7 +73,8 @@ plugins {
 ### Platform Setup
 In all platforms on Application Start you need to initialize library using 
 ```kotlin 
-NotifierManager.initialize(NotificationPlatformConfiguration) //passing android or ios configuration depending on the platform
+//passing android, ios, desktop or web configuration depending on the platform
+NotifierManager.initialize(NotificationPlatformConfiguration)  
 ```
 
 <details>
@@ -184,6 +190,21 @@ fun main() = application {
 }
 ```
 
+### Web Setup (Js and Wasm)
+On 
+ ```kotlin
+fun main()  {
+
+    NotifierManager.initialize(
+        NotificationPlatformConfiguration.Web(
+            askNotificationPermissionOnStart = true,
+            notificationIconPath = null
+        )
+    )
+    
+}
+```
+
 
 
 
@@ -193,7 +214,7 @@ fun main() = application {
 You can send either local or push notification.
 
 ### Local Notification
-
+Local notifications are supported on Android, iOS, JS and wasm targets. 
 #### Send notification
 
 ```kotlin
@@ -215,7 +236,7 @@ notifier.removeAll() //Removes all notification
 ```
 
 ### Push Notification
-
+Push notifications are supported only for Android and iOS.
 #### Listen for push notification token changes
 In this method you can send notification token to the server.
 

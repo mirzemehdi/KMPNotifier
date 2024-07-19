@@ -50,6 +50,13 @@ private fun Koin.onLibraryInitialized() {
             if (askNotificationPermissionOnStart) permissionUtil.askNotificationPermission()
         }
 
+        Platform.Web -> {
+            val askNotificationPermissionOnStart =
+                (configuration as? NotificationPlatformConfiguration.Web)?.askNotificationPermissionOnStart
+                    ?: true
+            if (askNotificationPermissionOnStart) permissionUtil.askNotificationPermission()
+        }
+
     }
 }
 
