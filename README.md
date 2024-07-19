@@ -188,12 +188,16 @@ fun main() = application {
 
     }
 }
-```
+```  
+
 </details>
+
 <details>
   <summary>Web</summary>
+
+  
 ### Web Setup (Js and Wasm)
-On 
+On application start initialize it using Web configuration
  ```kotlin
 fun main()  {
 
