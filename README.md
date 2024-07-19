@@ -12,7 +12,7 @@
 
 
 
-Simple and easy to use Kotlin Multiplatform Push Notification library (using Firebase Cloud Messaging) targeting ios and android.  
+Simple and easy to use Kotlin Multiplatform Push Notification library (using Firebase Cloud Messaging) targeting ios and android and Local Notification targetting android, ios, desktop and web (js and wasm).  
 This library is used in [FindTravelNow](https://github.com/mirzemehdi/FindTravelNow-KMM/) production KMP project.
 You can check out [Documentation](https://mirzemehdi.github.io/KMPNotifier) for full library api information.
 
