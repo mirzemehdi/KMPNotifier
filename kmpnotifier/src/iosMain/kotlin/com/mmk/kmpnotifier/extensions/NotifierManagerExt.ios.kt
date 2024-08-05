@@ -29,7 +29,8 @@ public fun NotifierManager.onApplicationDidReceiveRemoteNotification(userInfo: M
 
 internal fun NotifierManager.onUserNotification(notificationContent: UNNotificationContent) {
     val userInfo = notificationContent.userInfo
-    if (notificationContent.isPushNotification()) NotifierManagerImpl.onPushNotification(
+    val hasNotification = notificationContent.title != null || notificationContent.body != null
+    if (notificationContent.isPushNotification() && hasNotification) NotifierManagerImpl.onPushNotification(
         title = notificationContent.title,
         body = notificationContent.body
     )
