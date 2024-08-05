@@ -13,7 +13,7 @@ internal class AndroidMockPermissionUtil(private val context: Context) : Permiss
         onPermissionResult(context.hasNotificationPermission())
     }
 
-    override fun askNotificationPermission(onPermissionGranted: () -> Unit) = Unit.also {
+    override fun askNotificationPermission(onPermissionResult: (Boolean) -> Unit) = Unit.also {
         println(
             "In Android this function is just a mock. You need to ask permission in Activity " +
                     "using like below: \n" +
