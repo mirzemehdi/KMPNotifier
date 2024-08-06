@@ -17,11 +17,13 @@ import kotlin.coroutines.suspendCoroutine
 @OptIn(ExperimentalForeignApi::class)
 internal class FirebasePushNotifierImpl : PushNotifier {
 
+    private val firebaseMessageDelegate by lazy { FirebaseMessageDelegate() }
+
     init {
         MainScope().launch {
             println("FirebasePushNotifier is initialized")
+            FIRMessaging.messaging().delegate = firebaseMessageDelegate
             UIApplication.sharedApplication.registerForRemoteNotifications()
-            FIRMessaging.messaging().delegate = FirebaseMessageDelegate()
         }
 
     }
