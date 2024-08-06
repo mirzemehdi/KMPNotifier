@@ -6,6 +6,6 @@ package com.mmk.kmpnotifier.permission
 public interface PermissionUtil {
 
 
-    public fun hasNotificationPermission(onPermissionResult: (Boolean) -> Unit = {})
-    public fun askNotificationPermission(onPermissionGranted: () -> Unit = {})
+    public fun hasNotificationPermission(onPermissionResult: (isGranted: Boolean) -> Unit = {})
+    public fun askNotificationPermission(onPermissionResult: (isGranted: Boolean) -> Unit = {})
 }

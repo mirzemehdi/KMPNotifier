@@ -7,7 +7,8 @@ import platform.UserNotifications.UNAuthorizationOptionSound
 import platform.UserNotifications.UNAuthorizationStatusAuthorized
 import platform.UserNotifications.UNUserNotificationCenter
 
-internal class IosPermissionUtil(private val notificationCenter: UNUserNotificationCenter) : PermissionUtil {
+internal class IosPermissionUtil(private val notificationCenter: UNUserNotificationCenter) :
+    PermissionUtil {
     companion object {
         val NOTIFICATION_PERMISSIONS =
             UNAuthorizationOptionAlert or
@@ -21,13 +22,13 @@ internal class IosPermissionUtil(private val notificationCenter: UNUserNotificat
         }
     }
 
-    override fun askNotificationPermission(onPermissionGranted: () -> Unit) {
+    override fun askNotificationPermission(onPermissionResult: (Boolean) -> Unit) {
         notificationCenter.requestAuthorizationWithOptions(NOTIFICATION_PERMISSIONS) { isGranted, _ ->
             if (isGranted) {
                 UNUserNotificationCenter.currentNotificationCenter().delegate =
                     IosNotifier.NotificationDelegate()
-                onPermissionGranted()
             }
+            onPermissionResult(isGranted)
         }
     }
 }
