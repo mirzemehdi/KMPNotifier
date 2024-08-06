@@ -12,7 +12,7 @@ plugins {
     alias(libs.plugins.kotlinNativeCocoaPods) apply false
     alias(libs.plugins.dokka) apply false
     alias(libs.plugins.kotlinx.binary.validator)
-
+    alias(libs.plugins.nexusPublish)
     id("com.google.gms.google-services") version "4.4.0" apply false
 }
 
@@ -21,9 +21,8 @@ plugins {
 
 allprojects {
     group = "io.github.mirzemehdi"
-    version = "1.2.0-alpha02"
-    val sonatypeUsername = gradleLocalProperties(rootDir).getProperty("sonatypeUsername")
-    val sonatypePassword = gradleLocalProperties(rootDir).getProperty("sonatypePassword")
+    version = project.properties["kmpNotifierVersion"] as String
+
     val gpgKeySecret = gradleLocalProperties(rootDir).getProperty("gpgKeySecret")
     val gpgKeyPassword = gradleLocalProperties(rootDir).getProperty("gpgKeyPassword")
 
@@ -36,24 +35,6 @@ allprojects {
 
 
     extensions.configure<PublishingExtension> {
-        repositories {
-            maven {
-                val isSnapshot = version.toString().endsWith("SNAPSHOT")
-                val repositoryId = System.getenv("SONATYPE_REPOSITORY_ID") ?: ""
-                url = uri(
-                    when{
-                        isSnapshot.not() && repositoryId.isNotEmpty() -> "https://s01.oss.sonatype.org/service/local/staging/deployByRepositoryId/${repositoryId}/"
-                        isSnapshot.not() -> "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2"
-                        else -> "https://s01.oss.sonatype.org/content/repositories/snapshots"
-                    }
-                )
-                credentials {
-                    username = sonatypeUsername
-                    password = sonatypePassword
-                }
-            }
-        }
-
         val javadocJar = tasks.register<Jar>("javadocJar") {
             dependsOn(tasks.getByName<DokkaTask>("dokkaHtml"))
             archiveClassifier.set("javadoc")
@@ -102,6 +83,18 @@ allprojects {
     // TODO: remove after https://youtrack.jetbrains.com/issue/KT-46466 is fixed
     project.tasks.withType(AbstractPublishToMaven::class.java).configureEach {
         dependsOn(project.tasks.withType(Sign::class.java))
+    }
+}
+nexusPublishing {
+    repositories {
+        sonatype {  //only for users registered in Sonatype after 24 Feb 2021
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+            val sonatypeUsername = gradleLocalProperties(rootDir).getProperty("sonatypeUsername")
+            val sonatypePassword = gradleLocalProperties(rootDir).getProperty("sonatypePassword")
+            username = sonatypeUsername
+            password = sonatypePassword
+        }
     }
 }
 
