@@ -9,6 +9,7 @@ internal class FirebasePushNotifierImpl : PushNotifier {
     init {
         println("FirebasePushNotifier is initialized")
     }
+
     override suspend fun getToken(): String? {
         return getFirebaseMessagingInstance().token.asDeferred().await()
     }

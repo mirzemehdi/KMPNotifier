@@ -22,7 +22,7 @@ internal class FirebasePushNotifierImpl : PushNotifier {
     init {
         MainScope().launch {
             println("FirebasePushNotifier is initialized")
-            FIRMessaging.messaging().delegate = firebaseMessageDelegate
+            getFirebaseMessagingInstance().delegate = firebaseMessageDelegate
             UIApplication.sharedApplication.registerForRemoteNotifications()
         }
 
@@ -30,7 +30,7 @@ internal class FirebasePushNotifierImpl : PushNotifier {
 
 
     override suspend fun getToken(): String? = suspendCoroutine { cont ->
-        FIRMessaging.messaging().tokenWithCompletion { token, error ->
+        getFirebaseMessagingInstance().tokenWithCompletion { token, error ->
             cont.resume(token)
             error?.let { println("Error while getting token: $error") }
         }
@@ -38,17 +38,17 @@ internal class FirebasePushNotifierImpl : PushNotifier {
     }
 
     override suspend fun deleteMyToken() = suspendCoroutine { cont ->
-        FIRMessaging.messaging().deleteTokenWithCompletion {
+        getFirebaseMessagingInstance().deleteTokenWithCompletion {
             cont.resume(Unit)
         }
     }
 
     override suspend fun subscribeToTopic(topic: String) {
-        FIRMessaging.messaging().subscribeToTopic(topic)
+        getFirebaseMessagingInstance().subscribeToTopic(topic)
     }
 
     override suspend fun unSubscribeFromTopic(topic: String) {
-        FIRMessaging.messaging().unsubscribeFromTopic(topic)
+        getFirebaseMessagingInstance().unsubscribeFromTopic(topic)
     }
 
 
@@ -61,5 +61,9 @@ internal class FirebasePushNotifierImpl : PushNotifier {
             }
         }
 
+    }
+
+    private fun getFirebaseMessagingInstance(): FIRMessaging {
+        return FIRMessaging.messaging()
     }
 }
