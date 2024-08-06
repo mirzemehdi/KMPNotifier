@@ -10,19 +10,23 @@ internal class FirebasePushNotifierImpl : PushNotifier {
         println("FirebasePushNotifier is initialized")
     }
     override suspend fun getToken(): String? {
-        return FirebaseMessaging.getInstance().token.asDeferred().await()
+        return getFirebaseMessagingInstance().token.asDeferred().await()
     }
 
     override suspend fun deleteMyToken() {
-        FirebaseMessaging.getInstance().deleteToken()
+        getFirebaseMessagingInstance().deleteToken()
     }
 
     override suspend fun subscribeToTopic(topic: String) {
-        FirebaseMessaging.getInstance().subscribeToTopic(topic)
+        getFirebaseMessagingInstance().subscribeToTopic(topic)
     }
 
     override suspend fun unSubscribeFromTopic(topic: String) {
-        FirebaseMessaging.getInstance().unsubscribeFromTopic(topic)
+        getFirebaseMessagingInstance().unsubscribeFromTopic(topic)
+    }
+
+    private fun getFirebaseMessagingInstance(): FirebaseMessaging {
+        return FirebaseMessaging.getInstance()
     }
 
 
