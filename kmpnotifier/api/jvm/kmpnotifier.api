@@ -104,12 +104,12 @@ public final class com/mmk/kmpnotifier/notification/configuration/NotificationPl
 }
 
 public abstract interface class com/mmk/kmpnotifier/permission/PermissionUtil {
-	public abstract fun askNotificationPermission (Lkotlin/jvm/functions/Function0;)V
+	public abstract fun askNotificationPermission (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun hasNotificationPermission (Lkotlin/jvm/functions/Function1;)V
 }
 
 public final class com/mmk/kmpnotifier/permission/PermissionUtil$DefaultImpls {
-	public static synthetic fun askNotificationPermission$default (Lcom/mmk/kmpnotifier/permission/PermissionUtil;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
+	public static synthetic fun askNotificationPermission$default (Lcom/mmk/kmpnotifier/permission/PermissionUtil;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 	public static synthetic fun hasNotificationPermission$default (Lcom/mmk/kmpnotifier/permission/PermissionUtil;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 }
 

@@ -10,9 +10,9 @@ internal class WebPermissionUtilImpl : PermissionUtil {
         onPermissionResult(permission == NotificationPermission.GRANTED)
     }
 
-    override fun askNotificationPermission(onPermissionGranted: () -> Unit) {
+    override fun askNotificationPermission(onPermissionResult: (Boolean) -> Unit) {
         Notification.requestPermission().then {
-            onPermissionGranted()
+            onPermissionResult(it == NotificationPermission.GRANTED)
             null
         }
     }

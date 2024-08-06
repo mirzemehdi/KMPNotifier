@@ -6,8 +6,8 @@ internal class EmptyPermissionUtilImpl : PermissionUtil {
         onPermissionResult(true)
     }
 
-    override fun askNotificationPermission(onPermissionGranted: () -> Unit) {
+    override fun askNotificationPermission(onPermissionResult: (Boolean) -> Unit) {
         println("Not implemented: granted permission by default")
-        onPermissionGranted()
+        onPermissionResult(true)
     }
 }
