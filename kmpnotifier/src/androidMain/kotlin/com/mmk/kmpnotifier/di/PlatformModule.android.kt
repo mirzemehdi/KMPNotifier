@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.startup.Initializer
 import com.mmk.kmpnotifier.firebase.FirebasePushNotifierImpl
 import com.mmk.kmpnotifier.notification.AndroidNotifier
+import com.mmk.kmpnotifier.notification.DEFAULT_APP_NAME
 import com.mmk.kmpnotifier.notification.NotificationChannelFactory
 import com.mmk.kmpnotifier.notification.Notifier
 import com.mmk.kmpnotifier.notification.PushNotifier
@@ -46,7 +47,7 @@ internal actual val platformModule = module {
         )
     } bind Notifier::class
 
-    factoryOf(::FirebasePushNotifierImpl) bind PushNotifier::class
+    factory { params -> FirebasePushNotifierImpl(params.get()) } bind PushNotifier::class
 
 }
 

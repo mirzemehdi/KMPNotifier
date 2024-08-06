@@ -3,6 +3,7 @@ package com.mmk.kmpnotifier.notification
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import com.mmk.kmpnotifier.permission.PermissionUtil
 
+public class StringHolder(key:String)
 
 public object NotifierManager {
 
@@ -24,10 +25,17 @@ public object NotifierManager {
     }
 
     /**
-     * Creates push Notifier instance (Firebase Push Notification)
+     * Creates and returns push Notifier instance (Firebase Push Notification) with default firebase name
      */
     public fun getPushNotifier(): PushNotifier {
-        return NotifierManagerImpl.getPushNotifier()
+        return getPushNotifier(DEFAULT_APP_NAME)
+    }
+
+    /**
+     * Creates and returns push Notifier instance (Firebase Push Notification) with given firebase name
+     */
+    public fun getPushNotifier(firebaseAppName:String): PushNotifier {
+        return NotifierManagerImpl.getPushNotifier(firebaseAppName)
     }
 
     /**

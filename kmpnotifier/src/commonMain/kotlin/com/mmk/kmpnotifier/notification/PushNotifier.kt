@@ -1,6 +1,7 @@
 package com.mmk.kmpnotifier.notification
 
 public typealias PayloadData = Map<String, *>
+internal const val DEFAULT_APP_NAME ="[DEFAULT]"
 
 /**
  * Class represents push notification such as Firebase Push Notification

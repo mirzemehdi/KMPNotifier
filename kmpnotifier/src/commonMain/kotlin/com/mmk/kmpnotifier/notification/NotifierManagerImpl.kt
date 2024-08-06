@@ -5,6 +5,9 @@ import com.mmk.kmpnotifier.di.LibDependencyInitializer
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import com.mmk.kmpnotifier.permission.PermissionUtil
 import org.koin.core.component.get
+import org.koin.core.component.inject
+import org.koin.core.parameter.parameterArrayOf
+import org.koin.core.parameter.parametersOf
 
 internal object NotifierManagerImpl : KMPKoinComponent() {
     private val listeners = mutableListOf<NotifierManager.Listener>()
@@ -20,9 +23,9 @@ internal object NotifierManagerImpl : KMPKoinComponent() {
         return get()
     }
 
-    fun getPushNotifier(): PushNotifier {
+    fun getPushNotifier(firebaseAppName: String): PushNotifier {
         requireInitialization()
-        return get()
+        return get(parameters = { parametersOf(firebaseAppName) })
     }
 
     fun getPermissionUtil(): PermissionUtil {

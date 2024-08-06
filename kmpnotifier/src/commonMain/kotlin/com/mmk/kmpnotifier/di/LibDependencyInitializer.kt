@@ -1,11 +1,14 @@
 package com.mmk.kmpnotifier.di
 
 
+import com.mmk.kmpnotifier.notification.DEFAULT_APP_NAME
+import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.PushNotifier
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import com.mmk.kmpnotifier.permission.PermissionUtil
 import org.koin.core.Koin
 import org.koin.core.KoinApplication
+import org.koin.core.parameter.parametersOf
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 
@@ -39,7 +42,7 @@ private fun Koin.onLibraryInitialized() {
     val platform by inject<Platform>()
     val configuration by inject<NotificationPlatformConfiguration>()
 
-    get<PushNotifier>() //This will make sure that that when lib is initialized, init method is called
+    get<PushNotifier>(parameters = {parametersOf(DEFAULT_APP_NAME)}) //This will make sure that that when lib is initialized, init method is called
 
     when (platform) {
         Platform.Android, Platform.Desktop -> Unit //In Android platform permission should be asked in activity
