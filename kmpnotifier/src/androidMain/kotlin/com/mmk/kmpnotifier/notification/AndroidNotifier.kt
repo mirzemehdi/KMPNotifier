@@ -67,6 +67,8 @@ internal class AndroidNotifier(
     }
 
     private fun getPendingIntent(payloadData: Map<String, String>): PendingIntent? {
+
+
         val intent = getLauncherActivityIntent()?.apply {
             putExtra(ACTION_NOTIFICATION_CLICK, ACTION_NOTIFICATION_CLICK)
             payloadData.forEach { putExtra(it.key, it.value) }
@@ -85,6 +87,5 @@ internal class AndroidNotifier(
         val packageManager = context.applicationContext.packageManager
         return packageManager.getLaunchIntentForPackage(context.applicationContext.packageName)
     }
-
 
 }
