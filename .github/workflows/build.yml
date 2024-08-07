@@ -34,7 +34,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Setup gradle
-        uses: gradle/gradle-build-action@v2.4.2
+        uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1
 
       - name: Check api
         run: ./gradlew apiCheck
@@ -59,7 +59,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Setup gradle
-        uses: gradle/gradle-build-action@v2.4.2
+        uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1
 
       - name: Test ${{ matrix.config.target }} targets
         continue-on-error: ${{ matrix.config.continueOnError }}
@@ -84,7 +84,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Setup gradle
-        uses: gradle/gradle-build-action@v2.4.2
+        uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1
 
       - name: Setup Pages
         uses: actions/configure-pages@v3
@@ -101,6 +101,26 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v1
 
+      - name: Write secrets to local.properties
+        run: |
+          echo sonatypeUsername="${SONATYPE_USERNAME}" >> "local.properties"
+          echo sonatypePassword="${SONATYPE_PASSWORD}" >> "local.properties"
+          echo gpgKeyPassword="${GPG_KEY_PASSWORD}" >> "local.properties"
+          echo gpgKeySecret="${GPG_KEY_SECRET}" >> "local.properties"
+        env:
+          SONATYPE_USERNAME: mirzemehdi
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          GPG_KEY_PASSWORD: ${{ secrets.GPG_KEY_PASSWORD }}
+          GPG_KEY_SECRET: ${{ secrets.GPG_KEY_SECRET }}
+
+
+      - name: Publish to sonatype
+        uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1
+        with:
+          arguments: |
+            publishToSonatype
+            closeAndReleaseSonatypeStagingRepository
+
       - name: Create new release from tag
         env:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -110,64 +130,3 @@ jobs:
           token: ${{ env.github_token }}
 
 
-  create-staging-repository:
-    runs-on: ubuntu-latest
-    name: Create staging repository
-    needs: release
-    outputs:
-      repository_id: ${{ steps.create.outputs.repository_id }}
-    steps:
-      - id: create
-        uses: nexus-actions/create-nexus-staging-repo@v1.3.0
-        with:
-          username: ${{ secrets.SONATYPE_USERNAME }}
-          password: ${{ secrets.SONATYPE_PASSWORD }}
-          staging_profile_id: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
-          description: Created by GitHub Actions
-          base_url: https://s01.oss.sonatype.org/service/local/
-
-  publish:
-    name: Publish to Maven
-    runs-on: macos-latest
-    needs: create-staging-repository
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Setup JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Setup gradle
-        uses: gradle/gradle-build-action@v2.4.2
-
-      - name: Write secrets to local.properties
-        run: |
-          echo sonatypeUsername="${SONATYPE_USERNAME}" >> "local.properties"
-          echo sonatypePassword="${SONATYPE_PASSWORD}" >> "local.properties"
-          echo gpgKeyPassword="${GPG_KEY_PASSWORD}" >> "local.properties"
-          echo gpgKeySecret="${GPG_KEY_SECRET}" >> "local.properties"
-        env:
-          SONATYPE_REPOSITORY_ID: ${{ needs.create-staging-repository.outputs.repository_id }}
-          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-          GPG_KEY_PASSWORD: ${{ secrets.GPG_KEY_PASSWORD }}
-          GPG_KEY_SECRET: ${{ secrets.GPG_KEY_SECRET }}
-
-      - name: Release to sonatype
-        run: ./gradlew publishAllPublicationsToMavenRepository
-
-  close-staging-repository:
-    name: Close staging repository
-    runs-on: ubuntu-latest
-    needs: [ create-staging-repository, publish ]
-    if: ${{ always() && needs.create-staging-repository.result == 'success' }}
-    steps:
-      - name: Close staging repository
-        uses: nexus-actions/release-nexus-staging-repo@6632a81bfab63557b2717e8423b0a620ae5aa414
-        with:
-          username: ${{ secrets.SONATYPE_USERNAME }}
-          password: ${{ secrets.SONATYPE_PASSWORD }}
-          staging_repository_id: ${{ needs.create-staging-repository.outputs.repository_id }}
-          base_url: https://s01.oss.sonatype.org/service/local/
