@@ -67,9 +67,13 @@ internal class AndroidNotifier(
     }
 
     private fun getPendingIntent(payloadData: Map<String, String>): PendingIntent? {
+
+
         val intent = getLauncherActivityIntent()?.apply {
             putExtra(ACTION_NOTIFICATION_CLICK, ACTION_NOTIFICATION_CLICK)
             payloadData.forEach { putExtra(it.key, it.value) }
+            val urlData = payloadData.getOrDefault(Notifier.KEY_URL, null)
+            urlData?.let { setData(Uri.parse(urlData)) }
         }
         intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
@@ -83,6 +87,5 @@ internal class AndroidNotifier(
         val packageManager = context.applicationContext.packageManager
         return packageManager.getLaunchIntentForPackage(context.applicationContext.packageName)
     }
-
 
 }
