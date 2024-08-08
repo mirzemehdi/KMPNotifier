@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.mmk.kmpnotifier.notification.Notifier
 import com.mmk.kmpnotifier.notification.NotifierManager
 
 @Composable
@@ -45,7 +46,14 @@ fun App() {
             val permissionUtil = remember { NotifierManager.getPermissionUtil() }
             var notificationId by remember { mutableStateOf(0) }
             Button(onClick = {
-                notificationId = notifier.notify("Title", "bodyMessage")
+                notificationId = notifier.notify(
+                    title = "Title",
+                    body = "bodyMessage",
+                    payloadData = mapOf(
+                        Notifier.KEY_URL to "https://github.com/mirzemehdi/KMPNotifier/",
+                        "extraKey" to "randomValue"
+                    )
+                )
             }) {
                 Text("Send Local Notification")
             }

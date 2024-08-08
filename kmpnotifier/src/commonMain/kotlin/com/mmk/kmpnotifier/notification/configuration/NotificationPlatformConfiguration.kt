@@ -31,11 +31,13 @@ public sealed interface NotificationPlatformConfiguration {
          * @param name this is the title that is shown on app notification channels. Default value is "General"
          * Usually it is either General or Miscellaneous or Miscellaneous in most apps
          * @param description Notification description
+         * @param soundUri  Custom Notification sound, uri should be converted to String.
          */
         public class NotificationChannelData(
             public val id: String = "DEFAULT_NOTIFICATION_CHANNEL_ID",
             public val name: String = "General",
             public val description: String = "",
+            public val soundUri: String? = null
         )
 
     }
@@ -51,10 +53,16 @@ public sealed interface NotificationPlatformConfiguration {
      * @param askNotificationPermissionOnStart Default value is true, when library is initialized it
      * will ask notification permission automatically from the user.
      * By setting askNotificationPermissionOnStart false, you can customize to ask permission whenever you want.
+     *
+     * @param notificationSoundName Custom notification sound name. Default value is null.
+     * If set null, default notification sound will be played.
+     * Place the file in the Resources directory of your iOS target.
+     * Ensure the file is added to your target's "Build Phases" under "Copy Bundle Resources".
      */
     public data class Ios(
         public val showPushNotification: Boolean = true,
-        public val askNotificationPermissionOnStart: Boolean = true
+        public val askNotificationPermissionOnStart: Boolean = true,
+        public val notificationSoundName: String? = null
     ) : NotificationPlatformConfiguration
 
 
