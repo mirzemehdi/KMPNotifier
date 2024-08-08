@@ -31,11 +31,13 @@ public sealed interface NotificationPlatformConfiguration {
          * @param name this is the title that is shown on app notification channels. Default value is "General"
          * Usually it is either General or Miscellaneous or Miscellaneous in most apps
          * @param description Notification description
+         * @param soundUri  Custom Notification sound, uri should be converted to String.
          */
         public class NotificationChannelData(
             public val id: String = "DEFAULT_NOTIFICATION_CHANNEL_ID",
             public val name: String = "General",
             public val description: String = "",
+            public val soundUri: String? = null
         )
 
     }
