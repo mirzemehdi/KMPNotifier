@@ -13,6 +13,7 @@
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
 		A679C56D2B02DAAC008F0522 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = A679C56C2B02DAAC008F0522 /* FirebaseMessaging */; };
 		A679C5792B02E1F1008F0522 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A679C5782B02E1F1008F0522 /* GoogleService-Info.plist */; };
+		A6E3F5632C64FB5C00B9A220 /* custom_notification_sound.wav in Resources */ = {isa = PBXBuildFile; fileRef = A6E3F5622C64FB5C00B9A220 /* custom_notification_sound.wav */; };
 		A6EDE9F12B02C93F00DACEA2 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = A6EDE9F02B02C93F00DACEA2 /* FirebaseMessaging */; };
 /* End PBXBuildFile section */
 
@@ -38,6 +39,7 @@
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A679C5782B02E1F1008F0522 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A679C57A2B02E91A008F0522 /* iosApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iosApp.entitlements; sourceTree = "<group>"; };
+		A6E3F5622C64FB5C00B9A220 /* custom_notification_sound.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = custom_notification_sound.wav; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +83,7 @@
 		7555FF7D242A565900829871 /* iosApp */ = {
 			isa = PBXGroup;
 			children = (
+				A6E3F5622C64FB5C00B9A220 /* custom_notification_sound.wav */,
 				A679C57A2B02E91A008F0522 /* iosApp.entitlements */,
 				058557BA273AAA24004C7B11 /* Assets.xcassets */,
 				7555FF82242A565900829871 /* ContentView.swift */,
@@ -168,6 +171,7 @@
 			files = (
 				058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */,
 				058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */,
+				A6E3F5632C64FB5C00B9A220 /* custom_notification_sound.wav in Resources */,
 				A679C5792B02E1F1008F0522 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

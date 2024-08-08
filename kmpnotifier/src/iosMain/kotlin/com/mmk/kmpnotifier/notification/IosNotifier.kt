@@ -4,6 +4,7 @@ import com.mmk.kmpnotifier.extensions.onApplicationDidReceiveRemoteNotification
 import com.mmk.kmpnotifier.extensions.onNotificationClicked
 import com.mmk.kmpnotifier.extensions.onUserNotification
 import com.mmk.kmpnotifier.extensions.shouldShowNotification
+import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import com.mmk.kmpnotifier.permission.IosPermissionUtil
 import platform.UserNotifications.UNMutableNotificationContent
 import platform.UserNotifications.UNNotification
@@ -21,6 +22,7 @@ import kotlin.random.Random
 internal class IosNotifier(
     private val permissionUtil: IosPermissionUtil,
     private val notificationCenter: UNUserNotificationCenter,
+    private val iosNotificationConfiguration: NotificationPlatformConfiguration.Ios
 ) : Notifier {
 
 
@@ -35,7 +37,7 @@ internal class IosNotifier(
             val notificationContent = UNMutableNotificationContent().apply {
                 setTitle(title)
                 setBody(body)
-                setSound(UNNotificationSound.defaultSound)
+                setSound()
                 setUserInfo(userInfo + payloadData)
             }
             val trigger = UNTimeIntervalNotificationTrigger.triggerWithTimeInterval(1.0, false)
@@ -49,6 +51,15 @@ internal class IosNotifier(
                 error?.let { println("Error showing notification: $error") }
             }
         }
+    }
+
+    private fun UNMutableNotificationContent.setSound() {
+        val customSoundPath = iosNotificationConfiguration.notificationSoundName
+        val customNotificationSound = customSoundPath?.let {
+            UNNotificationSound.soundNamed(customSoundPath)
+        }
+        val notificationSound = customNotificationSound ?: UNNotificationSound.defaultSound
+        setSound(notificationSound)
     }
 
     override fun remove(id: Int) {
