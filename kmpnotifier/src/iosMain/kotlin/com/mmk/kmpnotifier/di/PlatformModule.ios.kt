@@ -17,7 +17,8 @@ internal actual val platformModule = module {
     factory {
         IosNotifier(
             permissionUtil = get(),
-            notificationCenter = UNUserNotificationCenter.currentNotificationCenter()
+            notificationCenter = UNUserNotificationCenter.currentNotificationCenter(),
+            iosNotificationConfiguration = get()
         )
     } bind Notifier::class
 
