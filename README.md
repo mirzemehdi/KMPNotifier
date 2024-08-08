@@ -322,6 +322,10 @@ NotifierManager.getPushNotifier().deleteMyToken() //Delete user's token for exam
 NotifierManager.getPushNotifier().subscribeToTopic("new_users") 
 NotifierManager.getPushNotifier().unSubscribeFromTopic("new_users") 
 ```
+For setting custom notification sound, check https://github.com/mirzemehdi/KMPNotifier/pull/61#issuecomment-2275850021  
+For setting Intent data in Android (for deeplink), check https://github.com/mirzemehdi/KMPNotifier/pull/60#issue-2454489089    
+For permissionUtil, or manually asking notification permission check https://github.com/mirzemehdi/KMPNotifier/pull/27#issuecomment-2083639907  
+
 
 
 
