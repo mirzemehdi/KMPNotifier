@@ -3,10 +3,16 @@ public final class com/mmk/kmpnotifier/extensions/NotifierManagerExtKt {
 }
 
 public abstract interface class com/mmk/kmpnotifier/notification/Notifier {
+	public static final field Companion Lcom/mmk/kmpnotifier/notification/Notifier$Companion;
+	public static final field KEY_URL Ljava/lang/String;
 	public abstract fun notify (ILjava/lang/String;Ljava/lang/String;Ljava/util/Map;)V
 	public abstract fun notify (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)I
 	public abstract fun remove (I)V
 	public abstract fun removeAll ()V
+}
+
+public final class com/mmk/kmpnotifier/notification/Notifier$Companion {
+	public static final field KEY_URL Ljava/lang/String;
 }
 
 public final class com/mmk/kmpnotifier/notification/Notifier$DefaultImpls {
@@ -58,11 +64,12 @@ public final class com/mmk/kmpnotifier/notification/configuration/NotificationPl
 
 public final class com/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Android$NotificationChannelData {
 	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getDescription ()Ljava/lang/String;
 	public final fun getId ()Ljava/lang/String;
 	public final fun getName ()Ljava/lang/String;
+	public final fun getSoundUri ()Ljava/lang/String;
 }
 
 public final class com/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Desktop : com/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration {
@@ -82,14 +89,16 @@ public final class com/mmk/kmpnotifier/notification/configuration/NotificationPl
 
 public final class com/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Ios : com/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration {
 	public fun <init> ()V
-	public fun <init> (ZZ)V
-	public synthetic fun <init> (ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (ZZLjava/lang/String;)V
+	public synthetic fun <init> (ZZLjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Z
 	public final fun component2 ()Z
-	public final fun copy (ZZ)Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Ios;
-	public static synthetic fun copy$default (Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Ios;ZZILjava/lang/Object;)Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Ios;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (ZZLjava/lang/String;)Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Ios;
+	public static synthetic fun copy$default (Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Ios;ZZLjava/lang/String;ILjava/lang/Object;)Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration$Ios;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAskNotificationPermissionOnStart ()Z
+	public final fun getNotificationSoundName ()Ljava/lang/String;
 	public final fun getShowPushNotification ()Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
