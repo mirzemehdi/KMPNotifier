@@ -9,12 +9,18 @@
 ![badge-js](https://img.shields.io/badge/platform-js-fcba03.svg?style=flat)
 ![badge-wasm](https://img.shields.io/badge/platform-wasm-331f06.svg?style=flat)
 
-
+[![Android Weekly badge](https://androidweekly.net/issues/issue-632/badge)](https://androidweekly.net/issues/issue-632)
+[![Android Weekly badge](https://androidweekly.net/issues/issue-599/badge)](https://androidweekly.net/issues/issue-599)
 
 
 Simple and easy to use Kotlin Multiplatform Push Notification library (using Firebase Cloud Messaging) targeting ios and android and Local Notification targetting android, ios, desktop and web (js and wasm).  
 This library is used in [FindTravelNow](https://github.com/mirzemehdi/FindTravelNow-KMM/) production KMP project.
-You can check out [Documentation](https://mirzemehdi.github.io/KMPNotifier) for full library api information.
+You can check out [Documentation](https://mirzemehdi.github.io/KMPNotifier) for full library api information.  
+
+**_Related Blog Posts_**  
+[KMPNotifier Update: Web, Desktop, and New Features for Kotlin Multiplatform Notifications](https://proandroiddev.com/kmpnotifier-update-web-desktop-and-new-features-for-kotlin-multiplatform-notifications-529b489f5d9c)  
+[How to implement Push Notifications in Kotlin Multiplatform](https://proandroiddev.com/how-to-implement-push-notification-in-kotlin-multiplatform-5006ff20f76c)  
+
 
 ## Features
   - 🔔 Local Notification (android, ios, desktop, js and wasm targets)  
