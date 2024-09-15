@@ -137,7 +137,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
       //By default showPushNotification value is true.
       //When set showPushNotification to false foreground push  notification will not be shown.
       //You can still get notification content using #onPushNotification listener method.
-      NotifierManager.shared.initialize(configuration: NotificationPlatformConfigurationIos(showPushNotification: true))
+      NotifierManager.shared.initialize(configuration: NotificationPlatformConfigurationIos(
+            showPushNotification: true,
+            askNotificationPermissionOnStart: true)
+      )
       
     return true
   }
