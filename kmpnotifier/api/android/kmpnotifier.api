@@ -1,4 +1,5 @@
 public final class com/mmk/kmpnotifier/extensions/NotifierManagerExtKt {
+	public static final fun initialize (Lcom/mmk/kmpnotifier/notification/NotifierManager;Landroid/content/Context;Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration;)V
 	public static final fun onCreateOrOnNewIntent (Lcom/mmk/kmpnotifier/notification/NotifierManager;Landroid/content/Intent;)V
 }
 
