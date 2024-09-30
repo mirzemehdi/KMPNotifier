@@ -33,6 +33,7 @@ fun App() {
             }
         })
         myPushNotificationToken = NotifierManager.getPushNotifier().getToken() ?: ""
+        println("Firebase Token: $myPushNotificationToken")
     }
 
 

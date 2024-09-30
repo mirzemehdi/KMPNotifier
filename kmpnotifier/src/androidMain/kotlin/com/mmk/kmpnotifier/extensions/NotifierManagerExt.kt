@@ -1,9 +1,11 @@
 package com.mmk.kmpnotifier.extensions
 
+import android.content.Context
 import android.content.Intent
 import androidx.core.os.bundleOf
 import com.mmk.kmpnotifier.Constants.ACTION_NOTIFICATION_CLICK
 import com.mmk.kmpnotifier.Constants.KEY_ANDROID_FIREBASE_NOTIFICATION
+import com.mmk.kmpnotifier.di.ContextInitializer
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.NotifierManagerImpl
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
@@ -54,6 +56,23 @@ public fun NotifierManager.onCreateOrOnNewIntent(intent: Intent?) {
         NotifierManagerImpl.onPushPayloadData(payloadData.minus(ACTION_NOTIFICATION_CLICK))
     if (isNotificationClicked)
         NotifierManagerImpl.onNotificationClicked(payloadData.minus(ACTION_NOTIFICATION_CLICK))
+}
+
+
+/**
+ * @param context Android application context. By default
+ * using androidx-startup Context reference is passed without needing to pass one manually.
+ * If you disabled androidx-startup you can use this function in android application start to pass Context reference
+ * @param configuration pass android configuration
+ * @see NotificationPlatformConfiguration.Android
+ *
+ */
+public fun NotifierManager.initialize(
+    context: Context,
+    configuration: NotificationPlatformConfiguration
+) {
+    ContextInitializer().create(context)
+    NotifierManagerImpl.initialize(configuration)
 }
 
 internal fun NotifierManagerImpl.shouldShowNotification(): Boolean {
