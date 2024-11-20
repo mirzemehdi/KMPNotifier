@@ -17,12 +17,15 @@ public sealed interface NotificationPlatformConfiguration {
      * received it will be shown to user. When set to false, it will not be shown to user,
      * but you can still get notification content using
      * @see com.mmk.kmpnotifier.notification.NotifierManager.Listener.onPushNotification
+     * @param displayNotificationManager Assembles and displays notification. If not provided the default manager
+     * [com.mmk.kmpnotifier.notification.DefaultDisplayNotificationManager] is used. Also
      */
     public class Android(
         public val notificationIconResId: Int,
         public val notificationIconColorResId: Int? = null,
         public val notificationChannelData: NotificationChannelData = NotificationChannelData(),
         public val showPushNotification: Boolean = true,
+        public val displayNotificationManager: DisplayNotificationManager? = null
     ) : NotificationPlatformConfiguration {
 
         /**
