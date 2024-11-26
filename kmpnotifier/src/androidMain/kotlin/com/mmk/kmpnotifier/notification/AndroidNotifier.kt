@@ -5,10 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
-import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat
 import com.mmk.kmpnotifier.Constants.ACTION_NOTIFICATION_CLICK
 import com.mmk.kmpnotifier.extensions.notificationManager
+import com.mmk.kmpnotifier.notification.configuration.DisplayNotificationManager
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import com.mmk.kmpnotifier.permission.PermissionUtil
 import kotlin.random.Random
@@ -18,6 +17,7 @@ internal class AndroidNotifier(
     private val context: Context,
     private val androidNotificationConfiguration: NotificationPlatformConfiguration.Android,
     private val notificationChannelFactory: NotificationChannelFactory,
+    private val displayNotificationManager: DisplayNotificationManager?,
     private val permissionUtil: PermissionUtil,
 ) : Notifier {
 
@@ -38,22 +38,23 @@ internal class AndroidNotifier(
         val notificationManager = context.notificationManager ?: return
         val pendingIntent = getPendingIntent(payloadData)
         notificationChannelFactory.createChannels()
-        val notification = NotificationCompat.Builder(
-            context,
-            androidNotificationConfiguration.notificationChannelData.id
-        ).apply {
-            setChannelId(androidNotificationConfiguration.notificationChannelData.id)
-            setContentTitle(title)
-            setContentText(body)
-            setSmallIcon(androidNotificationConfiguration.notificationIconResId)
-            setAutoCancel(true)
-            setContentIntent(pendingIntent)
-            androidNotificationConfiguration.notificationIconColorResId?.let {
-                color = ContextCompat.getColor(context, it)
-            }
-        }.build()
+        val androidNotificationData = AndroidNotificationData.Companion.Builder(
+            context = context,
+            notificationManager = notificationManager
+        )
+            .setNotificationId(id)
+            .setChannelData(androidNotificationConfiguration.notificationChannelData)
+            .setNotificationIconRes(androidNotificationConfiguration.notificationIconResId)
+            .setNotificationIconColorResId(androidNotificationConfiguration.notificationIconColorResId)
+            .setPayloadData(payloadData)
+            .setPendingIntent(pendingIntent)
+            .build()
+        val notificationFct = (displayNotificationManager ?: DefaultDisplayNotificationManager())
+        val androidNotificationManager = notificationFct as AndroidNotificationManager?
+            ?: throw IllegalStateException("Factory doesn't implement AndroidNotificationFactory")
+        androidNotificationManager.setData(androidNotificationData)
+        notificationFct.displayNotification(title, body)
 
-        notificationManager.notify(id, notification)
     }
 
     override fun remove(id: Int) {

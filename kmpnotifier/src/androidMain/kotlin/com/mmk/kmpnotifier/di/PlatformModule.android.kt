@@ -42,6 +42,7 @@ internal actual val platformModule = module {
                 context = get(),
                 channelData = configuration.notificationChannelData
             ),
+            displayNotificationManager = configuration.displayNotificationManager,
             permissionUtil = get()
         )
     } bind Notifier::class
