@@ -1,14 +1,13 @@
 package com.mmk.kmpnotifier.notification
 
-import com.mmk.kmpnotifier.extensions.onApplicationDidReceiveRemoteNotification
 import com.mmk.kmpnotifier.extensions.onNotificationClicked
 import com.mmk.kmpnotifier.extensions.onUserNotification
 import com.mmk.kmpnotifier.extensions.shouldShowNotification
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import com.mmk.kmpnotifier.permission.IosPermissionUtil
+import com.prinum.utils.logger.Logger
 import platform.UserNotifications.UNMutableNotificationContent
 import platform.UserNotifications.UNNotification
-import platform.UserNotifications.UNNotificationContent
 import platform.UserNotifications.UNNotificationPresentationOptions
 import platform.UserNotifications.UNNotificationRequest
 import platform.UserNotifications.UNNotificationResponse
@@ -25,7 +24,9 @@ internal class IosNotifier(
     private val iosNotificationConfiguration: NotificationPlatformConfiguration.Ios
 ) : Notifier {
 
-
+    companion object{
+        private const val TAG = "IosNotifier"
+    }
     override fun notify(title: String, body: String, payloadData: Map<String, String>): Int {
         val notificationID = Random.nextInt(0, Int.MAX_VALUE)
         notify(notificationID, title, body, payloadData)
@@ -41,6 +42,7 @@ internal class IosNotifier(
                 setUserInfo(userInfo + payloadData)
             }
             val trigger = UNTimeIntervalNotificationTrigger.triggerWithTimeInterval(1.0, false)
+            Logger.d(TAG, "Notify iOS message with title: $title")
             val notificationRequest = UNNotificationRequest.requestWithIdentifier(
                 identifier = id.toString(),
                 content = notificationContent,
@@ -48,7 +50,7 @@ internal class IosNotifier(
             )
 
             notificationCenter.addNotificationRequest(notificationRequest) { error ->
-                error?.let { println("Error showing notification: $error") }
+                error?.let { Logger.d(TAG, "Error showing notification: $error") }
             }
         }
     }
@@ -77,6 +79,7 @@ internal class IosNotifier(
             withCompletionHandler: () -> Unit,
         ) {
             val notificationContent = didReceiveNotificationResponse.notification.request.content
+            Logger.d("IosNotifier", "didReceiveNotificationResponse. Content: $notificationContent")
             NotifierManager.onUserNotification(notificationContent)
             NotifierManager.onNotificationClicked(notificationContent)
             if (NotifierManager.shouldShowNotification(notificationContent)) withCompletionHandler()
@@ -88,6 +91,7 @@ internal class IosNotifier(
             withCompletionHandler: (UNNotificationPresentationOptions) -> Unit,
         ) {
             val notificationContent = willPresentNotification.request.content
+            Logger.d("IosNotifier", "willPresentNotification. Content: $notificationContent")
             NotifierManager.onUserNotification(notificationContent)
             if (NotifierManager.shouldShowNotification(notificationContent)) withCompletionHandler(
                 IosPermissionUtil.NOTIFICATION_PERMISSIONS

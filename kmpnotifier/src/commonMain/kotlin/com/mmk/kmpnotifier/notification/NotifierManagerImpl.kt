@@ -4,11 +4,13 @@ import com.mmk.kmpnotifier.di.KMPKoinComponent
 import com.mmk.kmpnotifier.di.LibDependencyInitializer
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import com.mmk.kmpnotifier.permission.PermissionUtil
+import com.prinum.utils.logger.Logger
 import org.koin.core.component.get
 
 internal object NotifierManagerImpl : KMPKoinComponent() {
     private val listeners = mutableListOf<NotifierManager.Listener>()
 
+    private const val TAG = "NotifierManagerImpl"
     fun initialize(configuration: NotificationPlatformConfiguration) {
         LibDependencyInitializer.initialize(configuration)
     }
@@ -39,20 +41,20 @@ internal object NotifierManagerImpl : KMPKoinComponent() {
     }
 
     fun onPushPayloadData(data: PayloadData) {
-        println("Received Push Notification payload data")
-        if (listeners.size == 0) println("There is no listener to notify onPushPayloadData")
+        Logger.d(TAG, "Received Push Notification payload data")
+        if (listeners.size == 0) Logger.d(TAG, "There is no listener to notify onPushPayloadData")
         listeners.forEach { it.onPayloadData(data) }
     }
 
     fun onPushNotification(title: String?, body: String?) {
-        println("Received Push Notification notification type message")
+        Logger.d(TAG, "Received Push Notification notification type message")
         if (listeners.size == 0) println("There is no listener to notify onPushNotification")
         listeners.forEach { it.onPushNotification(title = title, body = body) }
     }
 
     fun onNotificationClicked(data: PayloadData) {
-        println("Notification is clicked")
-        if (listeners.size == 0) println("There is no listener to notify onPushPayloadData")
+        Logger.d(TAG, "Notification is clicked")
+        if (listeners.size == 0) Logger.d(TAG, "There is no listener to notify onPushPayloadData")
         listeners.forEach { it.onNotificationClicked(data) }
     }
 

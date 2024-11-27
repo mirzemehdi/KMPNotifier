@@ -27,7 +27,7 @@ public fun NotifierManager.onApplicationDidReceiveRemoteNotification(userInfo: M
         NotifierManagerImpl.onPushPayloadData(payloadData)
 }
 
-internal fun NotifierManager.onUserNotification(notificationContent: UNNotificationContent) {
+public fun NotifierManager.onUserNotification(notificationContent: UNNotificationContent) {
     val userInfo = notificationContent.userInfo
     val hasNotification = notificationContent.title != null || notificationContent.body != null
     if (notificationContent.isPushNotification() && hasNotification) NotifierManagerImpl.onPushNotification(
@@ -37,11 +37,11 @@ internal fun NotifierManager.onUserNotification(notificationContent: UNNotificat
     NotifierManager.onApplicationDidReceiveRemoteNotification(userInfo)
 }
 
-internal fun NotifierManager.onNotificationClicked(notificationContent: UNNotificationContent) {
+public fun NotifierManager.onNotificationClicked(notificationContent: UNNotificationContent) {
     NotifierManagerImpl.onNotificationClicked(notificationContent.userInfo.asPayloadData())
 }
 
-internal fun NotifierManager.shouldShowNotification(notificationContent: UNNotificationContent): Boolean {
+public fun NotifierManager.shouldShowNotification(notificationContent: UNNotificationContent): Boolean {
     val configuration =
         NotifierManagerImpl.getConfiguration() as? NotificationPlatformConfiguration.Ios
     val configurationShowPushNotificationEnabled = configuration?.showPushNotification ?: true

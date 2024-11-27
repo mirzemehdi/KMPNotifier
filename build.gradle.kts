@@ -31,19 +31,12 @@ allprojects {
 
     apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "maven-publish")
-    apply(plugin = "signing")
 
 
     extensions.configure<PublishingExtension> {
-        val javadocJar = tasks.register<Jar>("javadocJar") {
-            dependsOn(tasks.getByName<DokkaTask>("dokkaHtml"))
-            archiveClassifier.set("javadoc")
-            from("${layout.buildDirectory}/dokka")
-        }
 
         publications {
             withType<MavenPublication> {
-                artifact(javadocJar)
                 pom {
                     groupId="io.github.mirzemehdi"
                     name.set("KMPNotifier")
@@ -72,12 +65,6 @@ allprojects {
                 }
             }
         }
-    }
-
-    val publishing = extensions.getByType<PublishingExtension>()
-    extensions.configure<SigningExtension> {
-        useInMemoryPgpKeys(gpgKeySecret, gpgKeyPassword)
-        sign(publishing.publications)
     }
 
     // TODO: remove after https://youtrack.jetbrains.com/issue/KT-46466 is fixed

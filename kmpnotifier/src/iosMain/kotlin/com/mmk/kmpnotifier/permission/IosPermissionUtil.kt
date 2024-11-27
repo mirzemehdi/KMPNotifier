@@ -1,6 +1,6 @@
 package com.mmk.kmpnotifier.permission
 
-import com.mmk.kmpnotifier.notification.IosNotifier
+import com.prinum.utils.logger.Logger
 import platform.UserNotifications.UNAuthorizationOptionAlert
 import platform.UserNotifications.UNAuthorizationOptionBadge
 import platform.UserNotifications.UNAuthorizationOptionSound
@@ -10,6 +10,7 @@ import platform.UserNotifications.UNUserNotificationCenter
 internal class IosPermissionUtil(private val notificationCenter: UNUserNotificationCenter) :
     PermissionUtil {
     companion object {
+        val TAG = "IosPermissionUtil"
         val NOTIFICATION_PERMISSIONS =
             UNAuthorizationOptionAlert or
                     UNAuthorizationOptionSound or
@@ -23,11 +24,9 @@ internal class IosPermissionUtil(private val notificationCenter: UNUserNotificat
     }
 
     override fun askNotificationPermission(onPermissionResult: (Boolean) -> Unit) {
+        Logger.d(TAG, "Invoking askNotificationPermission")
         notificationCenter.requestAuthorizationWithOptions(NOTIFICATION_PERMISSIONS) { isGranted, _ ->
-            if (isGranted) {
-                UNUserNotificationCenter.currentNotificationCenter().delegate =
-                    IosNotifier.NotificationDelegate()
-            }
+            Logger.d(TAG, "askNotificationPermission is granted: $isGranted")
             onPermissionResult(isGranted)
         }
     }

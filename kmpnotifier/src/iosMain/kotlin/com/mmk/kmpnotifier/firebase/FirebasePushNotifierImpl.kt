@@ -4,6 +4,7 @@ import cocoapods.FirebaseMessaging.FIRMessaging
 import cocoapods.FirebaseMessaging.FIRMessagingDelegateProtocol
 import com.mmk.kmpnotifier.notification.NotifierManagerImpl
 import com.mmk.kmpnotifier.notification.PushNotifier
+import com.prinum.utils.logger.Logger
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -19,9 +20,13 @@ internal class FirebasePushNotifierImpl : PushNotifier {
 
     private val firebaseMessageDelegate by lazy { FirebaseMessageDelegate() }
 
+    companion object {
+        private const val TAG = "FirebasePushNotifierImpl"
+    }
+
     init {
         MainScope().launch {
-            println("FirebasePushNotifier is initialized")
+            Logger.d(TAG, "FirebasePushNotifier is initialized")
             FIRMessaging.messaging().delegate = firebaseMessageDelegate
             UIApplication.sharedApplication.registerForRemoteNotifications()
         }
@@ -32,7 +37,7 @@ internal class FirebasePushNotifierImpl : PushNotifier {
     override suspend fun getToken(): String? = suspendCoroutine { cont ->
         FIRMessaging.messaging().tokenWithCompletion { token, error ->
             cont.resume(token)
-            error?.let { println("Error while getting token: $error") }
+            error?.let { Logger.d(TAG, "Error while getting token: $error") }
         }
 
     }
@@ -56,7 +61,7 @@ internal class FirebasePushNotifierImpl : PushNotifier {
         private val notifierManager by lazy { NotifierManagerImpl }
         override fun messaging(messaging: FIRMessaging, didReceiveRegistrationToken: String?) {
             didReceiveRegistrationToken?.let { token ->
-                println("FirebaseMessaging: onNewToken is called")
+                Logger.d(TAG, "FirebaseMessaging: onNewToken is called")
                 notifierManager.onNewToken(didReceiveRegistrationToken)
             }
         }

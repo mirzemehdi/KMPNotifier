@@ -19,31 +19,31 @@ kotlin {
         }
     }
 
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        browser()
-    }
-    js(IR) {
-        nodejs()
-        browser()
-        binaries.library()
-    }
+//    @OptIn(ExperimentalWasmDsl::class)
+//    wasmJs {
+//        browser()
+//    }
+//    js(IR) {
+//        nodejs()
+//        browser()
+//        binaries.library()
+//    }
 
-    jvm()
+//    jvm()
     iosX64()
     iosArm64()
     iosSimulatorArm64()
 
 
-    cocoapods {
-        ios.deploymentTarget = "14.1"
-        framework {
-            baseName = "KMPNotifier"
-            isStatic = true
-        }
-        noPodspec()
-        pod("FirebaseMessaging")
-    }
+//    cocoapods {
+//        ios.deploymentTarget = "14.1"
+//        framework {
+//            baseName = "KMPNotifier"
+//            isStatic = true
+//        }
+//        noPodspec()
+//        pod("FirebaseMessaging")
+//    }
 
 
 
@@ -59,12 +59,23 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.koin.core)
             implementation(libs.kotlinx.coroutine)
+            implementation(libs.prinum.logger)
         }
 
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
 
+        targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget>().all {
+            val mainCompilation = compilations.getByName("main")
+
+            // point our crashlytics.def file
+            mainCompilation.cinterops.create("crashlytics") {
+                // Pass the header files location
+                includeDirs("$projectDir/src/include")
+                compilerOpts("-DNS_FORMAT_ARGUMENT(A)=", "-D_Nullable_result=_Nullable")
+            }
+        }
     }
 }
 

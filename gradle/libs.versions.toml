@@ -22,8 +22,6 @@ firebase-messaging = "24.0.1"
 kotlinx-coroutine = "1.9.0-RC.2"
 nexusPublish = "2.0.0"
 
-
-
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
@@ -43,7 +41,7 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "androidx-activityCompose" }
 androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "androidx-startup-runtime" }
-
+prinum-logger = { module = "com.prinum.utils.logger:logger", version = "3.1.4" }
 koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
 
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging-ktx" ,version.ref="firebase-messaging"}
