@@ -125,25 +125,31 @@ internal class AndroidNotifier(
     }
 
     private suspend fun NotificationImage?.asBitmap(): Bitmap? {
-        return when (this) {
-            null -> null
-            is NotificationImage.Url -> {
-                return try {
-                    withContext(Dispatchers.IO) {
-                        URL(url).openStream().buffered()
-                            .use { inputStream -> BitmapFactory.decodeStream(inputStream) }
+        return withContext(Dispatchers.IO) {
+            try {
+                when (this@asBitmap) {
+                    null -> null
+                    is NotificationImage.Url -> {
+                        URL(url).openStream().buffered().use { inputStream ->
+                            BitmapFactory.decodeStream(inputStream)
+                        }
                     }
-                } catch (e: Exception) {
-                    if (e is CancellationException) throw e
-                    Log.e(
-                        "AndroidNotifier",
-                        "Error while downloading notification image. Make sure you have an internet connection",
-                        e
-                    )
-                    null
+
+                    is NotificationImage.File -> {
+                        BitmapFactory.decodeFile(path)
+                    }
                 }
+            } catch (e: Exception) {
+                if (e is CancellationException) throw e
+                Log.e(
+                    "AndroidNotifier",
+                    "Error while processing notification image. Ensure correct path or internet connection.",
+                    e
+                )
+                null
             }
         }
     }
+
 
 }
