@@ -1,6 +1,5 @@
 package com.mmk.kmpnotifier.notification
 
-import com.mmk.kmpnotifier.extensions.onApplicationDidReceiveRemoteNotification
 import com.mmk.kmpnotifier.extensions.onNotificationClicked
 import com.mmk.kmpnotifier.extensions.onUserNotification
 import com.mmk.kmpnotifier.extensions.shouldShowNotification
@@ -8,7 +7,6 @@ import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfig
 import com.mmk.kmpnotifier.permission.IosPermissionUtil
 import platform.UserNotifications.UNMutableNotificationContent
 import platform.UserNotifications.UNNotification
-import platform.UserNotifications.UNNotificationContent
 import platform.UserNotifications.UNNotificationPresentationOptions
 import platform.UserNotifications.UNNotificationRequest
 import platform.UserNotifications.UNNotificationResponse
@@ -28,29 +26,44 @@ internal class IosNotifier(
 
     override fun notify(title: String, body: String, payloadData: Map<String, String>): Int {
         val notificationID = Random.nextInt(0, Int.MAX_VALUE)
-        notify(notificationID, title, body, payloadData)
+        notify {
+            this.id = notificationID
+            this.title = title
+            this.body = body
+            this.payloadData = payloadData
+        }
         return notificationID
     }
 
     override fun notify(id: Int, title: String, body: String, payloadData: Map<String, String>) {
+        notify {
+            this.id = id
+            this.title = title
+            this.body = body
+            this.payloadData = payloadData
+        }
+    }
+
+    override fun notify(block: NotifierBuilder.() -> Unit) {
+        val builder = NotifierBuilder().apply(block)
         permissionUtil.askNotificationPermission {
             val notificationContent = UNMutableNotificationContent().apply {
-                setTitle(title)
-                setBody(body)
+                setTitle(builder.title)
+                setBody(builder.body)
                 setSound()
-                setUserInfo(userInfo + payloadData)
+                setUserInfo(userInfo + builder.payloadData)
             }
             val trigger = UNTimeIntervalNotificationTrigger.triggerWithTimeInterval(1.0, false)
             val notificationRequest = UNNotificationRequest.requestWithIdentifier(
-                identifier = id.toString(),
+                identifier = builder.id.toString(),
                 content = notificationContent,
                 trigger = trigger
             )
-
             notificationCenter.addNotificationRequest(notificationRequest) { error ->
                 error?.let { println("Error showing notification: $error") }
             }
         }
+
     }
 
     private fun UNMutableNotificationContent.setSound() {

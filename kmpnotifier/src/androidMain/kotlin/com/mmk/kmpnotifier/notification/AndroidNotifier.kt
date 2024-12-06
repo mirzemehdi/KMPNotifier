@@ -23,11 +23,26 @@ internal class AndroidNotifier(
 
     override fun notify(title: String, body: String, payloadData: Map<String, String>): Int {
         val notificationID = Random.nextInt(0, Int.MAX_VALUE)
-        notify(notificationID, title, body, payloadData)
+        notify {
+            this.id = notificationID
+            this.title = title
+            this.body = body
+            this.payloadData = payloadData
+        }
         return notificationID
     }
 
     override fun notify(id: Int, title: String, body: String, payloadData: Map<String, String>) {
+        notify {
+            this.id = id
+            this.title = title
+            this.body = body
+            this.payloadData = payloadData
+        }
+    }
+
+    override fun notify(block: NotifierBuilder.() -> Unit) {
+        val builder = NotifierBuilder().apply(block)
         permissionUtil.hasNotificationPermission {
             if (it.not())
                 Log.w(
@@ -36,15 +51,15 @@ internal class AndroidNotifier(
                 )
         }
         val notificationManager = context.notificationManager ?: return
-        val pendingIntent = getPendingIntent(payloadData)
+        val pendingIntent = getPendingIntent(builder.payloadData)
         notificationChannelFactory.createChannels()
         val notification = NotificationCompat.Builder(
             context,
             androidNotificationConfiguration.notificationChannelData.id
         ).apply {
             setChannelId(androidNotificationConfiguration.notificationChannelData.id)
-            setContentTitle(title)
-            setContentText(body)
+            setContentTitle(builder.title)
+            setContentText(builder.body)
             setSmallIcon(androidNotificationConfiguration.notificationIconResId)
             setAutoCancel(true)
             setContentIntent(pendingIntent)
@@ -53,7 +68,7 @@ internal class AndroidNotifier(
             }
         }.build()
 
-        notificationManager.notify(id, notification)
+        notificationManager.notify(builder.id, notification)
     }
 
     override fun remove(id: Int) {
@@ -67,8 +82,6 @@ internal class AndroidNotifier(
     }
 
     private fun getPendingIntent(payloadData: Map<String, String>): PendingIntent? {
-
-
         val intent = getLauncherActivityIntent()?.apply {
             putExtra(ACTION_NOTIFICATION_CLICK, ACTION_NOTIFICATION_CLICK)
             payloadData.forEach { putExtra(it.key, it.value) }
