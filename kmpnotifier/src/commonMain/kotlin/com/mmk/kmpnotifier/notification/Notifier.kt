@@ -8,7 +8,7 @@ import org.koin.core.scope.Scope
 public interface Notifier {
 
     public companion object {
-        public const val KEY_URL: String = "URL"
+        public var KEY_URL: String = "URL"
     }
 
     /**
