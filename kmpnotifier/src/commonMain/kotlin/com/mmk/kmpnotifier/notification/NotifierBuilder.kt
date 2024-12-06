@@ -10,6 +10,8 @@ public class NotifierBuilder {
 
     public var payloadData: Map<String, String> = emptyMap()
 
+    public var image: NotificationImage? = null
+
     public fun payload(block: MutableMap<String, String>.() -> Unit) {
         payloadData = mutableMapOf<String, String>().apply(block)
     }
