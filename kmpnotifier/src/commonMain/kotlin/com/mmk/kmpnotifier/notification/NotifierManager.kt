@@ -31,10 +31,18 @@ public object NotifierManager {
     }
 
     /**
-     * For listening updates such as push notification token changes
+     * For listening updates such as push notification token changes. This will add new listener to listener list.
      */
     public fun addListener(listener: Listener) {
         NotifierManagerImpl.addListener(listener)
+    }
+
+    /**
+     * For listening updates such as push notification token changes. This will set one listener only.
+     * You can set null to remove listener.
+     */
+    public fun setListener(listener: Listener?) {
+        NotifierManagerImpl.setListener(listener)
     }
 
     /**
@@ -72,7 +80,7 @@ public object NotifierManager {
          * @param title Notification title
          * @param body Notification body message
          */
-        public fun onPushNotification(title:String?,body:String?) {}
+        public fun onPushNotification(title: String?, body: String?) {}
 
         /**
          * Called when notification is clicked
