@@ -34,6 +34,11 @@ internal object NotifierManagerImpl : KMPKoinComponent() {
         listeners.add(listener)
     }
 
+    fun setListener(listener: NotifierManager.Listener?) {
+        listeners.clear()
+        listener?.let { listeners.add(it) }
+    }
+
     fun onNewToken(token: String) {
         listeners.forEach { it.onNewToken(token) }
     }
