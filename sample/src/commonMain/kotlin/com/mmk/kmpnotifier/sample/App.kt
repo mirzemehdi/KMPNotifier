@@ -17,9 +17,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.mmk.kmpnotifier.notification.NotificationImage
 import com.mmk.kmpnotifier.notification.Notifier
 import com.mmk.kmpnotifier.notification.NotifierManager
+import io.github.mirzemehdi.sample.generated.resources.Res
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import kotlin.random.Random
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun App() {
     var myPushNotificationToken by remember { mutableStateOf("") }
@@ -47,14 +52,17 @@ fun App() {
             val permissionUtil = remember { NotifierManager.getPermissionUtil() }
             var notificationId by remember { mutableStateOf(0) }
             Button(onClick = {
-                notificationId = notifier.notify(
-                    title = "Title",
-                    body = "bodyMessage",
+                notificationId = Random.nextInt(0, Int.MAX_VALUE)
+                notifier.notify {
+                    id = notificationId
+                    title = "Title from KMPNotifier"
+                    body = "Body message from KMPNotifier"
                     payloadData = mapOf(
                         Notifier.KEY_URL to "https://github.com/mirzemehdi/KMPNotifier/",
                         "extraKey" to "randomValue"
                     )
-                )
+                    image = NotificationImage.Url("https://github.com/user-attachments/assets/a0f38159-b31d-4a47-97a7-cc230e15d30b")
+                }
             }) {
                 Text("Send Local Notification")
             }
