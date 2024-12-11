@@ -55,13 +55,13 @@ fun App() {
                 notificationId = Random.nextInt(0, Int.MAX_VALUE)
                 notifier.notify {
                     id = notificationId
-                    title = "Title"
-                    body = "bodyMessage"
+                    title = "Title from KMPNotifier"
+                    body = "Body message from KMPNotifier"
                     payloadData = mapOf(
                         Notifier.KEY_URL to "https://github.com/mirzemehdi/KMPNotifier/",
                         "extraKey" to "randomValue"
                     )
-                    image = NotificationImage.Url("https://kappmaker.com/images/facebook-card.png")
+                    image = NotificationImage.Url("https://github.com/user-attachments/assets/a0f38159-b31d-4a47-97a7-cc230e15d30b")
                 }
             }) {
                 Text("Send Local Notification")
