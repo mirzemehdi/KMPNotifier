@@ -2,22 +2,63 @@ public final class com/mmk/kmpnotifier/extensions/DesktopPlatformExtKt {
 	public static final fun composeDesktopResourcesPath ()Ljava/lang/String;
 }
 
+public abstract class com/mmk/kmpnotifier/notification/NotificationImage {
+}
+
+public final class com/mmk/kmpnotifier/notification/NotificationImage$File : com/mmk/kmpnotifier/notification/NotificationImage {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/mmk/kmpnotifier/notification/NotificationImage$File;
+	public static synthetic fun copy$default (Lcom/mmk/kmpnotifier/notification/NotificationImage$File;Ljava/lang/String;ILjava/lang/Object;)Lcom/mmk/kmpnotifier/notification/NotificationImage$File;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getPath ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/mmk/kmpnotifier/notification/NotificationImage$Url : com/mmk/kmpnotifier/notification/NotificationImage {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lcom/mmk/kmpnotifier/notification/NotificationImage$Url;
+	public static synthetic fun copy$default (Lcom/mmk/kmpnotifier/notification/NotificationImage$Url;Ljava/lang/String;ILjava/lang/Object;)Lcom/mmk/kmpnotifier/notification/NotificationImage$Url;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getUrl ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract interface class com/mmk/kmpnotifier/notification/Notifier {
 	public static final field Companion Lcom/mmk/kmpnotifier/notification/Notifier$Companion;
-	public static final field KEY_URL Ljava/lang/String;
 	public abstract fun notify (ILjava/lang/String;Ljava/lang/String;Ljava/util/Map;)V
 	public abstract fun notify (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)I
+	public abstract fun notify (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun remove (I)V
 	public abstract fun removeAll ()V
 }
 
 public final class com/mmk/kmpnotifier/notification/Notifier$Companion {
-	public static final field KEY_URL Ljava/lang/String;
+	public final fun getKEY_URL ()Ljava/lang/String;
+	public final fun setKEY_URL (Ljava/lang/String;)V
 }
 
 public final class com/mmk/kmpnotifier/notification/Notifier$DefaultImpls {
 	public static synthetic fun notify$default (Lcom/mmk/kmpnotifier/notification/Notifier;ILjava/lang/String;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)V
 	public static synthetic fun notify$default (Lcom/mmk/kmpnotifier/notification/Notifier;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)I
+}
+
+public final class com/mmk/kmpnotifier/notification/NotifierBuilder {
+	public fun <init> ()V
+	public final fun getBody ()Ljava/lang/String;
+	public final fun getId ()I
+	public final fun getImage ()Lcom/mmk/kmpnotifier/notification/NotificationImage;
+	public final fun getPayloadData ()Ljava/util/Map;
+	public final fun getTitle ()Ljava/lang/String;
+	public final fun payload (Lkotlin/jvm/functions/Function1;)V
+	public final fun setBody (Ljava/lang/String;)V
+	public final fun setId (I)V
+	public final fun setImage (Lcom/mmk/kmpnotifier/notification/NotificationImage;)V
+	public final fun setPayloadData (Ljava/util/Map;)V
+	public final fun setTitle (Ljava/lang/String;)V
 }
 
 public final class com/mmk/kmpnotifier/notification/NotifierManager {
@@ -27,6 +68,7 @@ public final class com/mmk/kmpnotifier/notification/NotifierManager {
 	public final fun getPermissionUtil ()Lcom/mmk/kmpnotifier/permission/PermissionUtil;
 	public final fun getPushNotifier ()Lcom/mmk/kmpnotifier/notification/PushNotifier;
 	public final fun initialize (Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration;)V
+	public final fun setListener (Lcom/mmk/kmpnotifier/notification/NotifierManager$Listener;)V
 }
 
 public abstract interface class com/mmk/kmpnotifier/notification/NotifierManager$Listener {

@@ -235,16 +235,21 @@ If you are using mac make sure you also allow notifications for browser from sys
 You can send either local or push notification.
 
 ### Local Notification
-Local notifications are supported on Android, iOS, JS and wasm targets. 
+Local notifications are supported on Android, iOS, JS and wasm targets. Image is supported on Android and iOS 
 #### Send notification
 
 ```kotlin
 val notifier = NotifierManager.getLocalNotifier()
-val notificationId = notifier.notify("Title", "Body") 
-// or you can use below to specify ID yourself
-notifier.notify(1, "Title", "Body")
-
-
+notifier.notify {
+  id= Random.nextInt(0, Int.MAX_VALUE)
+  title = "Title from KMPNotifier"
+  body = "Body message from KMPNotifier"
+  payloadData = mapOf(
+    Notifier.KEY_URL to "https://github.com/mirzemehdi/KMPNotifier/",
+    "extraKey" to "randomValue"
+  )
+  image = NotificationImage.Url("https://github.com/user-attachments/assets/a0f38159-b31d-4a47-97a7-cc230e15d30b")
+}
 ```
 
 #### Remove notification by Id or all notifications

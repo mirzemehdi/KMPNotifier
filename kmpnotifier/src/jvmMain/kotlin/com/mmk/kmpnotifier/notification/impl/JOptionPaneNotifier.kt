@@ -1,6 +1,7 @@
 package com.mmk.kmpnotifier.notification.impl
 
 import com.mmk.kmpnotifier.notification.Notifier
+import com.mmk.kmpnotifier.notification.NotifierBuilder
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import javax.swing.ImageIcon
 import javax.swing.JOptionPane
@@ -10,15 +11,30 @@ internal class JOptionPaneNotifier(private val configuration: NotificationPlatfo
 
     override fun notify(title: String, body: String, payloadData: Map<String, String>): Int {
         val id = -1
-        notify(id = id, title = title, body = body, payloadData)
+        notify {
+            this.id = id
+            this.title = title
+            this.body = body
+            this.payloadData = payloadData
+        }
         return id
     }
 
     override fun notify(id: Int, title: String, body: String, payloadData: Map<String, String>) {
+        notify {
+            this.id = id
+            this.title = title
+            this.body = body
+            this.payloadData = payloadData
+        }
+    }
+
+    override fun notify(block: NotifierBuilder.() -> Unit) {
+        val builder = NotifierBuilder().apply(block)
         JOptionPane.showMessageDialog(
             null,
-            body,
-            title,
+            builder.body,
+            builder.title,
             JOptionPane.INFORMATION_MESSAGE,
             ImageIcon(configuration.notificationIconPath)
         )

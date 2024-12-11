@@ -1,14 +1,12 @@
 package com.mmk.kmpnotifier.notification
 
-import org.koin.core.scope.Scope
-
 /**
  * Class that represent local notification
  */
 public interface Notifier {
 
     public companion object {
-        public const val KEY_URL: String = "URL"
+        public var KEY_URL: String = "URL"
     }
 
     /**
@@ -37,6 +35,12 @@ public interface Notifier {
         body: String,
         payloadData: Map<String, String> = emptyMap()
     )
+
+    /**
+     * Sends local notification to device,
+     * with notification builder that allows you to set notification params
+     */
+    public fun notify(block: NotifierBuilder.() -> Unit)
 
 
     /**

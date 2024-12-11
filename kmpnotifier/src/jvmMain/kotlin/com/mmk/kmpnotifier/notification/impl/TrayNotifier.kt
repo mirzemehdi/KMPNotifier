@@ -1,6 +1,7 @@
 package com.mmk.kmpnotifier.notification.impl
 
 import com.mmk.kmpnotifier.notification.Notifier
+import com.mmk.kmpnotifier.notification.NotifierBuilder
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import java.awt.SystemTray
 import java.awt.Toolkit
@@ -25,7 +26,12 @@ internal class TrayNotifier(private val configuration: NotificationPlatformConfi
     override fun notify(title: String, body: String, payloadData: Map<String, String>): Int {
         if (isSupported.not()) return -1
         val notificationID = Random.nextInt(0, Int.MAX_VALUE)
-        notify(notificationID, title, body, payloadData)
+        notify {
+            this.id = notificationID
+            this.title = title
+            this.body = body
+            this.payloadData = payloadData
+        }
         return notificationID
     }
 
@@ -35,14 +41,24 @@ internal class TrayNotifier(private val configuration: NotificationPlatformConfi
         body: String,
         payloadData: Map<String, String>
     ) {
+        notify {
+            this.id = id
+            this.title = title
+            this.body = body
+            this.payloadData = payloadData
+        }
+    }
+
+    override fun notify(block: NotifierBuilder.() -> Unit) {
+        val builder = NotifierBuilder().apply(block)
         if (isSupported.not()) return
         val icon = Toolkit.getDefaultToolkit().getImage(configuration.notificationIconPath)
         val trayIcon = TrayIcon(icon).apply {
             isImageAutoSize = true
         }
         SystemTray.getSystemTray().add(trayIcon)
-            .also { trayIcons[id] = trayIcon }
-        trayIcon.displayMessage(title, body, TrayIcon.MessageType.INFO)
+            .also { trayIcons[builder.id] = trayIcon }
+        trayIcon.displayMessage(builder.title, builder.body, TrayIcon.MessageType.INFO)
     }
 
     override fun remove(id: Int) {
