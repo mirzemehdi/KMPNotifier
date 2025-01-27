@@ -1,3 +1,5 @@
+@file:Suppress("UnusedReceiverParameter")
+
 package com.mmk.kmpnotifier.extensions
 
 import com.mmk.kmpnotifier.Constants.KEY_IOS_FIREBASE_NOTIFICATION
@@ -5,7 +7,6 @@ import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.NotifierManagerImpl
 import com.mmk.kmpnotifier.notification.PayloadData
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
-import platform.UserNotifications.UNMutableNotificationContent
 import platform.UserNotifications.UNNotificationContent
 
 /***
@@ -23,18 +24,25 @@ import platform.UserNotifications.UNNotificationContent
  */
 public fun NotifierManager.onApplicationDidReceiveRemoteNotification(userInfo: Map<Any?, *>) {
     val payloadData = userInfo.asPayloadData()
-    if (payloadData.containsKey(KEY_IOS_FIREBASE_NOTIFICATION))
+    if (payloadData.containsKey(KEY_IOS_FIREBASE_NOTIFICATION)) {
         NotifierManagerImpl.onPushPayloadData(payloadData)
+    }
 }
 
 internal fun NotifierManager.onUserNotification(notificationContent: UNNotificationContent) {
     val userInfo = notificationContent.userInfo
+    val payloadData = userInfo.asPayloadData()
     val hasNotification = notificationContent.title != null || notificationContent.body != null
-    if (notificationContent.isPushNotification() && hasNotification) NotifierManagerImpl.onPushNotification(
-        title = notificationContent.title,
-        body = notificationContent.body
-    )
-    NotifierManager.onApplicationDidReceiveRemoteNotification(userInfo)
+    // Has notification message send as push notification otherwise data notification
+    if (notificationContent.isPushNotification() && hasNotification) {
+        NotifierManagerImpl.onPushNotification(
+            title = notificationContent.title,
+            body = notificationContent.body,
+            data = payloadData,
+        )
+    } else if (payloadData.isNotEmpty()) {
+        NotifierManager.onApplicationDidReceiveRemoteNotification(userInfo)
+    }
 }
 
 internal fun NotifierManager.onNotificationClicked(notificationContent: UNNotificationContent) {
@@ -51,12 +59,13 @@ internal fun NotifierManager.shouldShowNotification(notificationContent: UNNotif
     }
 }
 
-
-internal fun Map<Any?, *>.asPayloadData(): PayloadData {
-    return this.keys
-        .filterNotNull()
-        .filterIsInstance<String>()
-        .associateWith { key -> this[key] }
+internal fun Map<Any?, *>?.asPayloadData(): PayloadData {
+    return this.orEmpty().let { data ->
+        data.keys
+            .filterNotNull()
+            .filterIsInstance<String>()
+            .associateWith { key -> data[key] }
+    }
 }
 
 private fun UNNotificationContent.isPushNotification(): Boolean {

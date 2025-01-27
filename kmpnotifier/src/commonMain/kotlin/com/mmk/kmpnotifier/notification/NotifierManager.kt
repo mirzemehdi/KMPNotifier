@@ -80,7 +80,7 @@ public object NotifierManager {
          * @param title Notification title
          * @param body Notification body message
          */
-        public fun onPushNotification(title: String?, body: String?) {}
+        public fun onPushNotification(title: String?, body: String?, data: PayloadData) {}
 
         /**
          * Called when notification is clicked
