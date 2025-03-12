@@ -2,6 +2,10 @@ public final class com/mmk/kmpnotifier/extensions/DesktopPlatformExtKt {
 	public static final fun composeDesktopResourcesPath ()Ljava/lang/String;
 }
 
+public abstract interface class com/mmk/kmpnotifier/logger/Logger {
+	public abstract fun log (Ljava/lang/String;)V
+}
+
 public abstract class com/mmk/kmpnotifier/notification/NotificationImage {
 }
 
@@ -69,6 +73,7 @@ public final class com/mmk/kmpnotifier/notification/NotifierManager {
 	public final fun getPushNotifier ()Lcom/mmk/kmpnotifier/notification/PushNotifier;
 	public final fun initialize (Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration;)V
 	public final fun setListener (Lcom/mmk/kmpnotifier/notification/NotifierManager$Listener;)V
+	public final fun setLogger (Lcom/mmk/kmpnotifier/logger/Logger;)V
 }
 
 public abstract interface class com/mmk/kmpnotifier/notification/NotifierManager$Listener {

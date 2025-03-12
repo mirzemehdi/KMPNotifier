@@ -4,10 +4,9 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.mmk.kmpnotifier.Constants
 import com.mmk.kmpnotifier.extensions.shouldShowNotification
+import com.mmk.kmpnotifier.logger.currentLogger
 import com.mmk.kmpnotifier.notification.Notifier
-import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.NotifierManagerImpl
-import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 
 internal class MyFirebaseMessagingService : FirebaseMessagingService() {
 
@@ -15,7 +14,7 @@ internal class MyFirebaseMessagingService : FirebaseMessagingService() {
     private val notifier: Notifier by lazy { notifierManager.getLocalNotifier() }
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        println("FirebaseMessaging: onNewToken is called")
+        currentLogger.log("FirebaseMessaging: onNewToken is called")
         notifierManager.onNewToken(token)
     }
 

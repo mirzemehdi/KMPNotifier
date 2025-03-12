@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import com.mmk.kmpnotifier.notification.NotificationImage
 import com.mmk.kmpnotifier.notification.Notifier
 import com.mmk.kmpnotifier.notification.NotifierManager
-import io.github.mirzemehdi.sample.generated.resources.Res
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import kotlin.random.Random
 
@@ -29,8 +28,10 @@ import kotlin.random.Random
 fun App() {
     var myPushNotificationToken by remember { mutableStateOf("") }
     LaunchedEffect(true) {
-
         println("LaunchedEffectApp is called")
+        NotifierManager.setLogger { message ->
+            println(message)
+        }
         NotifierManager.addListener(object : NotifierManager.Listener {
             override fun onNewToken(token: String) {
                 myPushNotificationToken = token
@@ -61,7 +62,8 @@ fun App() {
                         Notifier.KEY_URL to "https://github.com/mirzemehdi/KMPNotifier/",
                         "extraKey" to "randomValue"
                     )
-                    image = NotificationImage.Url("https://github.com/user-attachments/assets/a0f38159-b31d-4a47-97a7-cc230e15d30b")
+                    image =
+                        NotificationImage.Url("https://github.com/user-attachments/assets/a0f38159-b31d-4a47-97a7-cc230e15d30b")
                 }
             }) {
                 Text("Send Local Notification")

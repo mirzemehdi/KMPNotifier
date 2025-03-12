@@ -1,5 +1,6 @@
 package com.mmk.kmpnotifier.notification
 
+import com.mmk.kmpnotifier.logger.Logger
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import com.mmk.kmpnotifier.permission.PermissionUtil
 
@@ -89,5 +90,13 @@ public object NotifierManager {
         public fun onNotificationClicked(data: PayloadData) {}
     }
 
-
+    /**
+     * Sets a custom logger for the library to use.
+     * By default, the library uses an empty logger that doesn't log anything.
+     *
+     * @param logger The logger to use
+     */
+    public fun setLogger(logger: Logger) {
+        NotifierManagerImpl.setLogger(logger)
+    }
 }
