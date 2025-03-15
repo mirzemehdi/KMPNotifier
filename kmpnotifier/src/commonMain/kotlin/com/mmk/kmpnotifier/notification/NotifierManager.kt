@@ -70,6 +70,8 @@ public object NotifierManager {
 
         /**
          * Called when "Push Notification" data type message is available
+         * This can be deprecated in future in favor of `onPushNotificationWithPayloadData` method.
+         * @see onPushNotificationWithPayloadData For Receiving one callback instead of two
          * @see onPushNotification for receiving "Push Notification" notification type message.
          * @param data Push Notification Payload Data
          */
@@ -77,11 +79,21 @@ public object NotifierManager {
 
         /**
          * Called when "Push Notification" notification type message is received.
+         * This can be deprecated in future in favor of `onPushNotificationWithPayloadData` method.
+         * @see onPushNotificationWithPayloadData For Receiving one callback instead of two
          * @see onPayloadData for receiving "Push Notification" data type message.
          * @param title Notification title
          * @param body Notification body message
          */
         public fun onPushNotification(title: String?, body: String?) {}
+
+        /**
+         * Called when "Push Notification"  is received.
+         * @param title Notification title
+         * @param body Notification body message
+         * @param data Notification Payload data
+         */
+        public fun onPushNotificationWithPayloadData(title: String?, body: String?, data: PayloadData) {}
 
         /**
          * Called when notification is clicked

@@ -150,6 +150,7 @@ internal class IosNotifier(
 
 
     internal class NotificationDelegate : UNUserNotificationCenterDelegateProtocol, NSObject() {
+        // This is called for you to handle the tapped on notification action
         override fun userNotificationCenter(
             center: UNUserNotificationCenter,
             didReceiveNotificationResponse: UNNotificationResponse,
@@ -161,6 +162,8 @@ internal class IosNotifier(
             if (NotifierManager.shouldShowNotification(notificationContent)) withCompletionHandler()
         }
 
+        // Asks the delegate how to handle a notification that arrived while the app was running
+        //  in the foreground.
         override fun userNotificationCenter(
             center: UNUserNotificationCenter,
             willPresentNotification: UNNotification,
@@ -168,9 +171,9 @@ internal class IosNotifier(
         ) {
             val notificationContent = willPresentNotification.request.content
             NotifierManager.onUserNotification(notificationContent)
-            if (NotifierManager.shouldShowNotification(notificationContent)) withCompletionHandler(
-                IosPermissionUtil.NOTIFICATION_PERMISSIONS
-            )
+            if (NotifierManager.shouldShowNotification(notificationContent)) {
+                withCompletionHandler(IosPermissionUtil.NOTIFICATION_PERMISSIONS)
+            }
         }
     }
 }
