@@ -29,9 +29,6 @@ fun App() {
     var myPushNotificationToken by remember { mutableStateOf("") }
     LaunchedEffect(true) {
         println("LaunchedEffectApp is called")
-        NotifierManager.setLogger { message ->
-            println(message)
-        }
         NotifierManager.addListener(object : NotifierManager.Listener {
             override fun onNewToken(token: String) {
                 myPushNotificationToken = token
