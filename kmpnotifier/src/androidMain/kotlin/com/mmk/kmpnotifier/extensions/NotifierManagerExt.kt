@@ -1,5 +1,3 @@
-@file:Suppress("UnusedReceiverParameter")
-
 package com.mmk.kmpnotifier.extensions
 
 import android.content.Context
@@ -54,7 +52,9 @@ public fun NotifierManager.onCreateOrOnNewIntent(intent: Intent?) {
     }
 
     if (extras.containsKey(KEY_ANDROID_FIREBASE_NOTIFICATION)) {
-        NotifierManagerImpl.onPushPayloadData(payloadData.minus(ACTION_NOTIFICATION_CLICK))
+        val payloadDataWithoutClickAction = payloadData.minus(ACTION_NOTIFICATION_CLICK)
+        NotifierManagerImpl.onPushPayloadData(payloadDataWithoutClickAction)
+        NotifierManagerImpl.onPushNotificationWithPayloadData(data = payloadDataWithoutClickAction)
     }
     if (isNotificationClicked) {
         NotifierManagerImpl.onNotificationClicked(payloadData.minus(ACTION_NOTIFICATION_CLICK))

@@ -26,6 +26,7 @@ public fun NotifierManager.onApplicationDidReceiveRemoteNotification(userInfo: M
     val payloadData = userInfo.asPayloadData()
     if (payloadData.containsKey(KEY_IOS_FIREBASE_NOTIFICATION)) {
         NotifierManagerImpl.onPushPayloadData(payloadData)
+        NotifierManagerImpl.onPushNotificationWithPayloadData(data = payloadData)
     }
 }
 
@@ -33,16 +34,19 @@ internal fun NotifierManager.onUserNotification(notificationContent: UNNotificat
     val userInfo = notificationContent.userInfo
     val payloadData = userInfo.asPayloadData()
     val hasNotification = notificationContent.title != null || notificationContent.body != null
-    // Has notification message send as push notification otherwise data notification
     if (notificationContent.isPushNotification() && hasNotification) {
         NotifierManagerImpl.onPushNotification(
             title = notificationContent.title,
-            body = notificationContent.body,
-            data = payloadData,
+            body = notificationContent.body
         )
-    } else if (payloadData.isNotEmpty()) {
-        NotifierManager.onApplicationDidReceiveRemoteNotification(userInfo)
+        NotifierManagerImpl.onPushNotificationWithPayloadData(
+            title = notificationContent.title,
+            body = notificationContent.body,
+            data = payloadData
+        )
     }
+    NotifierManager.onApplicationDidReceiveRemoteNotification(userInfo)
+
 }
 
 internal fun NotifierManager.onNotificationClicked(notificationContent: UNNotificationContent) {

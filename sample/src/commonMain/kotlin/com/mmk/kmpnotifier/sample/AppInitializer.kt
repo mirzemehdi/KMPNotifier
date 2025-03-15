@@ -13,14 +13,23 @@ object AppInitializer {
                 println("Push Notification onNewToken: $token")
             }
 
-            override fun onPushNotification(title: String?, body: String?, data: PayloadData) {
-                println(
-                    "Push Notification notification type message is received: Title: $title and Body: $body and data: $data"
-                )
+            override fun onPushNotification(title: String?, body: String?) {
+                super.onPushNotification(title, body)
+                println("Push Notification notification type message is received: Title: $title and Body: $body")
             }
 
             override fun onPayloadData(data: PayloadData) {
+                super.onPayloadData(data)
                 println("Push Notification payloadData: $data")
+            }
+
+            override fun onPushNotificationWithPayloadData(
+                title: String?,
+                body: String?,
+                data: PayloadData
+            ) {
+                super.onPushNotificationWithPayloadData(title, body, data)
+                println("Push Notification is received: Title: $title and Body: $body and Notification payloadData: $data")
             }
 
             override fun onNotificationClicked(data: PayloadData) {
