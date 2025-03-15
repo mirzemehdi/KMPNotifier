@@ -3,6 +3,7 @@ package com.mmk.kmpnotifier.firebase
 import cocoapods.FirebaseMessaging.FIRMessaging
 import cocoapods.FirebaseMessaging.FIRMessagingDelegateProtocol
 import com.mmk.kmpnotifier.logger.currentLogger
+import com.mmk.kmpnotifier.notification.IosNotifier
 import com.mmk.kmpnotifier.notification.NotifierManagerImpl
 import com.mmk.kmpnotifier.notification.PushNotifier
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -10,6 +11,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import platform.UIKit.UIApplication
 import platform.UIKit.registerForRemoteNotifications
+import platform.UserNotifications.UNUserNotificationCenter
 import platform.darwin.NSObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -23,6 +25,8 @@ internal class FirebasePushNotifierImpl : PushNotifier {
     init {
         MainScope().launch {
             currentLogger.log("FirebasePushNotifier is initialized")
+            UNUserNotificationCenter.currentNotificationCenter().delegate =
+                IosNotifier.NotificationDelegate()
             FIRMessaging.messaging().delegate = firebaseMessageDelegate
             UIApplication.sharedApplication.registerForRemoteNotifications()
         }
