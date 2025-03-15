@@ -2,6 +2,7 @@ package com.mmk.kmpnotifier.permission
 
 import android.content.Context
 import com.mmk.kmpnotifier.extensions.hasNotificationPermission
+import com.mmk.kmpnotifier.logger.currentLogger
 
 
 /**
@@ -14,7 +15,7 @@ internal class AndroidMockPermissionUtil(private val context: Context) : Permiss
     }
 
     override fun askNotificationPermission(onPermissionResult: (Boolean) -> Unit) = Unit.also {
-        println(
+        currentLogger.log(
             "In Android this function is just a mock. You need to ask permission in Activity " +
                     "using like below: \n" +
                     "val permissionUtil by permissionUtil()\n" +

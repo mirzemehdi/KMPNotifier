@@ -1,6 +1,7 @@
 package com.mmk.kmpnotifier.firebase
 
 import com.google.firebase.messaging.FirebaseMessaging
+import com.mmk.kmpnotifier.logger.currentLogger
 import com.mmk.kmpnotifier.notification.PushNotifier
 import kotlinx.coroutines.tasks.asDeferred
 import kotlin.coroutines.cancellation.CancellationException
@@ -8,7 +9,7 @@ import kotlin.coroutines.cancellation.CancellationException
 internal class FirebasePushNotifierImpl : PushNotifier {
 
     init {
-        println("FirebasePushNotifier is initialized")
+        currentLogger.log("FirebasePushNotifier is initialized")
     }
 
     override suspend fun getToken(): String? {
@@ -17,7 +18,7 @@ internal class FirebasePushNotifierImpl : PushNotifier {
         } catch (e: Exception) {
             if (e is CancellationException) throw e
             null.also {
-                println("Error while getting token: $e")
+                currentLogger.log("Error while getting token: $e")
             }
         }
     }

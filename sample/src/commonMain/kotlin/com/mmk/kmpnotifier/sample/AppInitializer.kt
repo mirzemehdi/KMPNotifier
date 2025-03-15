@@ -8,6 +8,9 @@ import com.mmk.kmpnotifier.notification.PushNotifier
 object AppInitializer {
     fun onApplicationStart() {
         onApplicationStartPlatformSpecific()
+        NotifierManager.setLogger { message ->
+            println(message)
+        }
         NotifierManager.addListener(object : NotifierManager.Listener {
             override fun onNewToken(token: String) {
                 println("Push Notification onNewToken: $token")

@@ -1,5 +1,6 @@
 package com.mmk.kmpnotifier.notification.impl
 
+import com.mmk.kmpnotifier.logger.currentLogger
 import com.mmk.kmpnotifier.notification.Notifier
 import com.mmk.kmpnotifier.notification.NotifierBuilder
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
@@ -16,9 +17,9 @@ internal class TrayNotifier(private val configuration: NotificationPlatformConfi
     companion object {
         val isSupported by lazy {
             SystemTray.isSupported().also {
-                if (it.not()) System.err.println(
-                    "Tray is not supported on the current platform. "
-                )
+                if (it.not()) {
+                    currentLogger.log("Tray is not supported on the current platform.")
+                }
             }
         }
     }

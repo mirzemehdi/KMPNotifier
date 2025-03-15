@@ -3,6 +3,7 @@ package com.mmk.kmpnotifier.notification
 import com.mmk.kmpnotifier.extensions.onNotificationClicked
 import com.mmk.kmpnotifier.extensions.onUserNotification
 import com.mmk.kmpnotifier.extensions.shouldShowNotification
+import com.mmk.kmpnotifier.logger.currentLogger
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import com.mmk.kmpnotifier.permission.IosPermissionUtil
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -83,7 +84,7 @@ internal class IosNotifier(
                     trigger = trigger
                 )
                 notificationCenter.addNotificationRequest(notificationRequest) { error ->
-                    error?.let { println("Error showing notification: $error") }
+                    error?.let { currentLogger.log("Error showing notification: $error") }
                 }
             }
         }
@@ -141,7 +142,7 @@ internal class IosNotifier(
                 }
             } catch (e: Exception) {
                 if (e is CancellationException) throw e
-                println("Error creating notification attachment: $e")
+                currentLogger.log("Error creating notification attachment: $e")
                 null
             }
         }
@@ -176,6 +177,3 @@ internal class IosNotifier(
         }
     }
 }
-
-
-
