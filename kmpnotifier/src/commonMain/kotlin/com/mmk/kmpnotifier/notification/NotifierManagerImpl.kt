@@ -55,6 +55,22 @@ internal object NotifierManagerImpl : KMPKoinComponent() {
         listeners.forEach { it.onPushNotification(title = title, body = body) }
     }
 
+    fun onPushNotificationWithPayloadData(
+        title: String? = null,
+        body: String? = null,
+        data: PayloadData
+    ) {
+        println("Received Push Notification")
+        if (listeners.size == 0) println("There is no listener to notify onPushNotificationWithPayloadData")
+        listeners.forEach {
+            it.onPushNotificationWithPayloadData(
+                title = title,
+                body = body,
+                data = data
+            )
+        }
+    }
+
     fun onNotificationClicked(data: PayloadData) {
         println("Notification is clicked")
         if (listeners.size == 0) println("There is no listener to notify onPushPayloadData")

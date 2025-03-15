@@ -5,14 +5,13 @@ import com.google.firebase.messaging.RemoteMessage
 import com.mmk.kmpnotifier.Constants
 import com.mmk.kmpnotifier.extensions.shouldShowNotification
 import com.mmk.kmpnotifier.notification.Notifier
-import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.NotifierManagerImpl
-import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 
 internal class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     private val notifierManager by lazy { NotifierManagerImpl }
     private val notifier: Notifier by lazy { notifierManager.getLocalNotifier() }
+
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         println("FirebaseMessaging: onNewToken is called")
@@ -22,20 +21,29 @@ internal class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
         val payloadData = message.data
-        message.notification?.let {
+        val notification = message.notification
+        notification?.let {
             if (notifierManager.shouldShowNotification())
                 notifier.notify(
-                    title = it.title ?: "",
-                    body = it.body ?: "",
+                    title = notification.title ?: "",
+                    body = notification.body ?: "",
                     payloadData = payloadData
                 )
 
-            notifierManager.onPushNotification(title = it.title, body = it.body)
+            notifierManager.onPushNotification(title = notification.title, body = notification.body)
         }
-        if (payloadData.isNotEmpty()) {
-            val data =
-                payloadData + mapOf(Constants.ACTION_NOTIFICATION_CLICK to Constants.ACTION_NOTIFICATION_CLICK)
-            notifierManager.onPushPayloadData(data)
+        val payloadDataWithClickAction = payloadData
+            .takeIf { it.isNotEmpty() }
+            ?.plus(Constants.ACTION_NOTIFICATION_CLICK to Constants.ACTION_NOTIFICATION_CLICK)
+            ?: payloadData
+
+        if (payloadDataWithClickAction.isNotEmpty()) {
+            notifierManager.onPushPayloadData(payloadDataWithClickAction)
         }
+        notifierManager.onPushNotificationWithPayloadData(
+            title = notification?.title,
+            body = notification?.body,
+            data = payloadDataWithClickAction
+        )
     }
 }

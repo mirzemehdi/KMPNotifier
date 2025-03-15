@@ -51,11 +51,14 @@ public fun NotifierManager.onCreateOrOnNewIntent(intent: Intent?) {
         value?.let { payloadData[key] = it }
     }
 
-
-    if (extras.containsKey(KEY_ANDROID_FIREBASE_NOTIFICATION))
-        NotifierManagerImpl.onPushPayloadData(payloadData.minus(ACTION_NOTIFICATION_CLICK))
-    if (isNotificationClicked)
+    if (extras.containsKey(KEY_ANDROID_FIREBASE_NOTIFICATION)) {
+        val payloadDataWithoutClickAction = payloadData.minus(ACTION_NOTIFICATION_CLICK)
+        NotifierManagerImpl.onPushPayloadData(payloadDataWithoutClickAction)
+        NotifierManagerImpl.onPushNotificationWithPayloadData(data = payloadDataWithoutClickAction)
+    }
+    if (isNotificationClicked) {
         NotifierManagerImpl.onNotificationClicked(payloadData.minus(ACTION_NOTIFICATION_CLICK))
+    }
 }
 
 
