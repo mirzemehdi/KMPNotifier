@@ -88,9 +88,9 @@ public object NotifierManager {
 
         /**
          * Called when "Push Notification"  is received.
-         * @see onPayloadData for receiving "Push Notification" data type message.
          * @param title Notification title
          * @param body Notification body message
+         * @param data Notification Payload data
          */
         public fun onPushNotificationWithPayloadData(title: String?, body: String?, data: PayloadData) {}
 
