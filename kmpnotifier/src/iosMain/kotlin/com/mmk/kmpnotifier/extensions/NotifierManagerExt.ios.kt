@@ -39,14 +39,15 @@ internal fun NotifierManager.onUserNotification(notificationContent: UNNotificat
             title = notificationContent.title,
             body = notificationContent.body
         )
+    }
+    if (notificationContent.isPushNotification()) {
+        NotifierManagerImpl.onPushPayloadData(payloadData)
         NotifierManagerImpl.onPushNotificationWithPayloadData(
             title = notificationContent.title,
             body = notificationContent.body,
             data = payloadData
         )
     }
-    NotifierManager.onApplicationDidReceiveRemoteNotification(userInfo)
-
 }
 
 internal fun NotifierManager.onNotificationClicked(notificationContent: UNNotificationContent) {
