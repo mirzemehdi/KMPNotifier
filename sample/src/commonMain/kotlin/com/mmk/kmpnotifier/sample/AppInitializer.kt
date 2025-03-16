@@ -9,7 +9,7 @@ object AppInitializer {
     fun onApplicationStart() {
         onApplicationStartPlatformSpecific()
         NotifierManager.setLogger { message ->
-            println(message)
+            println("KMPNotifier: $message")
         }
         NotifierManager.addListener(object : NotifierManager.Listener {
             override fun onNewToken(token: String) {

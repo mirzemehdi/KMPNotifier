@@ -62,8 +62,8 @@ internal object NotifierManagerImpl : KMPKoinComponent() {
         body: String? = null,
         data: PayloadData
     ) {
-        println("Received Push Notification")
-        if (listeners.size == 0) println("There is no listener to notify onPushNotificationWithPayloadData")
+        currentLogger.log("Received Push Notification")
+        if (listeners.size == 0) currentLogger.log("There is no listener to notify onPushNotificationWithPayloadData")
         listeners.forEach {
             it.onPushNotificationWithPayloadData(
                 title = title,
