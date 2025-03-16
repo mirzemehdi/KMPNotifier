@@ -1,6 +1,6 @@
 # KMPNotifier - Kotlin Multiplatform Push Notification
 [![Build](https://github.com/mirzemehdi/KMPNotifier/actions/workflows/build.yml/badge.svg)](https://github.com/mirzemehdi/KMPNotifier/actions/workflows/build.yml) 
-[![Kotlin](https://img.shields.io/badge/Kotlin-2.0.20-blue.svg?style=flat&logo=kotlin)](https://kotlinlang.org)
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.1.10-blue.svg?style=flat&logo=kotlin)](https://kotlinlang.org)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.mirzemehdi/kmpnotifier?color=blue)](https://search.maven.org/search?q=g:io.github.mirzemehdi)
 
 ![badge-android](http://img.shields.io/badge/platform-android-6EDB8D.svg?style=flat)
@@ -143,7 +143,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
       //You can still get notification content using #onPushNotification listener method.
       NotifierManager.shared.initialize(configuration: NotificationPlatformConfigurationIos(
             showPushNotification: true,
-            askNotificationPermissionOnStart: true)
+            askNotificationPermissionOnStart: true,
+            notificationSoundName: nil
+          )
       )
       
     return true
@@ -270,6 +272,16 @@ In this method you can send notification token to the server.
 NotifierManager.addListener(object : NotifierManager.Listener {
   override fun onNewToken(token: String) {
     println("onNewToken: $token") //Update user token in the server if needed
+  }
+}) 
+```
+
+#### Receive Notification and Data payload in one callback
+```kotlin
+NotifierManager.addListener(object : NotifierManager.Listener {
+  override onPushNotificationWithPayloadData(title: String?, body: String?, data: PayloadData) {
+    //PayloadData is just typeAlias for Map<String,*>.
+    println("Push Notification is received: Title: $title and Body: $body and Notification payloadData: $data")
   }
 }) 
 ```
