@@ -1,5 +1,6 @@
 package com.mmk.kmpnotifier.notification.impl
 
+import com.mmk.kmpnotifier.logger.currentLogger
 import com.mmk.kmpnotifier.notification.Notifier
 import com.mmk.kmpnotifier.notification.NotifierBuilder
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
@@ -41,10 +42,10 @@ internal class JOptionPaneNotifier(private val configuration: NotificationPlatfo
     }
 
     override fun remove(id: Int) {
-        println("No remove functionality")
+        currentLogger.log("No remove functionality")
     }
 
     override fun removeAll() {
-        println("No removeAll functionality")
+        currentLogger.log("No removeAll functionality")
     }
 }

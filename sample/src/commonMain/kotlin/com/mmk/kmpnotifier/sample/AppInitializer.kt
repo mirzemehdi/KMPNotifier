@@ -2,11 +2,15 @@ package com.mmk.kmpnotifier.sample
 
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.PayloadData
+import com.mmk.kmpnotifier.notification.PushNotifier
 
 
 object AppInitializer {
     fun onApplicationStart() {
         onApplicationStartPlatformSpecific()
+        NotifierManager.setLogger { message ->
+            println("KMPNotifier: $message")
+        }
         NotifierManager.addListener(object : NotifierManager.Listener {
             override fun onNewToken(token: String) {
                 println("Push Notification onNewToken: $token")
@@ -22,8 +26,16 @@ object AppInitializer {
                 println("Push Notification payloadData: $data")
             }
 
+            override fun onPushNotificationWithPayloadData(
+                title: String?,
+                body: String?,
+                data: PayloadData
+            ) {
+                super.onPushNotificationWithPayloadData(title, body, data)
+                println("Push Notification is received: Title: $title and Body: $body and Notification payloadData: $data")
+            }
+
             override fun onNotificationClicked(data: PayloadData) {
-                super.onNotificationClicked(data)
                 println("Notification clicked, Notification payloadData: $data")
             }
         })

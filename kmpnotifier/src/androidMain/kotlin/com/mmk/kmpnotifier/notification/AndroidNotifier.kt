@@ -17,7 +17,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.IOException
 import java.net.URL
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.random.Random
@@ -62,7 +61,7 @@ internal class AndroidNotifier(
                 )
         }
         val notificationManager = context.notificationManager ?: return
-        val pendingIntent = getPendingIntent(builder.payloadData)
+        val pendingIntent = getPendingIntent(builder.payloadData, builder.id)
         notificationChannelFactory.createChannels()
         scope.launch {
             val imageBitmap = builder.image?.asBitmap()
@@ -104,7 +103,7 @@ internal class AndroidNotifier(
         notificationManager.cancelAll()
     }
 
-    private fun getPendingIntent(payloadData: Map<String, String>): PendingIntent? {
+    private fun getPendingIntent(payloadData: Map<String, String>, id: Int): PendingIntent? {
         val intent = getLauncherActivityIntent()?.apply {
             putExtra(ACTION_NOTIFICATION_CLICK, ACTION_NOTIFICATION_CLICK)
             payloadData.forEach { putExtra(it.key, it.value) }
@@ -116,7 +115,7 @@ internal class AndroidNotifier(
         val flags = PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
 
 
-        return PendingIntent.getActivity(context, 0, intent, flags)
+        return PendingIntent.getActivity(context, id, intent, flags)
     }
 
     private fun getLauncherActivityIntent(): Intent? {

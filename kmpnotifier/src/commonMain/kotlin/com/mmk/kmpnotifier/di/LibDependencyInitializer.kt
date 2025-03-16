@@ -1,6 +1,6 @@
 package com.mmk.kmpnotifier.di
 
-
+import com.mmk.kmpnotifier.logger.currentLogger
 import com.mmk.kmpnotifier.notification.PushNotifier
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import com.mmk.kmpnotifier.permission.PermissionUtil
@@ -8,7 +8,6 @@ import org.koin.core.Koin
 import org.koin.core.KoinApplication
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
-
 
 internal object LibDependencyInitializer {
     var koinApp: KoinApplication? = null
@@ -34,7 +33,7 @@ internal object LibDependencyInitializer {
 }
 
 private fun Koin.onLibraryInitialized() {
-    println("Library is initialized")
+    currentLogger.log("Library is initialized")
     val permissionUtil by inject<PermissionUtil>()
     val platform by inject<Platform>()
     val configuration by inject<NotificationPlatformConfiguration>()
@@ -59,4 +58,3 @@ private fun Koin.onLibraryInitialized() {
 
     }
 }
-

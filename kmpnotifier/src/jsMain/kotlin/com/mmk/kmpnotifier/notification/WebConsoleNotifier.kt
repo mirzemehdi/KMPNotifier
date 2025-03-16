@@ -1,5 +1,6 @@
 package com.mmk.kmpnotifier.notification
 
+import com.mmk.kmpnotifier.logger.currentLogger
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import com.mmk.kmpnotifier.permission.PermissionUtil
 import kotlinx.browser.window
@@ -49,12 +50,12 @@ internal class WebConsoleNotifier(
     }
 
     override fun remove(id: Int) {
-        println("remove notification is not implemented ")
+        currentLogger.log("remove notification is not implemented ")
 
     }
 
     override fun removeAll() {
-        println("remove notification is not implemented ")
+        currentLogger.log("remove notification is not implemented ")
     }
 
     private fun showNotification(title: String, body: String) {

@@ -344,7 +344,13 @@ For setting custom notification sound, check https://github.com/mirzemehdi/KMPNo
 For setting Intent data in Android (for deeplink), check https://github.com/mirzemehdi/KMPNotifier/pull/60#issue-2454489089    
 For permissionUtil, or manually asking notification permission check https://github.com/mirzemehdi/KMPNotifier/pull/27#issuecomment-2083639907  
 
+### Logging
 
+If you want to see internal logs of the library, you can set a logger using:
 
-
-
+```kotlin
+NotifierManager.setLogger { message ->
+    // Log the message
+    println(message)
+}
+```

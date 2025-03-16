@@ -2,6 +2,8 @@ package com.mmk.kmpnotifier.firebase
 
 import cocoapods.FirebaseMessaging.FIRMessaging
 import cocoapods.FirebaseMessaging.FIRMessagingDelegateProtocol
+import com.mmk.kmpnotifier.logger.currentLogger
+import com.mmk.kmpnotifier.notification.IosNotifier
 import com.mmk.kmpnotifier.notification.NotifierManagerImpl
 import com.mmk.kmpnotifier.notification.PushNotifier
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -9,6 +11,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import platform.UIKit.UIApplication
 import platform.UIKit.registerForRemoteNotifications
+import platform.UserNotifications.UNUserNotificationCenter
 import platform.darwin.NSObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -21,7 +24,9 @@ internal class FirebasePushNotifierImpl : PushNotifier {
 
     init {
         MainScope().launch {
-            println("FirebasePushNotifier is initialized")
+            currentLogger.log("FirebasePushNotifier is initialized")
+            UNUserNotificationCenter.currentNotificationCenter().delegate =
+                IosNotifier.NotificationDelegate()
             FIRMessaging.messaging().delegate = firebaseMessageDelegate
             UIApplication.sharedApplication.registerForRemoteNotifications()
         }
@@ -32,7 +37,7 @@ internal class FirebasePushNotifierImpl : PushNotifier {
     override suspend fun getToken(): String? = suspendCoroutine { cont ->
         FIRMessaging.messaging().tokenWithCompletion { token, error ->
             cont.resume(token)
-            error?.let { println("Error while getting token: $error") }
+            error?.let { currentLogger.log("Error while getting token: $error") }
         }
 
     }
@@ -56,7 +61,7 @@ internal class FirebasePushNotifierImpl : PushNotifier {
         private val notifierManager by lazy { NotifierManagerImpl }
         override fun messaging(messaging: FIRMessaging, didReceiveRegistrationToken: String?) {
             didReceiveRegistrationToken?.let { token ->
-                println("FirebaseMessaging: onNewToken is called")
+                currentLogger.log("FirebaseMessaging: onNewToken is called")
                 notifierManager.onNewToken(didReceiveRegistrationToken)
             }
         }

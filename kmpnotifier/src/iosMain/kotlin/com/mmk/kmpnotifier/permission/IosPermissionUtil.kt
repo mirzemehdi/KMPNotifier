@@ -24,10 +24,6 @@ internal class IosPermissionUtil(private val notificationCenter: UNUserNotificat
 
     override fun askNotificationPermission(onPermissionResult: (Boolean) -> Unit) {
         notificationCenter.requestAuthorizationWithOptions(NOTIFICATION_PERMISSIONS) { isGranted, _ ->
-            if (isGranted) {
-                UNUserNotificationCenter.currentNotificationCenter().delegate =
-                    IosNotifier.NotificationDelegate()
-            }
             onPermissionResult(isGranted)
         }
     }
