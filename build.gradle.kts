@@ -16,8 +16,13 @@ plugins {
     id("com.google.gms.google-services") version "4.4.0" apply false
 }
 
-
-
+apiValidation {
+    @OptIn(kotlinx.validation.ExperimentalBCVApi::class)
+    klib {
+        enabled = true
+    }
+    ignoredProjects += "sample"
+}
 
 allprojects {
     group = "io.github.mirzemehdi"
