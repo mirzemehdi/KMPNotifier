@@ -179,3 +179,9 @@ final object com.mmk.kmpnotifier.notification/NotifierManager { // com.mmk.kmpno
 
 // Targets: [ios]
 final fun (com.mmk.kmpnotifier.notification/NotifierManager).com.mmk.kmpnotifier.extensions/onApplicationDidReceiveRemoteNotification(kotlin.collections/Map<kotlin/Any?, *>) // com.mmk.kmpnotifier.extensions/onApplicationDidReceiveRemoteNotification|onApplicationDidReceiveRemoteNotification@com.mmk.kmpnotifier.notification.NotifierManager(kotlin.collections.Map<kotlin.Any?,*>){}[0]
+
+// Targets: [ios]
+final fun (com.mmk.kmpnotifier.notification/NotifierManager).com.mmk.kmpnotifier.extensions/onNotificationClicked(platform.UserNotifications/UNNotificationContent) // com.mmk.kmpnotifier.extensions/onNotificationClicked|onNotificationClicked@com.mmk.kmpnotifier.notification.NotifierManager(platform.UserNotifications.UNNotificationContent){}[0]
+
+// Targets: [ios]
+final fun (com.mmk.kmpnotifier.notification/NotifierManager).com.mmk.kmpnotifier.extensions/onUserNotification(platform.UserNotifications/UNNotificationContent) // com.mmk.kmpnotifier.extensions/onUserNotification|onUserNotification@com.mmk.kmpnotifier.notification.NotifierManager(platform.UserNotifications.UNNotificationContent){}[0]

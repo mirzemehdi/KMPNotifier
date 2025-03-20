@@ -7,7 +7,10 @@ import com.mmk.kmpnotifier.notification.IosNotifier
 import com.mmk.kmpnotifier.notification.NotifierManagerImpl
 import com.mmk.kmpnotifier.notification.PushNotifier
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import platform.UIKit.UIApplication
 import platform.UIKit.registerForRemoteNotifications
@@ -22,17 +25,17 @@ internal class FirebasePushNotifierImpl : PushNotifier {
 
     private val firebaseMessageDelegate by lazy { FirebaseMessageDelegate() }
 
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+
     init {
-        MainScope().launch {
-            currentLogger.log("FirebasePushNotifier is initialized")
+        scope.launch {
+            currentLogger.log("FirebasePushNotifier is initializing")
             UNUserNotificationCenter.currentNotificationCenter().delegate =
                 IosNotifier.NotificationDelegate()
             FIRMessaging.messaging().delegate = firebaseMessageDelegate
             UIApplication.sharedApplication.registerForRemoteNotifications()
         }
-
     }
-
 
     override suspend fun getToken(): String? = suspendCoroutine { cont ->
         FIRMessaging.messaging().tokenWithCompletion { token, error ->
