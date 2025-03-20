@@ -14,8 +14,9 @@ kotlinx-binary-validator = "0.16.3"
 dokka = "2.0.0"
 firebase-messaging = "24.1.0"
 kotlinx-coroutine = "1.10.1"
-nexusPublish = "2.0.0"
 kotlinx-browser = "0.3"
+mavenPublish = "0.31.0"
+
 
 
 
@@ -43,4 +44,4 @@ kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref =
 kotlinNativeCocoaPods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
 kotlinx-binary-validator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "kotlinx-binary-validator" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
-nexusPublish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexusPublish" }
+mavenPublish = { id = "com.vanniktech.maven.publish", version.ref = "mavenPublish" }
