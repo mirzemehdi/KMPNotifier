@@ -101,25 +101,30 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-      - name: Write secrets to local.properties
-        run: |
-          echo sonatypeUsername="${SONATYPE_USERNAME}" >> "local.properties"
-          echo sonatypePassword="${SONATYPE_PASSWORD}" >> "local.properties"
-          echo gpgKeyPassword="${GPG_KEY_PASSWORD}" >> "local.properties"
-          echo gpgKeySecret="${GPG_KEY_SECRET}" >> "local.properties"
+      - name: Install GPG
         env:
-          SONATYPE_USERNAME: mirzemehdi
-          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-          GPG_KEY_PASSWORD: ${{ secrets.GPG_KEY_PASSWORD }}
-          GPG_KEY_SECRET: ${{ secrets.GPG_KEY_SECRET }}
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+        run: |
+          brew install gpg
+          echo "$SIGNING_KEY" | gpg --dearmor > ${HOME}/secret_key.gpg
 
+      - name: Add Gradle Properties
+        env:
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        run: |
+          echo "mavenCentralUsername=${MAVEN_CENTRAL_USERNAME}" >> gradle.properties
+          echo "mavenCentralPassword=${MAVEN_CENTRAL_PASSWORD}" >> gradle.properties
+          echo "signing.keyId=${SIGNING_KEY_ID}" >> gradle.properties
+          echo "signing.password=${SIGNING_KEY_PASSWORD}" >> gradle.properties
+          echo "signing.secretKeyRingFile=${HOME}/secret_key.gpg" >> gradle.properties
 
-      - name: Publish to sonatype
-        uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1
-        with:
-          arguments: |
-            publishToSonatype
-            closeAndReleaseSonatypeStagingRepository
+      - name: Publish to MavenCentral
+        run: |
+          ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache
+
 
       - name: Create new release from tag
         env:
