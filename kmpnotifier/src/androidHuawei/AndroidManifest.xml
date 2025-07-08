@@ -14,10 +14,10 @@
         </provider>
 
         <service
-            android:name=".firebase.MyFirebaseMessagingService"
+            android:name=".service.HuaweiPushService"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                <action android:name="com.huawei.push.action.MESSAGING_EVENT" />
             </intent-filter>
         </service>
     </application>

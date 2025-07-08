@@ -12,13 +12,13 @@ public fun interface Logger {
     public fun log(message: String)
 }
 
+public fun Logger.log(throwable: Throwable): Unit = log(throwable.message.toString())
+
 /**
  * Default empty logger implementation that doesn't log anything.
  */
 internal object EmptyLogger : Logger {
-    override fun log(message: String) {
-        // Empty
-    }
+    override fun log(message: String) = Unit
 }
 
 /**

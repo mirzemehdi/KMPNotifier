@@ -13,7 +13,6 @@ internal object LibDependencyInitializer {
     var koinApp: KoinApplication? = null
         private set
 
-
     fun initialize(configuration: NotificationPlatformConfiguration) {
         if (isInitialized()) return
         val configModule = module {
@@ -21,15 +20,10 @@ internal object LibDependencyInitializer {
         }
         koinApp = koinApplication {
             modules(configModule + platformModule)
-        }.also {
-            it.koin.onLibraryInitialized()
-        }
-
+        }.also { it.koin.onLibraryInitialized() }
     }
 
     fun isInitialized() = koinApp != null
-
-
 }
 
 private fun Koin.onLibraryInitialized() {
@@ -55,6 +49,5 @@ private fun Koin.onLibraryInitialized() {
                     ?: true
             if (askNotificationPermissionOnStart) permissionUtil.askNotificationPermission()
         }
-
     }
 }

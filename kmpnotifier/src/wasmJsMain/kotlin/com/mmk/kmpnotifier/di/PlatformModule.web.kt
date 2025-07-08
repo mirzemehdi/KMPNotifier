@@ -5,7 +5,6 @@ import com.mmk.kmpnotifier.notification.Notifier
 import com.mmk.kmpnotifier.notification.PushNotifier
 import com.mmk.kmpnotifier.notification.WebConsoleNotifier
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
-import com.mmk.kmpnotifier.permission.EmptyPermissionUtilImpl
 import com.mmk.kmpnotifier.permission.PermissionUtil
 import com.mmk.kmpnotifier.permission.WebPermissionUtilImpl
 import org.koin.core.module.dsl.factoryOf

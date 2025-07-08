@@ -36,6 +36,7 @@ import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfig
  *
  * ```
  */
+@Suppress("UnusedReceiverParameter")
 public fun NotifierManager.onCreateOrOnNewIntent(intent: Intent?) {
     if (intent == null) return
     val extras = intent.extras ?: bundleOf()
@@ -70,6 +71,7 @@ public fun NotifierManager.onCreateOrOnNewIntent(intent: Intent?) {
  * @see NotificationPlatformConfiguration.Android
  *
  */
+@Suppress("UnusedReceiverParameter")
 public fun NotifierManager.initialize(
     context: Context,
     configuration: NotificationPlatformConfiguration
@@ -78,6 +80,7 @@ public fun NotifierManager.initialize(
     NotifierManagerImpl.initialize(configuration)
 }
 
+@Suppress("UnusedReceiverParameter")
 internal fun NotifierManagerImpl.shouldShowNotification(): Boolean {
     val configuration =
         NotifierManagerImpl.getConfiguration() as? NotificationPlatformConfiguration.Android

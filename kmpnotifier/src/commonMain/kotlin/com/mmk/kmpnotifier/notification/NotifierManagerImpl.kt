@@ -47,13 +47,13 @@ internal object NotifierManagerImpl : KMPKoinComponent() {
 
     fun onPushPayloadData(data: PayloadData) {
         currentLogger.log("Received Push Notification payload data")
-        if (listeners.size == 0) currentLogger.log("There is no listener to notify onPushPayloadData")
+        if (listeners.isEmpty()) currentLogger.log("There is no listener to notify onPushPayloadData")
         listeners.forEach { it.onPayloadData(data) }
     }
 
     fun onPushNotification(title: String?, body: String?) {
         currentLogger.log("Received Push Notification notification type message")
-        if (listeners.size == 0) currentLogger.log("There is no listener to notify onPushNotification")
+        if (listeners.isEmpty()) currentLogger.log("There is no listener to notify onPushNotification")
         listeners.forEach { it.onPushNotification(title = title, body = body) }
     }
 
@@ -63,7 +63,7 @@ internal object NotifierManagerImpl : KMPKoinComponent() {
         data: PayloadData
     ) {
         currentLogger.log("Received Push Notification")
-        if (listeners.size == 0) currentLogger.log("There is no listener to notify onPushNotificationWithPayloadData")
+        if (listeners.isEmpty()) currentLogger.log("There is no listener to notify onPushNotificationWithPayloadData")
         listeners.forEach {
             it.onPushNotificationWithPayloadData(
                 title = title,
@@ -75,7 +75,7 @@ internal object NotifierManagerImpl : KMPKoinComponent() {
 
     fun onNotificationClicked(data: PayloadData) {
         currentLogger.log("Notification is clicked")
-        if (listeners.size == 0) currentLogger.log("There is no listener to notify onPushPayloadData")
+        if (listeners.isEmpty()) currentLogger.log("There is no listener to notify onPushPayloadData")
         listeners.forEach { it.onNotificationClicked(data) }
     }
 

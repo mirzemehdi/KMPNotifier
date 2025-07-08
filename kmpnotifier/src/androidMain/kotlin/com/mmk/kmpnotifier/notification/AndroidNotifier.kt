@@ -5,10 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import com.mmk.kmpnotifier.Constants.ACTION_NOTIFICATION_CLICK
 import com.mmk.kmpnotifier.extensions.notificationManager
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
@@ -89,8 +89,6 @@ internal class AndroidNotifier(
             }.build()
             notificationManager.notify(builder.id, notification)
         }
-
-
     }
 
     override fun remove(id: Int) {
@@ -107,14 +105,12 @@ internal class AndroidNotifier(
         val intent = getLauncherActivityIntent()?.apply {
             putExtra(ACTION_NOTIFICATION_CLICK, ACTION_NOTIFICATION_CLICK)
             payloadData.forEach { putExtra(it.key, it.value) }
-            val urlData = payloadData.getOrDefault(Notifier.KEY_URL, null)
-            urlData?.let { setData(Uri.parse(urlData)) }
+            val urlData = payloadData.getOrElse(Notifier.KEY_URL) { null }
+            urlData?.let { setData(urlData.toUri()) }
         }
         intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
         val flags = PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-
-
         return PendingIntent.getActivity(context, id, intent, flags)
     }
 
@@ -123,32 +119,23 @@ internal class AndroidNotifier(
         return packageManager.getLaunchIntentForPackage(context.applicationContext.packageName)
     }
 
-    private suspend fun NotificationImage?.asBitmap(): Bitmap? {
-        return withContext(Dispatchers.IO) {
-            try {
-                when (this@asBitmap) {
-                    null -> null
-                    is NotificationImage.Url -> {
-                        URL(url).openStream().buffered().use { inputStream ->
-                            BitmapFactory.decodeStream(inputStream)
-                        }
-                    }
+    private suspend fun NotificationImage?.asBitmap(): Bitmap? = withContext(Dispatchers.IO) {
+        try {
+            when (this@asBitmap) {
+                null -> null
+                is NotificationImage.Url -> URL(url).openStream().buffered()
+                    .use { inputStream -> BitmapFactory.decodeStream(inputStream) }
 
-                    is NotificationImage.File -> {
-                        BitmapFactory.decodeFile(path)
-                    }
-                }
-            } catch (e: Exception) {
-                if (e is CancellationException) throw e
-                Log.e(
-                    "AndroidNotifier",
-                    "Error while processing notification image. Ensure correct path or internet connection.",
-                    e
-                )
-                null
+                is NotificationImage.File -> BitmapFactory.decodeFile(path)
             }
+        } catch (e: Exception) {
+            if (e is CancellationException) throw e
+            Log.e(
+                "AndroidNotifier",
+                "Error while processing notification image. Ensure correct path or internet connection.",
+                e
+            )
+            null
         }
     }
-
-
 }

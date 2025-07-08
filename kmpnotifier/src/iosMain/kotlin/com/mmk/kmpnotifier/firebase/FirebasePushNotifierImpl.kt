@@ -21,7 +21,7 @@ import kotlin.coroutines.suspendCoroutine
 
 
 @OptIn(ExperimentalForeignApi::class)
-internal class FirebasePushNotifierImpl : PushNotifier {
+internal class FirebasePushNotifierImpl : PushNotifier() {
 
     private val firebaseMessageDelegate by lazy { FirebaseMessageDelegate() }
 
@@ -46,18 +46,18 @@ internal class FirebasePushNotifierImpl : PushNotifier {
     }
 
     override suspend fun deleteMyToken() = suspendCoroutine { cont ->
-        FIRMessaging.messaging().deleteTokenWithCompletion {
-            cont.resume(Unit)
+        FIRMessaging.messaging().deleteTokenWithCompletion { error ->
+            cont.resume(error == null)
         }
     }
 
-    override suspend fun subscribeToTopic(topic: String) {
+    override suspend fun subscribeToTopic(topic: String) = callSafe {
         FIRMessaging.messaging().subscribeToTopic(topic)
-    }
+    }.isSuccess
 
-    override suspend fun unSubscribeFromTopic(topic: String) {
+    override suspend fun unSubscribeFromTopic(topic: String) =callSafe{
         FIRMessaging.messaging().unsubscribeFromTopic(topic)
-    }
+    }.isSuccess
 
 
     private class FirebaseMessageDelegate : FIRMessagingDelegateProtocol, NSObject() {
