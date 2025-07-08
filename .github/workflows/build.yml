@@ -9,9 +9,6 @@ on:
   pull_request:
     branches: [ "main" ]
 
-
-
-
 concurrency:
   group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
   cancel-in-progress: true
@@ -26,15 +23,15 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Setup JDK 17
-        uses: actions/setup-java@v3
+      - uses: actions/checkout@v4
+      - name: Setup JDK 21
+        uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Setup gradle
-        uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1
+        uses: gradle/gradle-build-action@v3
 
       - name: Check api
         run: ./gradlew apiCheck
@@ -51,15 +48,15 @@ jobs:
     name: Build ${{ matrix.config.target }}
     needs: check
     steps:
-      - uses: actions/checkout@v3
-      - name: Setup JDK 17
-        uses: actions/setup-java@v3
+      - uses: actions/checkout@v4
+      - name: Setup JDK 21
+        uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Setup gradle
-        uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1
+        uses: gradle/gradle-build-action@v3
 
       - name: Test ${{ matrix.config.target }} targets
         continue-on-error: ${{ matrix.config.continueOnError }}
@@ -77,14 +74,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup JDK 17
+      - name: Setup JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
       - name: Setup gradle
-        uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1
+        uses: gradle/gradle-build-action@v3
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -125,7 +122,6 @@ jobs:
         run: |
           ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache
 
-
       - name: Create new release from tag
         env:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -133,5 +129,3 @@ jobs:
         with:
           generate_release_notes: true
           token: ${{ env.github_token }}
-
-

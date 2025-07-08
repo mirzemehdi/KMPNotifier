@@ -2,7 +2,6 @@ package com.mmk.kmpnotifier.sample
 
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.PayloadData
-import com.mmk.kmpnotifier.notification.PushNotifier
 
 
 object AppInitializer {

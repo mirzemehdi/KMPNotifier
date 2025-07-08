@@ -6,7 +6,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <io.github.mirzemehdi:kmpnotifier>
+// Library unique name: <KMPNotifierLib:kmpnotifier>
 abstract fun interface com.mmk.kmpnotifier.logger/Logger { // com.mmk.kmpnotifier.logger/Logger|null[0]
     abstract fun log(kotlin/String) // com.mmk.kmpnotifier.logger/Logger.log|log(kotlin.String){}[0]
 }

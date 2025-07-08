@@ -1,3 +1,9 @@
+buildscript {
+    dependencies {
+        classpath(libs.huawei.services)
+    }
+}
+
 plugins {
     // this is necessary to avoid the plugins to be loaded multiple times
     // in each subproject's classloader
@@ -10,7 +16,7 @@ plugins {
     alias(libs.plugins.dokka) apply false
     alias(libs.plugins.kotlinx.binary.validator)
     alias(libs.plugins.mavenPublish) apply false
-    id("com.google.gms.google-services") version "4.4.0" apply false
+    alias(libs.plugins.google.services) apply false
 }
 
 apiValidation {
@@ -22,19 +28,9 @@ apiValidation {
 }
 
 allprojects {
-    group = "io.github.mirzemehdi"
-    version = project.properties["kmpNotifierVersion"] as String
-
-
     val excludedModules = listOf(":sample")
     if (project.path in excludedModules) return@allprojects
 
-    apply(plugin = "org.jetbrains.dokka")
     apply(plugin = "maven-publish")
     apply(plugin = "signing")
 }
-
-
-
-
-

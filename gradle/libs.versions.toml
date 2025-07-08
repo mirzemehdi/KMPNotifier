@@ -1,39 +1,42 @@
 [versions]
-compose = "1.7.8"
-compose-plugin = "1.7.3"
-agp = "8.7.3"
+compose = "1.8.3"
+compose-plugin = "1.8.2"
+agp = "8.11.0"
 android-minSdk = "21"
-android-compileSdk = "35"
-android-targetSdk = "35"
+android-compileSdk = "36"
+android-targetSdk = "36"
 androidx-activityCompose = "1.10.1"
-androidx-core-ktx = "1.15.0"
+androidx-core-ktx = "1.16.0"
 androidx-startup-runtime = "1.2.0"
-kotlin = "2.1.10"
-koin = "4.0.2"
-kotlinx-binary-validator = "0.16.3"
+kotlin = "2.1.21"
+koin = "4.1.0"
+kotlinx-binary-validator = "0.18.0"
 dokka = "2.0.0"
-firebase-messaging = "24.1.0"
-kotlinx-coroutine = "1.10.1"
+firebase-messaging = "24.1.2"
+kotlinx-coroutine = "1.10.2"
 kotlinx-browser = "0.3"
-mavenPublish = "0.31.0"
-
-
-
+mavenPublish = "0.33.0"
+google-services = "4.4.3"
+huawei-push = "6.13.0.300"
+huawei-services = "1.9.3.301"
 
 [libraries]
+gradle-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+gradle-android = { module = "com.android.tools.build:gradle-api", version.ref = "agp" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlinx-coroutine = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutine" }
 kotlinx-browser = { module = "org.jetbrains.kotlinx:kotlinx-browser", version.ref = "kotlinx-browser" }
 compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
-androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidx-core-ktx" }
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core-ktx" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "androidx-activityCompose" }
 androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "androidx-startup-runtime" }
-koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
-firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging-ktx" ,version.ref="firebase-messaging"}
-
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+huawei-push = { module = "com.huawei.hms:push", version.ref = "huawei-push" }
+firebase-messaging = { module = "com.google.firebase:firebase-messaging-ktx", version.ref = "firebase-messaging" }
+huawei-services = { module = "com.huawei.agconnect:agcp", version.ref = "huawei-services" }
 
 [plugins]
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
@@ -45,3 +48,20 @@ kotlinNativeCocoaPods = { id = "org.jetbrains.kotlin.native.cocoapods", version.
 kotlinx-binary-validator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "kotlinx-binary-validator" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 mavenPublish = { id = "com.vanniktech.maven.publish", version.ref = "mavenPublish" }
+google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
+huawei-services = { id = "com.huawei.agconnect" }
+kmpnotifier = { id = "com.mmk.kmpnotifier" }
+kmpnotifier-library = { id = "com.mmk.kmpnotifier.library" }
+
+[bundles]
+androidMain = [
+    "androidx-core-ktx",
+    "firebase-messaging",
+    "androidx-activity-ktx",
+    "androidx-startup-runtime",
+]
+
+commonMain = [
+    "koin-core",
+    "kotlinx-coroutine"
+]
