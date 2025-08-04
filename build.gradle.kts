@@ -10,7 +10,7 @@ plugins {
     alias(libs.plugins.dokka) apply false
     alias(libs.plugins.kotlinx.binary.validator)
     alias(libs.plugins.mavenPublish) apply false
-    id("com.google.gms.google-services") version "4.4.0" apply false
+    id("com.google.gms.google-services") version "4.4.3" apply false
 }
 
 apiValidation {
