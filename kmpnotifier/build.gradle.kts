@@ -1,6 +1,7 @@
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinMultiplatform
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -14,7 +15,7 @@ kotlin {
     androidTarget {
         publishLibraryVariants("release", "debug")
         compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+            jvmTarget.set(JvmTarget.JVM_17)
         }
     }
 
@@ -80,7 +81,6 @@ android {
 
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
-        // targetSdk moved to testOptions/lint as per deprecation warning
     }
 
     packaging {
@@ -131,6 +131,7 @@ mavenPublishing {
             url.set("https://github.com/mirzemehdi/KMPNotifier/issues")
         }
     }
+
 
     publishToMavenCentral()
     signAllPublications()

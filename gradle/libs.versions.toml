@@ -1,7 +1,7 @@
 [versions]
 compose = "1.8.3"
 compose-plugin = "1.8.2"
-agp = "8.12.0"
+agp = "8.10.1" #Update this when updating Android Studio
 android-minSdk = "23"
 android-compileSdk = "36"
 android-targetSdk = "36"
@@ -16,7 +16,7 @@ firebase-messaging = "25.0.0"
 kotlinx-coroutine = "1.10.2"
 kotlinx-browser = "0.4"
 mavenPublish = "0.34.0"
-
+googleServices = "4.4.3"
 
 
 
@@ -45,3 +45,4 @@ kotlinNativeCocoaPods = { id = "org.jetbrains.kotlin.native.cocoapods", version.
 kotlinx-binary-validator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "kotlinx-binary-validator" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 mavenPublish = { id = "com.vanniktech.maven.publish", version.ref = "mavenPublish" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
