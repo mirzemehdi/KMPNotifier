@@ -1,22 +1,22 @@
 [versions]
-compose = "1.7.8"
-compose-plugin = "1.7.3"
-agp = "8.7.3"
-android-minSdk = "21"
-android-compileSdk = "35"
-android-targetSdk = "35"
+compose = "1.8.3"
+compose-plugin = "1.8.2"
+agp = "8.10.1" #Update this when updating Android Studio
+android-minSdk = "23"
+android-compileSdk = "36"
+android-targetSdk = "36"
 androidx-activityCompose = "1.10.1"
-androidx-core-ktx = "1.15.0"
+androidx-core-ktx = "1.16.0"
 androidx-startup-runtime = "1.2.0"
-kotlin = "2.1.10"
-koin = "4.0.2"
-kotlinx-binary-validator = "0.16.3"
+kotlin = "2.2.0"
+koin = "4.1.0"
+kotlinx-binary-validator = "0.18.1"
 dokka = "2.0.0"
-firebase-messaging = "24.1.0"
-kotlinx-coroutine = "1.10.1"
-kotlinx-browser = "0.3"
-mavenPublish = "0.31.0"
-
+firebase-messaging = "25.0.0"
+kotlinx-coroutine = "1.10.2"
+kotlinx-browser = "0.4"
+mavenPublish = "0.34.0"
+googleServices = "4.4.3"
 
 
 
@@ -32,7 +32,7 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "androidx-activityCompose" }
 androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "androidx-startup-runtime" }
 koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
-firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging-ktx" ,version.ref="firebase-messaging"}
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" ,version.ref="firebase-messaging"}
 
 
 [plugins]
@@ -45,3 +45,4 @@ kotlinNativeCocoaPods = { id = "org.jetbrains.kotlin.native.cocoapods", version.
 kotlinx-binary-validator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "kotlinx-binary-validator" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 mavenPublish = { id = "com.vanniktech.maven.publish", version.ref = "mavenPublish" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
