@@ -36,6 +36,8 @@ public abstract interface class com/mmk/kmpnotifier/notification/Notifier {
 	public abstract fun notify (ILjava/lang/String;Ljava/lang/String;Ljava/util/Map;)V
 	public abstract fun notify (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)I
 	public abstract fun notify (Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun notify$default (Lcom/mmk/kmpnotifier/notification/Notifier;ILjava/lang/String;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)V
+	public static synthetic fun notify$default (Lcom/mmk/kmpnotifier/notification/Notifier;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)I
 	public abstract fun remove (I)V
 	public abstract fun removeAll ()V
 }
@@ -77,11 +79,11 @@ public final class com/mmk/kmpnotifier/notification/NotifierManager {
 }
 
 public abstract interface class com/mmk/kmpnotifier/notification/NotifierManager$Listener {
-	public abstract fun onNewToken (Ljava/lang/String;)V
-	public abstract fun onNotificationClicked (Ljava/util/Map;)V
-	public abstract fun onPayloadData (Ljava/util/Map;)V
-	public abstract fun onPushNotification (Ljava/lang/String;Ljava/lang/String;)V
-	public abstract fun onPushNotificationWithPayloadData (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)V
+	public fun onNewToken (Ljava/lang/String;)V
+	public fun onNotificationClicked (Ljava/util/Map;)V
+	public fun onPayloadData (Ljava/util/Map;)V
+	public fun onPushNotification (Ljava/lang/String;Ljava/lang/String;)V
+	public fun onPushNotificationWithPayloadData (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)V
 }
 
 public final class com/mmk/kmpnotifier/notification/NotifierManager$Listener$DefaultImpls {
@@ -163,7 +165,9 @@ public final class com/mmk/kmpnotifier/notification/configuration/NotificationPl
 
 public abstract interface class com/mmk/kmpnotifier/permission/PermissionUtil {
 	public abstract fun askNotificationPermission (Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun askNotificationPermission$default (Lcom/mmk/kmpnotifier/permission/PermissionUtil;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 	public abstract fun hasNotificationPermission (Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun hasNotificationPermission$default (Lcom/mmk/kmpnotifier/permission/PermissionUtil;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 }
 
 public final class com/mmk/kmpnotifier/permission/PermissionUtil$DefaultImpls {
