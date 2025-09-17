@@ -8,7 +8,8 @@ import com.prinum.utils.logger.Logger
 import org.koin.core.component.get
 
 internal object NotifierManagerImpl : KMPKoinComponent() {
-    private val listeners = mutableListOf<NotifierManager.Listener>()
+
+    private val listenersMutableList = mutableListOf<NotifierManager.Listener>()
 
     private const val TAG = "NotifierManagerImpl"
     fun initialize(configuration: NotificationPlatformConfiguration) {
@@ -33,29 +34,33 @@ internal object NotifierManagerImpl : KMPKoinComponent() {
     }
 
     fun addListener(listener: NotifierManager.Listener) {
-        listeners.add(listener)
+        listenersMutableList.add(listener)
     }
 
     fun onNewToken(token: String) {
-        listeners.forEach { it.onNewToken(token) }
+        val listenersList = listenersMutableList.toList()
+        listenersList.forEach { it.onNewToken(token) }
     }
 
     fun onPushPayloadData(data: PayloadData) {
+        val listenersList = listenersMutableList.toList()
         Logger.d(TAG, "Received Push Notification payload data")
-        if (listeners.size == 0) Logger.d(TAG, "There is no listener to notify onPushPayloadData")
-        listeners.forEach { it.onPayloadData(data) }
+        if (listenersList.isEmpty()) Logger.d(TAG, "There is no listener to notify onPushPayloadData")
+        listenersList.forEach { it.onPayloadData(data) }
     }
 
     fun onPushNotification(title: String?, body: String?) {
+        val listenersList = listenersMutableList.toList()
         Logger.d(TAG, "Received Push Notification notification type message")
-        if (listeners.size == 0) println("There is no listener to notify onPushNotification")
-        listeners.forEach { it.onPushNotification(title = title, body = body) }
+        if (listenersList.isEmpty()) println("There is no listener to notify onPushNotification")
+        listenersList.forEach { it.onPushNotification(title = title, body = body) }
     }
 
     fun onNotificationClicked(data: PayloadData) {
+        val listenersList = listenersMutableList.toList()
         Logger.d(TAG, "Notification is clicked")
-        if (listeners.size == 0) Logger.d(TAG, "There is no listener to notify onPushPayloadData")
-        listeners.forEach { it.onNotificationClicked(data) }
+        if (listenersList.isEmpty()) Logger.d(TAG, "There is no listener to notify onPushPayloadData")
+        listenersList.forEach { it.onNotificationClicked(data) }
     }
 
     private fun requireInitialization() {

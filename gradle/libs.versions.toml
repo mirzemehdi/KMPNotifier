@@ -41,7 +41,7 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "androidx-activityCompose" }
 androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "androidx-startup-runtime" }
-prinum-logger = { module = "com.prinum.utils.logger:logger", version = "3.1.4" }
+prinum-logger = { module = "com.prinum.utils.logger:logger", version = "3.3.1" }
 koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
 
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging-ktx" ,version.ref="firebase-messaging"}
