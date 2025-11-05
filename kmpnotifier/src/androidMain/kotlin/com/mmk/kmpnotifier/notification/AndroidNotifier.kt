@@ -9,6 +9,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.mmk.kmpnotifier.Constants
 import com.mmk.kmpnotifier.Constants.ACTION_NOTIFICATION_CLICK
 import com.mmk.kmpnotifier.extensions.notificationManager
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
@@ -37,7 +38,10 @@ internal class AndroidNotifier(
             this.id = notificationID
             this.title = title
             this.body = body
-            this.payloadData = payloadData
+            payloadData[Constants.KEY_ANDROID_FOREGROUND_IMAGE]?.let {
+                this.image = NotificationImage.Url(it)
+            }
+            this.payloadData = payloadData.minus(Constants.KEY_ANDROID_FOREGROUND_IMAGE)
         }
         return notificationID
     }
