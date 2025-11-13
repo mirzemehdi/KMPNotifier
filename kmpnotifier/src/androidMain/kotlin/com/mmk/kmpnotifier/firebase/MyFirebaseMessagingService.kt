@@ -24,12 +24,14 @@ internal class MyFirebaseMessagingService : FirebaseMessagingService() {
         val payloadData = message.data
         val notification = message.notification
         notification?.let {
-            if (notifierManager.shouldShowNotification())
+            if (notifierManager.shouldShowNotification()){
+                payloadData["channelId"] = notification.channelId
                 notifier.notify(
                     title = notification.title ?: "",
                     body = notification.body ?: "",
                     payloadData = payloadData
                 )
+            }
 
             notifierManager.onPushNotification(title = notification.title, body = notification.body)
         }

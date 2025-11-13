@@ -40,7 +40,7 @@ internal actual val platformModule = module {
             androidNotificationConfiguration = configuration,
             notificationChannelFactory = NotificationChannelFactory(
                 context = get(),
-                channelData = configuration.notificationChannelData
+                channelDataList = configuration.notificationChannelDataList
             ),
             permissionUtil = get()
         )
