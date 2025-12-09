@@ -1,22 +1,22 @@
 [versions]
-compose = "1.8.3"
-compose-plugin = "1.8.2"
-agp = "8.10.1" #Update this when updating Android Studio
+compose = "1.10.0"
+compose-plugin = "1.9.3"
+agp = "8.12.3"
 android-minSdk = "23"
 android-compileSdk = "36"
 android-targetSdk = "36"
-androidx-activityCompose = "1.10.1"
-androidx-core-ktx = "1.16.0"
+androidx-activityCompose = "1.12.1"
+androidx-core-ktx = "1.17.0"
 androidx-startup-runtime = "1.2.0"
-kotlin = "2.2.0"
-koin = "4.1.0"
+kotlin = "2.2.21"
+koin = "4.2.0-beta2"
 kotlinx-binary-validator = "0.18.1"
 dokka = "2.0.0"
-firebase-messaging = "25.0.0"
+firebase-messaging = "25.0.1"
 kotlinx-coroutine = "1.10.2"
-kotlinx-browser = "0.4"
-mavenPublish = "0.34.0"
-googleServices = "4.4.3"
+kotlinx-browser = "0.5.0"
+mavenPublish = "0.35.0"
+googleServices = "4.4.4"
 
 
 
