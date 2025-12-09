@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -20,6 +19,7 @@ import kotlinx.coroutines.withContext
 import java.net.URL
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.random.Random
+import androidx.core.net.toUri
 
 
 internal class AndroidNotifier(
@@ -63,13 +63,14 @@ internal class AndroidNotifier(
         val notificationManager = context.notificationManager ?: return
         val pendingIntent = getPendingIntent(builder.payloadData, builder.id)
         notificationChannelFactory.createChannels()
+        val channelId = builder.payloadData["channelId"] ?: androidNotificationConfiguration.notificationChannelDataList.first().id
         scope.launch {
             val imageBitmap = builder.image?.asBitmap()
             val notification = NotificationCompat.Builder(
                 context,
-                androidNotificationConfiguration.notificationChannelData.id
+                channelId
             ).apply {
-                setChannelId(androidNotificationConfiguration.notificationChannelData.id)
+                setChannelId(channelId)
                 setContentTitle(builder.title)
                 setContentText(builder.body)
                 imageBitmap?.let {
@@ -89,8 +90,6 @@ internal class AndroidNotifier(
             }.build()
             notificationManager.notify(builder.id, notification)
         }
-
-
     }
 
     override fun remove(id: Int) {
@@ -108,7 +107,7 @@ internal class AndroidNotifier(
             putExtra(ACTION_NOTIFICATION_CLICK, ACTION_NOTIFICATION_CLICK)
             payloadData.forEach { putExtra(it.key, it.value) }
             val urlData = payloadData.getOrDefault(Notifier.KEY_URL, null)
-            urlData?.let { setData(Uri.parse(urlData)) }
+            urlData?.let { setData(urlData.toUri()) }
         }
         intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 

@@ -11,7 +11,7 @@ public sealed interface NotificationPlatformConfiguration {
      *
      * @param  notificationIconResId icon ResourceId (R.drawable.ic_notification)
      * @param notificationIconColorResId optional icon color ResourceId (R.color.yellow)
-     * @param notificationChannelData optional notification channel data for General or Miscellaneous notifications
+     * @param notificationChannelDataList optional notification channels data for General or Miscellaneous notifications
      * @see NotificationChannelData
      * @param showPushNotification Default value is true, by default when push notification is
      * received it will be shown to user. When set to false, it will not be shown to user,
@@ -21,7 +21,7 @@ public sealed interface NotificationPlatformConfiguration {
     public class Android(
         public val notificationIconResId: Int,
         public val notificationIconColorResId: Int? = null,
-        public val notificationChannelData: NotificationChannelData = NotificationChannelData(),
+        public val notificationChannelDataList: List<NotificationChannelData> = listOf(NotificationChannelData()),
         public val showPushNotification: Boolean = true,
     ) : NotificationPlatformConfiguration {
 
