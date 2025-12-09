@@ -279,7 +279,7 @@ NotifierManager.addListener(object : NotifierManager.Listener {
 #### Receive Notification and Data payload in one callback
 ```kotlin
 NotifierManager.addListener(object : NotifierManager.Listener {
-  override onPushNotificationWithPayloadData(title: String?, body: String?, data: PayloadData) {
+  override fun onPushNotificationWithPayloadData(title: String?, body: String?, data: PayloadData) {
     //PayloadData is just typeAlias for Map<String,*>.
     println("Push Notification is received: Title: $title and Body: $body and Notification payloadData: $data")
   }
