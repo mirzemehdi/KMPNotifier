@@ -23,13 +23,20 @@ internal class MyFirebaseMessagingService : FirebaseMessagingService() {
         super.onMessageReceived(message)
         val payloadData = message.data
         val notification = message.notification
+
         notification?.let {
-            if (notifierManager.shouldShowNotification())
+            if (notifierManager.shouldShowNotification()) {
+                val payloadWithImage = notification.imageUrl?.let { imageUrl ->
+                    payloadData.takeIf { it.isNotEmpty() }
+                        ?.plus(Constants.KEY_ANDROID_FOREGROUND_IMAGE to imageUrl.toString())
+                } ?: payloadData
+
                 notifier.notify(
                     title = notification.title ?: "",
                     body = notification.body ?: "",
-                    payloadData = payloadData
+                    payloadData = payloadWithImage
                 )
+            }
 
             notifierManager.onPushNotification(title = notification.title, body = notification.body)
         }
