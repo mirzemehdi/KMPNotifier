@@ -7,16 +7,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.mmk.kmpnotifier.notification.NotificationAction
 import com.mmk.kmpnotifier.notification.NotificationImage
 import com.mmk.kmpnotifier.notification.Notifier
 import com.mmk.kmpnotifier.notification.NotifierManager
@@ -27,6 +23,8 @@ import kotlin.random.Random
 @Composable
 fun App() {
     var myPushNotificationToken by remember { mutableStateOf("") }
+    var actionMessage by remember { mutableStateOf("No action triggered yet") }
+
     LaunchedEffect(true) {
         println("LaunchedEffectApp is called")
         NotifierManager.addListener(object : NotifierManager.Listener {
@@ -48,7 +46,9 @@ fun App() {
         ) {
             val notifier = remember { NotifierManager.getLocalNotifier() }
             val permissionUtil = remember { NotifierManager.getPermissionUtil() }
+            val scope = rememberCoroutineScope()
             var notificationId by remember { mutableStateOf(0) }
+
             Button(onClick = {
                 notificationId = Random.nextInt(0, Int.MAX_VALUE)
                 notifier.notify {
@@ -76,11 +76,79 @@ fun App() {
                 Text("Remove NotificationID #$notificationId")
             }
 
+            // New advanced notification examples
+            Button(onClick = {
+                notifier.notify {
+                    notificationId = Random.nextInt(0, Int.MAX_VALUE)
+                    title = "Notification with Actions"
+                    body = "This notification has action buttons"
+                    payloadData = mapOf(
+                        Notifier.KEY_URL to "https://github.com/mirzemehdi/KMPNotifier/",
+                        "extraKey" to "randomValue"
+                    )
+                    image =
+                        NotificationImage.Url("https://github.com/user-attachments/assets/a0f38159-b31d-4a47-97a7-cc230e15d30b")
+
+                    actions = listOf(
+                        NotificationAction("done", "Mark Done"),
+                        NotificationAction("snooze", "Snooze 5min"),
+                        NotificationAction(
+                            id = "CUSTOM_SNOOZE",
+                            title = "Snooze",
+                            allowsTextInput = true,
+                            inputLabel = "Minutes"
+                        )
+                    )
+                    scheduledAt = 0L
+                }
+            }) {
+                Text("Notification with Actions")
+            }
+
+            Button(onClick = {
+
+                val futureTime = 10000L // 10 seconds from now (platform will add to current time)
+                notifier.notify {
+                    notificationId = Random.nextInt(0, Int.MAX_VALUE)
+                    title = "Notification with Actions"
+                    body = "This notification has action buttons"
+                    payloadData = mapOf(
+                        Notifier.KEY_URL to "https://github.com/mirzemehdi/KMPNotifier/",
+                        "extraKey" to "randomValue"
+                    )
+                    image =
+                        NotificationImage.Url("https://github.com/user-attachments/assets/a0f38159-b31d-4a47-97a7-cc230e15d30b")
+
+                    actions = listOf(
+                        NotificationAction("done", "Mark Done"),
+                        NotificationAction("snooze", "Snooze 5min"),
+                        NotificationAction(
+                            id = "CUSTOM_SNOOZE",
+                            title = "Snooze",
+                            allowsTextInput = true,
+                            inputLabel = "Minutes"
+                        )
+                    )
+                    scheduledAt = futureTime
+                }
+
+            }) {
+                Text("Schedule Notification (10s)")
+            }
+
+
             Text(
                 modifier = Modifier.padding(20.dp),
                 text = "FirebaseToken: $myPushNotificationToken",
                 style = MaterialTheme.typography.body1,
                 textAlign = TextAlign.Start,
+            )
+
+            Text(
+                modifier = Modifier.padding(20.dp),
+                text = "Action Status: $actionMessage",
+                style = MaterialTheme.typography.body2,
+                textAlign = TextAlign.Center,
             )
 
 

@@ -1,6 +1,8 @@
 package com.mmk.kmpnotifier.notification
 
+import android.app.AlarmManager
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_MUTABLE
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -21,6 +23,11 @@ import java.net.URL
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.random.Random
 
+public const val ACTION_SCHEDULED_NOTIFICATION_FIRED: String =
+    "com.mmk.kmpnotifier.EVENT_SCHEDULED_NOTIFICATION_FIRED_INTERNAL"
+public const val ACTION_SCHEDULED_NOTIFICATION_FIRED_PUBLIC: String =
+    "com.mmk.kmpnotifier.EVENT_SCHEDULED_NOTIFICATION_FIRED"
+
 
 internal class AndroidNotifier(
     private val context: Context,
@@ -30,6 +37,21 @@ internal class AndroidNotifier(
 ) : Notifier {
 
     private val scope by lazy { MainScope() }
+
+    private val alarmManager by lazy { context.getSystemService(Context.ALARM_SERVICE) as AlarmManager }
+
+    companion object {
+        internal const val ACTION_NOTIFICATION_ACTION = "com.mmk.kmpnotifier.NOTIFICATION_ACTION"
+        internal const val EXTRA_NOTIFICATION_REQUEST = "notification_request"
+        internal const val EXTRA_ACTION_ID = "action_id"
+        internal const val EXTRA_NOTIFICATION_ID = "notification_id"
+        internal const val EXTRA_PAYLOAD = "payload"
+        internal const val EXTRA_TITLE = "extra_title"
+        internal const val EXTRA_BODY = "extra_body"
+        internal const val EXTRA_REMOTE_INPUT = "extra_remote_input"
+
+    }
+
 
     override fun notify(title: String, body: String, payloadData: Map<String, String>): Int {
         val notificationID = Random.nextInt(0, Int.MAX_VALUE)
@@ -63,6 +85,12 @@ internal class AndroidNotifier(
         val notificationManager = context.notificationManager ?: return
         val pendingIntent = getPendingIntent(builder.payloadData, builder.id)
         notificationChannelFactory.createChannels()
+
+        if (isScheduledNotification(builder.scheduledAt)) {
+            scheduleNotificationAlarm(builder)
+            return
+        }
+
         scope.launch {
             val imageBitmap = builder.image?.asBitmap()
             val notification = NotificationCompat.Builder(
@@ -82,10 +110,38 @@ internal class AndroidNotifier(
                 }
                 setSmallIcon(androidNotificationConfiguration.notificationIconResId)
                 setAutoCancel(true)
+                setOnlyAlertOnce(true)
                 setContentIntent(pendingIntent)
                 androidNotificationConfiguration.notificationIconColorResId?.let {
                     color = ContextCompat.getColor(context, it)
                 }
+
+                // Add action buttons
+                builder.actions.forEach { action ->
+                    val actionPendingIntent =
+                        createActionPendingIntent(
+                            actionId = action.id,
+                            notificationId = builder.id,
+                            payload = builder.payloadData
+                        )
+
+                    val actionBuilder = NotificationCompat.Action.Builder(
+                        0,
+                        action.title,
+                        actionPendingIntent
+                    )
+
+                    if (action.allowsTextInput) {
+                        val remoteInput = androidx.core.app.RemoteInput.Builder(EXTRA_REMOTE_INPUT)
+                            .setLabel(action.inputLabel ?: "Enter value")
+                            .build()
+
+                        actionBuilder.addRemoteInput(remoteInput)
+                    }
+
+                    addAction(actionBuilder.build())
+                }
+
             }.build()
             notificationManager.notify(builder.id, notification)
         }
@@ -95,6 +151,22 @@ internal class AndroidNotifier(
 
     override fun remove(id: Int) {
         val notificationManager = context.notificationManager ?: return
+
+
+        // Cancel any scheduled alarm
+        val intent = Intent(ACTION_SCHEDULED_NOTIFICATION_FIRED)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            id,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_NO_CREATE
+        )
+
+        pendingIntent?.let {
+            alarmManager.cancel(it)
+            it.cancel()
+        }
+
         notificationManager.cancel(id)
     }
 
@@ -102,6 +174,51 @@ internal class AndroidNotifier(
         val notificationManager = context.notificationManager ?: return
         notificationManager.cancelAll()
     }
+
+    private fun isScheduledNotification(scheduledAt: Long): Boolean {
+        if (scheduledAt == 0L) return false
+        val currentTime = System.currentTimeMillis()
+
+        // Handle relative timing: if fireAt is a small value (less than a reasonable timestamp),
+        // treat it as milliseconds from now
+        val actualFireTime = if (scheduledAt < 1000000000000L) { // Before year 2001, treat as relative
+            currentTime + scheduledAt
+        } else {
+            scheduledAt
+        }
+
+        return actualFireTime > currentTime
+    }
+
+    private fun scheduleNotificationAlarm(request: NotifierBuilder) {
+        val intent = Intent(context, NotificationReceiver::class.java).apply {
+            action = ACTION_SCHEDULED_NOTIFICATION_FIRED
+            putExtra(EXTRA_ACTION_ID, ACTION_SCHEDULED_NOTIFICATION_FIRED)
+            putExtra(EXTRA_NOTIFICATION_ID, request.id)
+            putExtra(EXTRA_PAYLOAD, HashMap(request.payloadData))
+        }
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            request.id,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        try {
+            alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                request.scheduledAt,
+                pendingIntent
+            )
+            Log.d("AndroidNotificationScheduler", "Scheduled notification ${request.id} for ${request.scheduledAt}")
+        } catch (e: SecurityException) {
+            Log.e("AndroidNotificationScheduler", "Failed to schedule exact alarm", e)
+            // Fallback to inexact alarm
+            alarmManager.set(AlarmManager.RTC_WAKEUP, request.scheduledAt, pendingIntent)
+        }
+    }
+
 
     private fun getPendingIntent(payloadData: Map<String, String>, id: Int): PendingIntent? {
         val intent = getLauncherActivityIntent()?.apply {
@@ -121,6 +238,24 @@ internal class AndroidNotifier(
     private fun getLauncherActivityIntent(): Intent? {
         val packageManager = context.applicationContext.packageManager
         return packageManager.getLaunchIntentForPackage(context.applicationContext.packageName)
+    }
+
+    private fun createActionPendingIntent(
+        actionId: String,
+        notificationId: Int,
+        payload: Map<String, String>
+    ): PendingIntent {
+
+        val intent = Intent(context, NotificationReceiver::class.java).apply {
+            action = ACTION_NOTIFICATION_ACTION
+            putExtra(EXTRA_ACTION_ID, actionId)
+            putExtra(EXTRA_NOTIFICATION_ID, notificationId)
+            putExtra(EXTRA_PAYLOAD, HashMap(payload))
+        }
+
+
+        val flags = PendingIntent.FLAG_UPDATE_CURRENT or FLAG_MUTABLE
+        return PendingIntent.getBroadcast(context, (actionId + notificationId).hashCode(), intent, flags)
     }
 
     private suspend fun NotificationImage?.asBitmap(): Bitmap? {

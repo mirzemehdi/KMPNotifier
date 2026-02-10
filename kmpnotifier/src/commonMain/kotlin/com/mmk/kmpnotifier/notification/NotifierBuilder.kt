@@ -1,5 +1,6 @@
 package com.mmk.kmpnotifier.notification
 
+import com.mmk.kmpnotifier.notification.NotificationAction
 import kotlin.random.Random
 
 public class NotifierBuilder {
@@ -15,5 +16,12 @@ public class NotifierBuilder {
     public fun payload(block: MutableMap<String, String>.() -> Unit) {
         payloadData = mutableMapOf<String, String>().apply(block)
     }
+
+    /**
+     * List of action buttons to display with the notification
+     */
+    public var actions: List<NotificationAction> = emptyList()
+
+    public var scheduledAt: Long = 0L //0L means show immediately
 
 }
