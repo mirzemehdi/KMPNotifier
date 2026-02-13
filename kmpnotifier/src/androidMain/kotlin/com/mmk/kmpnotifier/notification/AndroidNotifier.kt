@@ -42,12 +42,8 @@ internal class AndroidNotifier(
 
     companion object {
         internal const val ACTION_NOTIFICATION_ACTION = "com.mmk.kmpnotifier.NOTIFICATION_ACTION"
-        internal const val EXTRA_NOTIFICATION_REQUEST = "notification_request"
         internal const val EXTRA_ACTION_ID = "action_id"
         internal const val EXTRA_NOTIFICATION_ID = "notification_id"
-        internal const val EXTRA_PAYLOAD = "payload"
-        internal const val EXTRA_TITLE = "extra_title"
-        internal const val EXTRA_BODY = "extra_body"
         internal const val EXTRA_REMOTE_INPUT = "extra_remote_input"
 
     }
@@ -195,7 +191,7 @@ internal class AndroidNotifier(
             action = ACTION_SCHEDULED_NOTIFICATION_FIRED
             putExtra(EXTRA_ACTION_ID, ACTION_SCHEDULED_NOTIFICATION_FIRED)
             putExtra(EXTRA_NOTIFICATION_ID, request.id)
-            putExtra(EXTRA_PAYLOAD, HashMap(request.payloadData))
+            request.payloadData.forEach { putExtra(it.key, it.value) }
         }
 
         val pendingIntent = PendingIntent.getBroadcast(
@@ -250,7 +246,7 @@ internal class AndroidNotifier(
             action = ACTION_NOTIFICATION_ACTION
             putExtra(EXTRA_ACTION_ID, actionId)
             putExtra(EXTRA_NOTIFICATION_ID, notificationId)
-            putExtra(EXTRA_PAYLOAD, HashMap(payload))
+            payload.forEach { putExtra(it.key, it.value) }
         }
 
 

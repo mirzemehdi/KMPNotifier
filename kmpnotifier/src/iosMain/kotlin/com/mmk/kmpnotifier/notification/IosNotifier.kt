@@ -31,6 +31,13 @@ import platform.darwin.NSObject
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.random.Random
 
+
+internal const val IOS_ACTION_SCHEDULED_FIRED = "com.mmk.kmpnotifier.EVENT_SCHEDULED_NOTIFICATION_FIRED_INTERNAL"
+internal const val IOS_ACTION_NOTIFICATION_ACTION = "com.mmk.kmpnotifier.NOTIFICATION_ACTION"
+internal const val IOS_EXTRA_ACTION_ID = "action_id"
+internal const val IOS_EXTRA_NOTIFICATION_ID = "notification_id"
+
+
 internal class IosNotifier(
     private val permissionUtil: IosPermissionUtil,
     private val notificationCenter: UNUserNotificationCenter,
@@ -177,3 +184,22 @@ internal class IosNotifier(
         }
     }
 }
+
+private fun NotificationAction.toIosAction(): platform.UserNotifications.UNNotificationAction {
+    return if (allowsTextInput) {
+        platform.UserNotifications.UNTextInputNotificationAction(
+            identifier = id,
+            title = title,
+            options = 0u,
+            textInputButtonTitle = "Send",
+            textInputPlaceholder = inputLabel ?: ""
+        )
+    } else {
+        platform.UserNotifications.UNNotificationAction(
+            identifier = id,
+            title = title,
+            options = 0u
+        )
+    }
+}
+

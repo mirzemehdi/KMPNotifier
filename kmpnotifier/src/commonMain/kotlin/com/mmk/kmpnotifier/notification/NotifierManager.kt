@@ -109,7 +109,7 @@ public object NotifierManager {
          * @param notificationId The ID of the notification
          * @param payload The payload data from the notification
          */
-        public fun onAction(actionId: String, notificationId: Int, payload: Map<String, String>){}
+        public fun onAction(actionId: String, notificationId: Int, payload: Map<String, Any?>){}
     }
 
     /**

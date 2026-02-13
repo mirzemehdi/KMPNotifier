@@ -18,7 +18,7 @@ object AppInitializer {
                 println("Push Notification onNewToken: $token")
             }
 
-            override fun onAction(actionId: String, notificationId: Int, payload: Map<String, String>) {
+            override fun onAction(actionId: String, notificationId: Int, payload: Map<String, Any?>) {
                 val actionMessage = "Action '$actionId' triggered on notification '$notificationId' with payload: $payload"
                 println("Action triggered: $actionMessage")
                 val localNotifier = NotifierManager.getLocalNotifier()
@@ -33,9 +33,6 @@ object AppInitializer {
                 if (actionId == "CUSTOM_SNOOZE"){
                     localNotifier.removeAll()
                 }
-
-
-
             }
 
             override fun onPushNotification(title: String?, body: String?) {
