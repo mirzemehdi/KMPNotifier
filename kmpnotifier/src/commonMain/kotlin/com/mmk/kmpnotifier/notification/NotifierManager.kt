@@ -31,6 +31,7 @@ public object NotifierManager {
         return NotifierManagerImpl.getPushNotifier()
     }
 
+
     /**
      * For listening updates such as push notification token changes. This will add new listener to listener list.
      */
@@ -100,6 +101,15 @@ public object NotifierManager {
          * @param data Push Notification Payload Data
          */
         public fun onNotificationClicked(data: PayloadData) {}
+
+
+        /**
+         * Called when a notification action is triggered
+         * @param actionId The ID of the action that was triggered
+         * @param notificationId The ID of the notification
+         * @param payload The payload data from the notification
+         */
+        public fun onAction(actionId: String, notificationId: Int, payload: Map<String, Any?>){}
     }
 
     /**

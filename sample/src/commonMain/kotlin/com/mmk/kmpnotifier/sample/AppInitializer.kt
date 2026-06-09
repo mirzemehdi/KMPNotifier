@@ -2,18 +2,37 @@ package com.mmk.kmpnotifier.sample
 
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.PayloadData
-import com.mmk.kmpnotifier.notification.PushNotifier
 
 
 object AppInitializer {
     fun onApplicationStart() {
+        println("Application is started")
         onApplicationStartPlatformSpecific()
         NotifierManager.setLogger { message ->
             println("KMPNotifier: $message")
         }
+
+
         NotifierManager.addListener(object : NotifierManager.Listener {
             override fun onNewToken(token: String) {
                 println("Push Notification onNewToken: $token")
+            }
+
+            override fun onAction(actionId: String, notificationId: Int, payload: Map<String, Any?>) {
+                val actionMessage = "Action '$actionId' triggered on notification '$notificationId' with payload: $payload"
+                println("Action triggered: $actionMessage")
+                val localNotifier = NotifierManager.getLocalNotifier()
+
+                if (actionId == "com.mmk.kmpnotifier.EVENT_SCHEDULED_NOTIFICATION_FIRED_INTERNAL"){
+                    NotifierManager.getLocalNotifier().notify{
+                        id = notificationId
+                        title = "Showing scheduled notification"
+                        body = "Notification triggered on notification '$notificationId' with payload: $payload"
+                    }
+                }
+                if (actionId == "CUSTOM_SNOOZE"){
+                    localNotifier.removeAll()
+                }
             }
 
             override fun onPushNotification(title: String?, body: String?) {

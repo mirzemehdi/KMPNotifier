@@ -54,4 +54,17 @@ public interface Notifier {
      * @see remove(id) for removing specific notification.
      */
     public fun removeAll()
+
+    /**
+     * Simple method to schedule a notification (backward compatibility)
+     * @param title Notification title
+     * @param body Notification body
+     * @param fireAt When to fire the notification (milliseconds since epoch)
+     * @return notification id
+     */
+    public fun scheduleSimple(title: String, body: String, fireAt: Long): Int {
+        // This is a placeholder - actual scheduling will be handled by platform implementations
+        // For now, just show immediately for backward compatibility
+        return notify(title, body)
+    }
 }

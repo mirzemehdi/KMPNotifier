@@ -32,6 +32,7 @@ internal object NotifierManagerImpl : KMPKoinComponent() {
         return get()
     }
 
+
     fun addListener(listener: NotifierManager.Listener) {
         listeners.add(listener)
     }
@@ -56,6 +57,13 @@ internal object NotifierManagerImpl : KMPKoinComponent() {
         if (listeners.size == 0) currentLogger.log("There is no listener to notify onPushNotification")
         listeners.forEach { it.onPushNotification(title = title, body = body) }
     }
+
+    fun onAction(actionId: String, notificationId: Int, payload: Map<String, Any?>) {
+        currentLogger.log("Received action")
+        if (listeners.size == 0) currentLogger.log("There is no listener to notify onAction")
+        listeners.forEach { it.onAction(actionId = actionId, notificationId = notificationId, payload = payload) }
+    }
+
 
     fun onPushNotificationWithPayloadData(
         title: String? = null,

@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
     <application
         android:allowBackup="true"
         android:name=".MainApplication"
@@ -24,7 +25,7 @@
         </activity>
 
 
-<!--        Optional-->
+        <!--        Optional-->
 
         <!-- Set custom default icon. This is used when no icon is set for incoming notification messages.
             -->

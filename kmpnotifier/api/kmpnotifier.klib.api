@@ -17,6 +17,7 @@ abstract interface com.mmk.kmpnotifier.notification/Notifier { // com.mmk.kmpnot
     abstract fun notify(kotlin/String, kotlin/String, kotlin.collections/Map<kotlin/String, kotlin/String> = ...): kotlin/Int // com.mmk.kmpnotifier.notification/Notifier.notify|notify(kotlin.String;kotlin.String;kotlin.collections.Map<kotlin.String,kotlin.String>){}[0]
     abstract fun remove(kotlin/Int) // com.mmk.kmpnotifier.notification/Notifier.remove|remove(kotlin.Int){}[0]
     abstract fun removeAll() // com.mmk.kmpnotifier.notification/Notifier.removeAll|removeAll(){}[0]
+    open fun scheduleSimple(kotlin/String, kotlin/String, kotlin/Long): kotlin/Int // com.mmk.kmpnotifier.notification/Notifier.scheduleSimple|scheduleSimple(kotlin.String;kotlin.String;kotlin.Long){}[0]
 
     final object Companion { // com.mmk.kmpnotifier.notification/Notifier.Companion|null[0]
         final var KEY_URL // com.mmk.kmpnotifier.notification/Notifier.Companion.KEY_URL|{}KEY_URL[0]
@@ -109,9 +110,34 @@ sealed interface com.mmk.kmpnotifier.notification.configuration/NotificationPlat
     }
 }
 
+final class com.mmk.kmpnotifier.notification/NotificationAction { // com.mmk.kmpnotifier.notification/NotificationAction|null[0]
+    constructor <init>(kotlin/String, kotlin/String, kotlin/Boolean = ..., kotlin/String? = ...) // com.mmk.kmpnotifier.notification/NotificationAction.<init>|<init>(kotlin.String;kotlin.String;kotlin.Boolean;kotlin.String?){}[0]
+
+    final val allowsTextInput // com.mmk.kmpnotifier.notification/NotificationAction.allowsTextInput|{}allowsTextInput[0]
+        final fun <get-allowsTextInput>(): kotlin/Boolean // com.mmk.kmpnotifier.notification/NotificationAction.allowsTextInput.<get-allowsTextInput>|<get-allowsTextInput>(){}[0]
+    final val id // com.mmk.kmpnotifier.notification/NotificationAction.id|{}id[0]
+        final fun <get-id>(): kotlin/String // com.mmk.kmpnotifier.notification/NotificationAction.id.<get-id>|<get-id>(){}[0]
+    final val inputLabel // com.mmk.kmpnotifier.notification/NotificationAction.inputLabel|{}inputLabel[0]
+        final fun <get-inputLabel>(): kotlin/String? // com.mmk.kmpnotifier.notification/NotificationAction.inputLabel.<get-inputLabel>|<get-inputLabel>(){}[0]
+    final val title // com.mmk.kmpnotifier.notification/NotificationAction.title|{}title[0]
+        final fun <get-title>(): kotlin/String // com.mmk.kmpnotifier.notification/NotificationAction.title.<get-title>|<get-title>(){}[0]
+
+    final fun component1(): kotlin/String // com.mmk.kmpnotifier.notification/NotificationAction.component1|component1(){}[0]
+    final fun component2(): kotlin/String // com.mmk.kmpnotifier.notification/NotificationAction.component2|component2(){}[0]
+    final fun component3(): kotlin/Boolean // com.mmk.kmpnotifier.notification/NotificationAction.component3|component3(){}[0]
+    final fun component4(): kotlin/String? // com.mmk.kmpnotifier.notification/NotificationAction.component4|component4(){}[0]
+    final fun copy(kotlin/String = ..., kotlin/String = ..., kotlin/Boolean = ..., kotlin/String? = ...): com.mmk.kmpnotifier.notification/NotificationAction // com.mmk.kmpnotifier.notification/NotificationAction.copy|copy(kotlin.String;kotlin.String;kotlin.Boolean;kotlin.String?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // com.mmk.kmpnotifier.notification/NotificationAction.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // com.mmk.kmpnotifier.notification/NotificationAction.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // com.mmk.kmpnotifier.notification/NotificationAction.toString|toString(){}[0]
+}
+
 final class com.mmk.kmpnotifier.notification/NotifierBuilder { // com.mmk.kmpnotifier.notification/NotifierBuilder|null[0]
     constructor <init>() // com.mmk.kmpnotifier.notification/NotifierBuilder.<init>|<init>(){}[0]
 
+    final var actions // com.mmk.kmpnotifier.notification/NotifierBuilder.actions|{}actions[0]
+        final fun <get-actions>(): kotlin.collections/List<com.mmk.kmpnotifier.notification/NotificationAction> // com.mmk.kmpnotifier.notification/NotifierBuilder.actions.<get-actions>|<get-actions>(){}[0]
+        final fun <set-actions>(kotlin.collections/List<com.mmk.kmpnotifier.notification/NotificationAction>) // com.mmk.kmpnotifier.notification/NotifierBuilder.actions.<set-actions>|<set-actions>(kotlin.collections.List<com.mmk.kmpnotifier.notification.NotificationAction>){}[0]
     final var body // com.mmk.kmpnotifier.notification/NotifierBuilder.body|{}body[0]
         final fun <get-body>(): kotlin/String // com.mmk.kmpnotifier.notification/NotifierBuilder.body.<get-body>|<get-body>(){}[0]
         final fun <set-body>(kotlin/String) // com.mmk.kmpnotifier.notification/NotifierBuilder.body.<set-body>|<set-body>(kotlin.String){}[0]
@@ -124,6 +150,9 @@ final class com.mmk.kmpnotifier.notification/NotifierBuilder { // com.mmk.kmpnot
     final var payloadData // com.mmk.kmpnotifier.notification/NotifierBuilder.payloadData|{}payloadData[0]
         final fun <get-payloadData>(): kotlin.collections/Map<kotlin/String, kotlin/String> // com.mmk.kmpnotifier.notification/NotifierBuilder.payloadData.<get-payloadData>|<get-payloadData>(){}[0]
         final fun <set-payloadData>(kotlin.collections/Map<kotlin/String, kotlin/String>) // com.mmk.kmpnotifier.notification/NotifierBuilder.payloadData.<set-payloadData>|<set-payloadData>(kotlin.collections.Map<kotlin.String,kotlin.String>){}[0]
+    final var scheduledAt // com.mmk.kmpnotifier.notification/NotifierBuilder.scheduledAt|{}scheduledAt[0]
+        final fun <get-scheduledAt>(): kotlin/Long // com.mmk.kmpnotifier.notification/NotifierBuilder.scheduledAt.<get-scheduledAt>|<get-scheduledAt>(){}[0]
+        final fun <set-scheduledAt>(kotlin/Long) // com.mmk.kmpnotifier.notification/NotifierBuilder.scheduledAt.<set-scheduledAt>|<set-scheduledAt>(kotlin.Long){}[0]
     final var title // com.mmk.kmpnotifier.notification/NotifierBuilder.title|{}title[0]
         final fun <get-title>(): kotlin/String // com.mmk.kmpnotifier.notification/NotifierBuilder.title.<get-title>|<get-title>(){}[0]
         final fun <set-title>(kotlin/String) // com.mmk.kmpnotifier.notification/NotifierBuilder.title.<set-title>|<set-title>(kotlin.String){}[0]
@@ -169,6 +198,7 @@ final object com.mmk.kmpnotifier.notification/NotifierManager { // com.mmk.kmpno
     final fun setLogger(com.mmk.kmpnotifier.logger/Logger) // com.mmk.kmpnotifier.notification/NotifierManager.setLogger|setLogger(com.mmk.kmpnotifier.logger.Logger){}[0]
 
     abstract interface Listener { // com.mmk.kmpnotifier.notification/NotifierManager.Listener|null[0]
+        open fun onAction(kotlin/String, kotlin/Int, kotlin.collections/Map<kotlin/String, kotlin/String>) // com.mmk.kmpnotifier.notification/NotifierManager.Listener.onAction|onAction(kotlin.String;kotlin.Int;kotlin.collections.Map<kotlin.String,kotlin.String>){}[0]
         open fun onNewToken(kotlin/String) // com.mmk.kmpnotifier.notification/NotifierManager.Listener.onNewToken|onNewToken(kotlin.String){}[0]
         open fun onNotificationClicked(kotlin.collections/Map<kotlin/String, *>) // com.mmk.kmpnotifier.notification/NotifierManager.Listener.onNotificationClicked|onNotificationClicked(kotlin.collections.Map<kotlin.String,*>){}[0]
         open fun onPayloadData(kotlin.collections/Map<kotlin/String, *>) // com.mmk.kmpnotifier.notification/NotifierManager.Listener.onPayloadData|onPayloadData(kotlin.collections.Map<kotlin.String,*>){}[0]
