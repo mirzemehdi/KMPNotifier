@@ -5,6 +5,18 @@ import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfig
 import com.mmk.kmpnotifier.permission.PermissionUtil
 
 
+/**
+ * Deprecated 1.x entry point of KMPNotifier.
+ *
+ * It keeps working and forwards to the new modular API. Migrate to [com.mmk.kmpnotifier.KMPNotifier]
+ * with the `LocalNotifications` (kmpnotifier-local) and `FirebasePush` (kmpnotifier-push-firebase)
+ * extensions — see MIGRATION.md. Removal is planned for 3.0.0.
+ */
+@Deprecated(
+    message = "NotifierManager is replaced by KMPNotifier with pluggable extensions " +
+            "(LocalNotifications, FirebasePush). See MIGRATION.md. Removal planned for 3.0.0.",
+    replaceWith = ReplaceWith("KMPNotifier", "com.mmk.kmpnotifier.KMPNotifier"),
+)
 public object NotifierManager {
 
     /**
@@ -13,6 +25,11 @@ public object NotifierManager {
      * @see NotificationPlatformConfiguration.Ios
      * @see NotificationPlatformConfiguration.Android
      */
+    @Deprecated(
+        message = "Use KMPNotifier.initialize(configuration, FirebasePush) for push (android/ios) " +
+                "or KMPNotifier.initialize(configuration, LocalNotifications) for local-only usage. " +
+                "See MIGRATION.md.",
+    )
     public fun initialize(configuration: NotificationPlatformConfiguration) {
         NotifierManagerImpl.initialize(configuration)
     }
@@ -20,6 +37,14 @@ public object NotifierManager {
     /**
      * Creates local Notifier instance
      */
+    @Deprecated(
+        message = "Use KMPNotifier.localNotifier (or LocalNotifications.notifier). See MIGRATION.md.",
+        replaceWith = ReplaceWith(
+            "KMPNotifier.localNotifier",
+            "com.mmk.kmpnotifier.KMPNotifier",
+            "com.mmk.kmpnotifier.local.localNotifier",
+        ),
+    )
     public fun getLocalNotifier(): Notifier {
         return NotifierManagerImpl.getLocalNotifier()
     }
@@ -27,6 +52,10 @@ public object NotifierManager {
     /**
      * Creates push Notifier instance (Firebase Push Notification)
      */
+    @Deprecated(
+        message = "Use KMPNotifier.firebasePushNotifier (or FirebasePush.notifier) from kmpnotifier-push-firebase " +
+                "on android/ios. See MIGRATION.md.",
+    )
     public fun getPushNotifier(): PushNotifier {
         return NotifierManagerImpl.getPushNotifier()
     }
@@ -35,6 +64,10 @@ public object NotifierManager {
     /**
      * For listening updates such as push notification token changes. This will add new listener to listener list.
      */
+    @Deprecated(
+        message = "Shared events (clicks, actions) moved to KMPNotifier.addListener(KMPNotifier.Listener); " +
+                "push events moved to FirebasePush.addListener(PushListener). See MIGRATION.md.",
+    )
     public fun addListener(listener: Listener) {
         NotifierManagerImpl.addListener(listener)
     }
@@ -43,6 +76,10 @@ public object NotifierManager {
      * For listening updates such as push notification token changes. This will set one listener only.
      * You can set null to remove listener.
      */
+    @Deprecated(
+        message = "Shared events (clicks, actions) moved to KMPNotifier.setListener(KMPNotifier.Listener); " +
+                "push events moved to FirebasePush.setListener(PushListener). See MIGRATION.md.",
+    )
     public fun setListener(listener: Listener?) {
         NotifierManagerImpl.setListener(listener)
     }
@@ -57,11 +94,26 @@ public object NotifierManager {
      *
      * @return PermissionUtil class instance
      */
+    @Deprecated(
+        message = "Use KMPNotifier.permissionUtil. See MIGRATION.md.",
+        replaceWith = ReplaceWith("KMPNotifier.permissionUtil", "com.mmk.kmpnotifier.KMPNotifier"),
+    )
     public fun getPermissionUtil(): PermissionUtil {
         return NotifierManagerImpl.getPermissionUtil()
     }
 
 
+    /**
+     * Deprecated 1.x listener carrying both shared and push events.
+     *
+     * Replaced by [com.mmk.kmpnotifier.KMPNotifier.Listener] (clicks, actions — fired for both
+     * local and push notifications) and `PushListener` in kmpnotifier-push-firebase
+     * (token updates, push payloads).
+     */
+    @Deprecated(
+        message = "Split into KMPNotifier.Listener (shared events: clicks, actions) and " +
+                "PushListener in kmpnotifier-push-firebase (push events). See MIGRATION.md.",
+    )
     public interface Listener {
         /**
          * Called when push notification token is updated, or initialized first time
@@ -71,7 +123,6 @@ public object NotifierManager {
 
         /**
          * Called when "Push Notification" data type message is available
-         * This can be deprecated in future in favor of `onPushNotificationWithPayloadData` method.
          * @see onPushNotificationWithPayloadData For Receiving one callback instead of two
          * @see onPushNotification for receiving "Push Notification" notification type message.
          * @param data Push Notification Payload Data
@@ -80,7 +131,6 @@ public object NotifierManager {
 
         /**
          * Called when "Push Notification" notification type message is received.
-         * This can be deprecated in future in favor of `onPushNotificationWithPayloadData` method.
          * @see onPushNotificationWithPayloadData For Receiving one callback instead of two
          * @see onPayloadData for receiving "Push Notification" data type message.
          * @param title Notification title
@@ -118,6 +168,10 @@ public object NotifierManager {
      *
      * @param logger The logger to use
      */
+    @Deprecated(
+        message = "Use KMPNotifier.setLogger. See MIGRATION.md.",
+        replaceWith = ReplaceWith("KMPNotifier.setLogger(logger)", "com.mmk.kmpnotifier.KMPNotifier"),
+    )
     public fun setLogger(logger: Logger) {
         NotifierManagerImpl.setLogger(logger)
     }

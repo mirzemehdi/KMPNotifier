@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.mmk.kmpnotifier.extensions
 
 import android.content.Context
@@ -33,6 +35,14 @@ import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfig
  *
  * ```
  */
+@Deprecated(
+    message = "Use KMPNotifier.onCreateOrOnNewIntent(intent). See MIGRATION.md.",
+    replaceWith = ReplaceWith(
+        "KMPNotifier.onCreateOrOnNewIntent(intent)",
+        "com.mmk.kmpnotifier.KMPNotifier",
+        "com.mmk.kmpnotifier.extensions.onCreateOrOnNewIntent",
+    ),
+)
 public fun NotifierManager.onCreateOrOnNewIntent(intent: Intent?) {
     KMPNotifier.onCreateOrOnNewIntent(intent)
 }
@@ -46,6 +56,11 @@ public fun NotifierManager.onCreateOrOnNewIntent(intent: Intent?) {
  * @see NotificationPlatformConfiguration.Android
  *
  */
+@Deprecated(
+    message = "Use KMPNotifier.initialize(context, configuration, FirebasePush) for push or " +
+            "KMPNotifier.initialize(context, configuration, LocalNotifications) for local-only usage. " +
+            "See MIGRATION.md.",
+)
 public fun NotifierManager.initialize(
     context: Context,
     configuration: NotificationPlatformConfiguration
