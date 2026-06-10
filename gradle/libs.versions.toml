@@ -17,6 +17,9 @@ kotlinx-coroutine = "1.10.2"
 kotlinx-browser = "0.5.0"
 mavenPublish = "0.35.0"
 googleServices = "4.4.4"
+robolectric = "4.16"
+androidx-test-core = "1.7.0"
+junit = "4.13.2"
 
 
 
@@ -33,6 +36,11 @@ androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref
 androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "androidx-startup-runtime" }
 koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" ,version.ref="firebase-messaging"}
+kotlinx-coroutine-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutine" }
+kotlinx-coroutine-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutine" }
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+androidx-test-core-ktx = { module = "androidx.test:core-ktx", version.ref = "androidx-test-core" }
+junit = { module = "junit:junit", version.ref = "junit" }
 
 
 [plugins]

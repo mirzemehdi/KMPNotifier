@@ -46,6 +46,7 @@ jobs:
         config: [
           { target: android, os: ubuntu-latest, tasks: testDebugUnitTest testReleaseUnitTest, continueOnError: false },
           { target: apple, os: macos-latest, tasks: iosX64Test iosSimulatorArm64Test, continueOnError: false },
+          { target: desktop-web, os: ubuntu-latest, tasks: jvmTest jsNodeTest, continueOnError: false },
         ]
     runs-on: ${{ matrix.config.os }}
     name: Build ${{ matrix.config.target }}
