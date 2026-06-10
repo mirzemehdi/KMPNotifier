@@ -12,10 +12,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.mmk.kmpnotifier.KMPNotifier
+import com.mmk.kmpnotifier.local.localNotifier
+import com.mmk.kmpnotifier.push.PushListener
+import com.mmk.kmpnotifier.push.firebase.addPushListener
+import com.mmk.kmpnotifier.push.firebase.firebasePushNotifier
 import com.mmk.kmpnotifier.notification.NotificationAction
 import com.mmk.kmpnotifier.notification.NotificationImage
 import com.mmk.kmpnotifier.notification.Notifier
-import com.mmk.kmpnotifier.notification.NotifierManager
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import kotlin.random.Random
 
@@ -27,13 +31,13 @@ fun App() {
 
     LaunchedEffect(true) {
         println("LaunchedEffectApp is called")
-        NotifierManager.addListener(object : NotifierManager.Listener {
+        KMPNotifier.addPushListener(object : PushListener {
             override fun onNewToken(token: String) {
                 myPushNotificationToken = token
                 println("onNewToken: $token")
             }
         })
-        myPushNotificationToken = NotifierManager.getPushNotifier().getToken() ?: ""
+        myPushNotificationToken = KMPNotifier.firebasePushNotifier.getToken() ?: ""
         println("Firebase Token: $myPushNotificationToken")
     }
 
@@ -44,8 +48,8 @@ fun App() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            val notifier = remember { NotifierManager.getLocalNotifier() }
-            val permissionUtil = remember { NotifierManager.getPermissionUtil() }
+            val notifier = remember { KMPNotifier.localNotifier }
+            val permissionUtil = remember { KMPNotifier.permissionUtil }
             val scope = rememberCoroutineScope()
             var notificationId by remember { mutableStateOf(0) }
 

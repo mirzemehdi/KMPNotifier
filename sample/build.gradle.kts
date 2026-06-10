@@ -41,7 +41,9 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            export(project(":kmpnotifier"))
+            export(project(":kmpnotifier-core"))
+            export(project(":kmpnotifier-local"))
+            export(project(":kmpnotifier-push-firebase"))
             baseName = "sample"
             isStatic = true
         }
@@ -59,7 +61,9 @@ kotlin {
             implementation(compose.foundation)
             implementation(compose.material)
             implementation(compose.components.resources)
-            api(project(":kmpnotifier"))
+            api(project(":kmpnotifier-core"))
+            api(project(":kmpnotifier-local"))
+            api(project(":kmpnotifier-push-firebase"))
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
