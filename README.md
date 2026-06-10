@@ -1,7 +1,7 @@
-# KMPNotifier - Kotlin Multiplatform Push Notification
+# KMPNotifier - Kotlin Multiplatform Notification
 [![Build](https://github.com/mirzemehdi/KMPNotifier/actions/workflows/build.yml/badge.svg)](https://github.com/mirzemehdi/KMPNotifier/actions/workflows/build.yml) 
-[![Kotlin](https://img.shields.io/badge/Kotlin-2.1.10-blue.svg?style=flat&logo=kotlin)](https://kotlinlang.org)
-[![Maven Central](https://img.shields.io/maven-central/v/io.github.mirzemehdi/kmpnotifier?color=blue)](https://search.maven.org/search?q=g:io.github.mirzemehdi)
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.2.21-blue.svg?style=flat&logo=kotlin)](https://kotlinlang.org)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.mirzemehdi/kmpnotifier-core?color=blue)](https://search.maven.org/search?q=g:io.github.mirzemehdi)
 
 ![badge-android](http://img.shields.io/badge/platform-android-6EDB8D.svg?style=flat)
 ![badge-ios](http://img.shields.io/badge/platform-ios-CDCDCD.svg?style=flat)
@@ -13,7 +13,7 @@
 [![Android Weekly badge](https://androidweekly.net/issues/issue-599/badge)](https://androidweekly.net/issues/issue-599)
 
 
-Simple and easy to use Kotlin Multiplatform Push Notification library (using Firebase Cloud Messaging) targeting ios and android and Local Notification targetting android, ios, desktop and web (js and wasm).  
+Simple and easy to use Kotlin Multiplatform Notification library: local notifications targeting android, iOS, desktop and web (js and wasm), and push notifications (Firebase Cloud Messaging) targeting android and iOS.  
 This library is used in [FindTravelNow](https://github.com/mirzemehdi/FindTravelNow-KMM/) production KMP project.
 You can check out [Documentation](https://mirzemehdi.github.io/KMPNotifier) for full library api information.  
 
@@ -30,48 +30,68 @@ You can check out [Documentation](https://mirzemehdi.github.io/KMPNotifier) for 
   - 🔔 Local Notification (android, ios, desktop, js and wasm targets)  
   - 🔔 Push Notification (Firebase Cloud Messaging) (android and ios only)  
   - 📱 Multiplatform (android, iOS, desktop and web (js and wasm))  
+  - 📦 Modular: use local notifications without pulling in Firebase
+
+## Modules
+
+Since 2.0.0 the library is split into focused modules:
+
+| Artifact | Use it for | Targets |
+|---|---|---|
+| `kmpnotifier-local` | local notifications (no Firebase) | android, ios, jvm, js, wasmJs |
+| `kmpnotifier-push-firebase` | Firebase push (includes local) | android, ios |
+| `kmpnotifier` | deprecated 1.x compatibility umbrella (includes everything) | all |
+
+Upgrading from 1.x? Your code keeps working — see [MIGRATION.md](MIGRATION.md) for the
+deprecation mapping and [CHANGELOG.md](CHANGELOG.md) for what changed.
 
 ## Installation
-Before starting you need to setup basic setup using Firebase official guideline (like initializing project in Firebase, adding `google-services.json` to android, `GoogleService-Info.plist` to iOS).
+
+For push notifications you need the basic Firebase setup following the official guideline (initializing project in Firebase, adding `google-services.json` to android, `GoogleService-Info.plist` to iOS). Local-only usage needs no Firebase setup at all.
 
 ## Minimum Requirements
 
-- **Android:** `minSdkVersion 21`
-- **iOS:** `iOS 14.1`
+- **Android:** `minSdkVersion 23`
+- **iOS:** `iOS 15.4`
 
 
 ### Gradle Setup
-KMPNotifier is available on Maven Central. In your root project `build.gradle.kts` file (or `settings.gradle` file) add `mavenCentral()` to repositories, and  add `google-services` plugin to plugins.
+KMPNotifier is available on Maven Central. In your root project `build.gradle.kts` file (or `settings.gradle` file) add `mavenCentral()` to repositories. If you use push notifications, also add the `google-services` plugin.
 
 ```kotlin
-plugins {
-  id("com.android.application") version "8.1.3" apply false
-  id("org.jetbrains.kotlin.multiplatform") version "1.9.20" apply false
-  id("com.google.gms.google-services") version "4.4.0" apply false
-}
-
 repositories { 
   mavenCentral()
 }
 ```
 
-Then in your shared module you add dependency in `commonMain`. Latest version: [![Maven Central](https://img.shields.io/maven-central/v/io.github.mirzemehdi/kmpnotifier?color=blue)](https://search.maven.org/search?q=g:io.github.mirzemehdi). In iOS framework part export this library as well.
+Then add the dependency in your shared module. Latest version: [![Maven Central](https://img.shields.io/maven-central/v/io.github.mirzemehdi/kmpnotifier-core?color=blue)](https://search.maven.org/search?q=g:io.github.mirzemehdi). In the iOS framework part, export the modules as well.
+
 ```kotlin
 sourceSets {
   commonMain.dependencies {
-    api("io.github.mirzemehdi:kmpnotifier:<version>") // in iOS export this library
+    // Local notifications (all targets, no Firebase):
+    api("io.github.mirzemehdi:kmpnotifier-local:<version>")
+  }
+  // Firebase push (android and ios only):
+  androidMain.dependencies {
+    api("io.github.mirzemehdi:kmpnotifier-push-firebase:<version>")
+  }
+  iosMain.dependencies {
+    api("io.github.mirzemehdi:kmpnotifier-push-firebase:<version>")
   }
 }
 
 listOf(iosX64(),iosArm64(),iosSimulatorArm64()).forEach { iosTarget ->
   iosTarget.binaries.framework {
-    export("io.github.mirzemehdi:kmpnotifier:<version>")
+    export("io.github.mirzemehdi:kmpnotifier-core:<version>")
+    export("io.github.mirzemehdi:kmpnotifier-local:<version>")
+    export("io.github.mirzemehdi:kmpnotifier-push-firebase:<version>") // if using push
     ...
   }
 }
 ```
 
-And in androidApp `build.gradle.kts` file you apply `google-services` plugin  
+If you use push notifications, apply the `google-services` plugin in your androidApp `build.gradle.kts` file:
 ```kotlin
 plugins {
   id("com.android.application")
@@ -81,10 +101,14 @@ plugins {
 
 
 ### Platform Setup
-In all platforms on Application Start you need to initialize library using 
+On application start you initialize the library with the platform configuration and the capabilities (extensions) you want:
+
 ```kotlin 
-//passing android, ios, desktop or web configuration depending on the platform
-NotifierManager.initialize(NotificationPlatformConfiguration)  
+// Local notifications only:
+KMPNotifier.initialize(configuration, LocalNotifications)
+
+// Local + Firebase push (android/ios; FirebasePush installs LocalNotifications automatically):
+KMPNotifier.initialize(configuration, FirebasePush)
 ```
 
 <details>
@@ -97,20 +121,21 @@ class MyApplication : Application() {
         super.onCreate()
         /**
          * By default showPushNotification value is true.
-         * When set showPushNotification to false foreground push  notification will not be shown to user.
-         * You can still get notification content using #onPushNotification listener method.
+         * When set showPushNotification to false foreground push notification will not be shown to user.
+         * You can still get notification content using a PushListener.
          */
-        NotifierManager.initialize(
+        KMPNotifier.initialize(
             configuration = NotificationPlatformConfiguration.Android(
                 notificationIconResId = R.drawable.ic_launcher_foreground,
                 showPushNotification = true,
-            )
+            ),
+            FirebasePush, // omit for local-only usage (pass LocalNotifications instead)
         )
     }
 }
 ```
 
-Also starting from Android 13(API Level 33) you need to ask runtime `POST_NOTIFICATIONS` in activity. I created utility function that you can use in activity.
+Also starting from Android 13(API Level 33) you need to ask runtime `POST_NOTIFICATIONS` permission in activity. I created utility function that you can use in activity.
 ```kotlin
 val permissionUtil by permissionUtil()
 permissionUtil.askNotificationPermission() //this will ask permission in Android 13(API Level 33) or above, otherwise permission will be granted.
@@ -123,7 +148,7 @@ permissionUtil.askNotificationPermission() //this will ask permission in Android
   <summary>iOS</summary>
 
   ### iOS Setup
-  First you just need to include FirebaseMessaging library to your ios app from Xcode. Then on application start you need to call both FirebaseApp initialization and NotifierManager initialization methods, and apnsToken setting as below. Don't forget to add Push Notifications and Background Modes (Remote Notifications) signing capability in Xcode.
+  For push notifications, include the FirebaseMessaging library in your iOS app from Xcode, call FirebaseApp initialization, and set the apnsToken as below. Don't forget to add Push Notifications and Background Modes (Remote Notifications) signing capability in Xcode. For local-only usage, skip everything Firebase-related and pass `LocalNotifications` instead of `FirebasePush`.
 
 ```swift
 import SwiftUI
@@ -137,17 +162,16 @@ class AppDelegate: NSObject, UIApplicationDelegate {
                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
 
       FirebaseApp.configure() //important
-      
-      //By default showPushNotification value is true.
-      //When set showPushNotification to false foreground push  notification will not be shown.
-      //You can still get notification content using #onPushNotification listener method.
-      NotifierManager.shared.initialize(configuration: NotificationPlatformConfigurationIos(
-            showPushNotification: true,
-            askNotificationPermissionOnStart: true,
-            notificationSoundName: nil
-          )
+
+      KMPNotifier.shared.initialize(
+          configuration: NotificationPlatformConfigurationIos(
+              showPushNotification: true,
+              askNotificationPermissionOnStart: true,
+              notificationSoundName: nil
+          ),
+          extensions: [FirebasePush.shared]
       )
-      
+
     return true
   }
 
@@ -173,7 +197,6 @@ struct iOSApp: App {
 ```
 
 
-
  
 </details>
 
@@ -186,11 +209,11 @@ You need to put notification icon into resources/common folder. For more informa
  ```kotlin
 fun main() = application {
 
-    NotifierManager.initialize(
+    KMPNotifier.initialize(
         NotificationPlatformConfiguration.Desktop(
-            showPushNotification = true,
             notificationIconPath = composeDesktopResourcesPath() + File.separator + "ic_notification.png"
-        )
+        ),
+        LocalNotifications,
     )
     
     AppInitializer.onApplicationStart()
@@ -216,17 +239,18 @@ On application start initialize it using Web configuration
  ```kotlin
 fun main()  {
 
-    NotifierManager.initialize(
+    KMPNotifier.initialize(
         NotificationPlatformConfiguration.Web(
             askNotificationPermissionOnStart = true,
             notificationIconPath = null
-        )
+        ),
+        LocalNotifications,
     )
     
 }
 ```
 **Note:**
-If you are using mac make sure you also allow notifications for browser from system system settings in order to see web notifications.  
+If you are using mac make sure you also allow notifications for browser from system settings in order to see web notifications.  
 
 
 
@@ -237,13 +261,12 @@ If you are using mac make sure you also allow notifications for browser from sys
 You can send either local or push notification.
 
 ### Local Notification
-Local notifications are supported on Android, iOS, JS and wasm targets. Image is supported on Android and iOS 
+Local notifications are supported on Android, iOS, desktop, JS and wasm targets. Image is supported on Android and iOS 
 #### Send notification
 
 ```kotlin
-val notifier = NotifierManager.getLocalNotifier()
-notifier.notify {
-  id= Random.nextInt(0, Int.MAX_VALUE)
+KMPNotifier.localNotifier.notify {
+  id = Random.nextInt(0, Int.MAX_VALUE)
   title = "Title from KMPNotifier"
   body = "Body message from KMPNotifier"
   payloadData = mapOf(
@@ -257,100 +280,91 @@ notifier.notify {
 #### Remove notification by Id or all notifications
 
 ```kotlin
-notifer.remove(notificationId) //Removes notification by Id  
+val notifier = KMPNotifier.localNotifier
+
+notifier.remove(notificationId) //Removes notification by Id  
 
 notifier.removeAll() //Removes all notification
 
 ```
 
-### Push Notification
-Push notifications are supported only for Android and iOS.
-#### Listen for push notification token changes
-In this method you can send notification token to the server.
+#### Notification click and action buttons
+
+Clicks and action buttons are shared events — they work for both local and push notifications:
 
 ```kotlin
-NotifierManager.addListener(object : NotifierManager.Listener {
+KMPNotifier.addListener(object : KMPNotifier.Listener {
+  override fun onNotificationClicked(data: PayloadData) {
+    println("Notification clicked, payload: $data")
+  }
+
+  override fun onAction(actionId: String, notificationId: Int, payload: Map<String, Any?>) {
+    println("Notification action $actionId triggered")
+  }
+})
+```
+
+### Push Notification
+Push notifications are supported only for Android and iOS, using the `kmpnotifier-push-firebase` module.
+
+#### Listen for push notification events
+Push-specific events (token updates, push payloads) use `PushListener`:
+
+```kotlin
+FirebasePush.addListener(object : PushListener {
   override fun onNewToken(token: String) {
     println("onNewToken: $token") //Update user token in the server if needed
   }
-}) 
-```
 
-#### Receive Notification and Data payload in one callback
-```kotlin
-NotifierManager.addListener(object : NotifierManager.Listener {
-  override fun onPushNotificationWithPayloadData(title: String?, body: String?, data: PayloadData) {
-    //PayloadData is just typeAlias for Map<String,*>.
-    println("Push Notification is received: Title: $title and Body: $body and Notification payloadData: $data")
-  }
-}) 
-```
-
-#### Receive notification type messages  
-```kotlin
-NotifierManager.addListener(object : NotifierManager.Listener {
-  override fun onPushNotification(title:String?,body:String?) {
+  override fun onPushNotification(title: String?, body: String?) {
     println("Push Notification notification title: $title")
   }
-}) 
-```
 
-
-#### Receive data payload
-```kotlin
-NotifierManager.addListener(object : NotifierManager.Listener {
   override fun onPayloadData(data: PayloadData) {
     println("Push Notification payloadData: $data") //PayloadData is just typeAlias for Map<String,*>.
   }
+
+  override fun onPushNotificationWithPayloadData(title: String?, body: String?, data: PayloadData) {
+    println("Push Notification is received: Title: $title and Body: $body and payloadData: $data")
+  }
 }) 
 ```
+
 And you need to call below platform-specific functions in order to receive payload data properly.
 ##### Android
-Call `NotifierManager.onCreateOrOnNewIntent(intent)` on launcher Activity's `onCreate` and `onNewIntent` methods.
+Call `KMPNotifier.onCreateOrOnNewIntent(intent)` on launcher Activity's `onCreate` and `onNewIntent` methods.
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
    super.onCreate(savedInstanceState)
-      NotifierManager.onCreateOrOnNewIntent(intent)
+      KMPNotifier.onCreateOrOnNewIntent(intent)
       ...
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        NotifierManager.onCreateOrOnNewIntent(intent)
+        KMPNotifier.onCreateOrOnNewIntent(intent)
     }
 
 ```
 
 ##### iOS
-Call `NotifierManager.onApplicationDidReceiveRemoteNotification(userInfo: userInfo)` on application's `didReceiveRemoteNotification` method.
+Call `FirebasePush.onApplicationDidReceiveRemoteNotification(userInfo: userInfo)` on application's `didReceiveRemoteNotification` method.
 
-```
+```swift
  func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) async -> UIBackgroundFetchResult {
-      NotifierManager.shared.onApplicationDidReceiveRemoteNotification(userInfo: userInfo)
+      FirebasePush.shared.onApplicationDidReceiveRemoteNotification(userInfo: userInfo)
       return UIBackgroundFetchResult.newData
  }
 
 ```  
 
 
-#### Detecting notification click and get payload data
-Make sure you follow previous step for getting payload data properly.
-```kotlin
-NotifierManager.addListener(object : NotifierManager.Listener {
-    override fun onNotificationClicked(data: PayloadData) {
-        super.onNotificationClicked(data)
-        println("Notification clicked, Notification payloadData: $data")
-    }
-}) 
-```   
-
-
 #### Other functions
 ```kotlin
-NotifierManager.getPushNotifier().getToken() //Get current user push notification token
-NotifierManager.getPushNotifier().deleteMyToken() //Delete user's token for example when user logs out 
-NotifierManager.getPushNotifier().subscribeToTopic("new_users") 
-NotifierManager.getPushNotifier().unSubscribeFromTopic("new_users") 
+KMPNotifier.firebasePushNotifier.getToken() //Get current user push notification token
+KMPNotifier.firebasePushNotifier.deleteMyToken() //Delete user's token for example when user logs out 
+KMPNotifier.firebasePushNotifier.subscribeToTopic("new_users") 
+KMPNotifier.firebasePushNotifier.unSubscribeFromTopic("new_users") 
 ```
 For setting custom notification sound, check https://github.com/mirzemehdi/KMPNotifier/pull/61#issuecomment-2275850021  
 For setting Intent data in Android (for deeplink), check https://github.com/mirzemehdi/KMPNotifier/pull/60#issue-2454489089    
@@ -361,8 +375,13 @@ For permissionUtil, or manually asking notification permission check https://git
 If you want to see internal logs of the library, you can set a logger using:
 
 ```kotlin
-NotifierManager.setLogger { message ->
+KMPNotifier.setLogger { message ->
     // Log the message
     println(message)
 }
 ```
+
+## Migrating from 1.x
+
+The old `NotifierManager` API (from the `kmpnotifier` artifact) keeps working in 2.x —
+it is deprecated and forwards to the new API. See [MIGRATION.md](MIGRATION.md).

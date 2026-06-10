@@ -1,8 +1,9 @@
+@file:OptIn(InternalKMPNotifierApi::class)
+
 package com.mmk.kmpnotifier.testutil
 
-import com.mmk.kmpnotifier.di.LibDependencyInitializer
-import com.mmk.kmpnotifier.logger.EmptyLogger
-import com.mmk.kmpnotifier.logger.currentLogger
+import com.mmk.kmpnotifier.internal.InternalKMPNotifierApi
+import com.mmk.kmpnotifier.internal.NotifierInternals
 import com.mmk.kmpnotifier.notification.NotifierManagerImpl
 
 /**
@@ -11,8 +12,7 @@ import com.mmk.kmpnotifier.notification.NotifierManagerImpl
 internal object TestNotifierState {
 
     fun resetAll() {
-        LibDependencyInitializer.reset()
+        NotifierInternals.resetForTests()
         NotifierManagerImpl.reset()
-        currentLogger = EmptyLogger
     }
 }

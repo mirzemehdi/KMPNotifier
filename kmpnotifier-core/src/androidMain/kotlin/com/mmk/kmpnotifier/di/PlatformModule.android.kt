@@ -1,0 +1,29 @@
+package com.mmk.kmpnotifier.di
+
+import android.content.Context
+import androidx.startup.Initializer
+import com.mmk.kmpnotifier.permission.AndroidMockPermissionUtil
+import com.mmk.kmpnotifier.permission.PermissionUtil
+import org.koin.core.module.dsl.factoryOf
+import org.koin.dsl.bind
+import org.koin.dsl.module
+
+internal lateinit var applicationContext: Context
+    private set
+
+internal class ContextInitializer : Initializer<Unit> {
+    override fun create(context: Context) {
+        applicationContext = context.applicationContext
+    }
+
+    override fun dependencies(): List<Class<out Initializer<*>>> {
+        return emptyList()
+    }
+}
+
+
+internal actual val platformModule = module {
+    factory { Platform.Android } bind Platform::class
+    single { applicationContext }
+    factoryOf(::AndroidMockPermissionUtil) bind PermissionUtil::class
+}

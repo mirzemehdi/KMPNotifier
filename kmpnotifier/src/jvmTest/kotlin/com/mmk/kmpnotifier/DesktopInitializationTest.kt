@@ -1,11 +1,11 @@
+@file:OptIn(InternalKMPNotifierApi::class)
+
 package com.mmk.kmpnotifier
 
-import com.mmk.kmpnotifier.notification.EmptyPushNotifierImpl
+import com.mmk.kmpnotifier.internal.InternalKMPNotifierApi
+import com.mmk.kmpnotifier.internal.NotifierInternals
 import com.mmk.kmpnotifier.notification.NotifierManager
-import com.mmk.kmpnotifier.notification.NotifierManagerImpl
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
-import com.mmk.kmpnotifier.notification.impl.JOptionPaneNotifier
-import com.mmk.kmpnotifier.notification.impl.TrayNotifier
 import com.mmk.kmpnotifier.testutil.TestNotifierState
 import kotlinx.coroutines.test.runTest
 import kotlin.test.AfterTest
@@ -43,25 +43,23 @@ class DesktopInitializationTest {
         NotifierManager.initialize(
             NotificationPlatformConfiguration.Desktop(notificationIconPath = "/other/icon.png")
         )
-        assertSame(configuration, NotifierManagerImpl.getConfiguration())
+        assertSame(configuration, NotifierInternals.configuration)
     }
 
     @Test
-    fun localNotifierMatchesTraySupport() {
+    fun localNotifierIsDesktopImplementation() {
         NotifierManager.initialize(configuration)
-        val notifier = NotifierManager.getLocalNotifier()
-        if (TrayNotifier.isSupported) {
-            assertTrue(notifier is TrayNotifier, "Expected TrayNotifier when tray is supported")
-        } else {
-            assertTrue(notifier is JOptionPaneNotifier, "Expected JOptionPaneNotifier fallback")
-        }
+        val notifierClassName = NotifierManager.getLocalNotifier()::class.simpleName.orEmpty()
+        assertTrue(
+            notifierClassName == "TrayNotifier" || notifierClassName == "JOptionPaneNotifier",
+            "Expected a desktop notifier implementation, got $notifierClassName",
+        )
     }
 
     @Test
     fun pushNotifierBehavesAsEmptyImplementation() = runTest {
         NotifierManager.initialize(configuration)
         val pushNotifier = NotifierManager.getPushNotifier()
-        assertTrue(pushNotifier is EmptyPushNotifierImpl)
         assertNull(pushNotifier.getToken())
         pushNotifier.deleteMyToken()
         pushNotifier.subscribeToTopic("topic")

@@ -1,101 +1,93 @@
+@file:OptIn(InternalKMPNotifierApi::class)
+
 package com.mmk.kmpnotifier.notification
 
-import com.mmk.kmpnotifier.di.KMPKoinComponent
-import com.mmk.kmpnotifier.di.LibDependencyInitializer
+import com.mmk.kmpnotifier.KMPNotifier
+import com.mmk.kmpnotifier.internal.InternalKMPNotifierApi
+import com.mmk.kmpnotifier.internal.NotifierEventHub
+import com.mmk.kmpnotifier.internal.NotifierInternals
+import com.mmk.kmpnotifier.internal.PushEventSink
+import com.mmk.kmpnotifier.local.LocalNotifications
 import com.mmk.kmpnotifier.logger.Logger
-import com.mmk.kmpnotifier.logger.currentLogger
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import com.mmk.kmpnotifier.permission.PermissionUtil
-import org.koin.core.component.get
 
-internal object NotifierManagerImpl : KMPKoinComponent() {
+/**
+ * Bridges the deprecated [NotifierManager] API onto the new modular API:
+ * events flowing through the core event hub are forwarded to legacy
+ * [NotifierManager.Listener]s.
+ */
+internal object NotifierManagerImpl {
+
     private val listeners = mutableListOf<NotifierManager.Listener>()
 
-    fun initialize(configuration: NotificationPlatformConfiguration) {
-        LibDependencyInitializer.initialize(configuration)
+    private val bridge = object : KMPNotifier.Listener, PushEventSink {
+        override fun onNotificationClicked(data: PayloadData) {
+            listeners.toList().forEach { it.onNotificationClicked(data) }
+        }
+
+        override fun onAction(actionId: String, notificationId: Int, payload: Map<String, Any?>) {
+            listeners.toList().forEach {
+                it.onAction(actionId = actionId, notificationId = notificationId, payload = payload)
+            }
+        }
+
+        override fun onNewToken(token: String) {
+            listeners.toList().forEach { it.onNewToken(token) }
+        }
+
+        override fun onPushPayloadData(data: PayloadData) {
+            listeners.toList().forEach { it.onPayloadData(data) }
+        }
+
+        override fun onPushNotification(title: String?, body: String?) {
+            listeners.toList().forEach { it.onPushNotification(title = title, body = body) }
+        }
+
+        override fun onPushNotificationWithPayloadData(title: String?, body: String?, data: PayloadData) {
+            listeners.toList().forEach {
+                it.onPushNotificationWithPayloadData(title = title, body = body, data = data)
+            }
+        }
     }
 
-    fun getConfiguration(): NotificationPlatformConfiguration = get()
+    private fun ensureBridge() {
+        NotifierEventHub.registerInternalListener(bridge)
+        NotifierEventHub.registerPushEventSink(bridge)
+    }
+
+    fun initialize(configuration: NotificationPlatformConfiguration) {
+        KMPNotifier.initialize(configuration, *defaultExtensions())
+        ensureBridge()
+    }
+
+    fun getConfiguration(): NotificationPlatformConfiguration = NotifierInternals.configuration
 
     fun getLocalNotifier(): Notifier {
-        requireInitialization()
-        return get()
+        NotifierInternals.requireInitialized()
+        return LocalNotifications.notifier
     }
 
     fun getPushNotifier(): PushNotifier {
-        requireInitialization()
-        return get()
+        NotifierInternals.requireInitialized()
+        return NotifierInternals.pushNotifierOrEmpty()
     }
 
-    fun getPermissionUtil(): PermissionUtil {
-        requireInitialization()
-        return get()
-    }
-
+    fun getPermissionUtil(): PermissionUtil = KMPNotifier.permissionUtil
 
     fun addListener(listener: NotifierManager.Listener) {
+        ensureBridge()
         listeners.add(listener)
     }
 
     fun setListener(listener: NotifierManager.Listener?) {
+        ensureBridge()
         listeners.clear()
         listener?.let { listeners.add(it) }
     }
 
-    fun onNewToken(token: String) {
-        listeners.forEach { it.onNewToken(token) }
-    }
-
-    fun onPushPayloadData(data: PayloadData) {
-        currentLogger.log("Received Push Notification payload data")
-        if (listeners.size == 0) currentLogger.log("There is no listener to notify onPushPayloadData")
-        listeners.forEach { it.onPayloadData(data) }
-    }
-
-    fun onPushNotification(title: String?, body: String?) {
-        currentLogger.log("Received Push Notification notification type message")
-        if (listeners.size == 0) currentLogger.log("There is no listener to notify onPushNotification")
-        listeners.forEach { it.onPushNotification(title = title, body = body) }
-    }
-
-    fun onAction(actionId: String, notificationId: Int, payload: Map<String, Any?>) {
-        currentLogger.log("Received action")
-        if (listeners.size == 0) currentLogger.log("There is no listener to notify onAction")
-        listeners.forEach { it.onAction(actionId = actionId, notificationId = notificationId, payload = payload) }
-    }
-
-
-    fun onPushNotificationWithPayloadData(
-        title: String? = null,
-        body: String? = null,
-        data: PayloadData
-    ) {
-        currentLogger.log("Received Push Notification")
-        if (listeners.size == 0) currentLogger.log("There is no listener to notify onPushNotificationWithPayloadData")
-        listeners.forEach {
-            it.onPushNotificationWithPayloadData(
-                title = title,
-                body = body,
-                data = data
-            )
-        }
-    }
-
-    fun onNotificationClicked(data: PayloadData) {
-        currentLogger.log("Notification is clicked")
-        if (listeners.size == 0) currentLogger.log("There is no listener to notify onPushPayloadData")
-        listeners.forEach { it.onNotificationClicked(data) }
-    }
-
-    private fun requireInitialization() {
-        if (LibDependencyInitializer.isInitialized().not()) throw IllegalStateException(
-            "NotifierFactory is not initialized. " +
-                    "Please, initialize NotifierFactory by calling #initialize method"
-        )
-    }
-
     fun setLogger(logger: Logger) {
-        currentLogger = logger
+        KMPNotifier.setLogger(logger)
     }
 
     /**
@@ -106,3 +98,10 @@ internal object NotifierManagerImpl : KMPKoinComponent() {
         listeners.clear()
     }
 }
+
+/**
+ * Extensions installed by the deprecated single-call [NotifierManager.initialize] so existing
+ * applications keep working unchanged: local notifications everywhere, Firebase push on
+ * android and iOS.
+ */
+internal expect fun defaultExtensions(): Array<com.mmk.kmpnotifier.KMPNotifierExtension>

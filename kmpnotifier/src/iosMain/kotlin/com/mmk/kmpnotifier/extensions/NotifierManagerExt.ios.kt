@@ -1,12 +1,12 @@
 @file:Suppress("UnusedReceiverParameter")
+@file:OptIn(InternalKMPNotifierApi::class)
 
 package com.mmk.kmpnotifier.extensions
 
-import com.mmk.kmpnotifier.Constants.KEY_IOS_FIREBASE_NOTIFICATION
+import com.mmk.kmpnotifier.KMPNotifier
+import com.mmk.kmpnotifier.internal.InternalKMPNotifierApi
 import com.mmk.kmpnotifier.notification.NotifierManager
-import com.mmk.kmpnotifier.notification.NotifierManagerImpl
-import com.mmk.kmpnotifier.notification.PayloadData
-import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
+import com.mmk.kmpnotifier.push.firebase.onApplicationDidReceiveRemoteNotification
 import platform.UserNotifications.UNNotificationContent
 
 /***
@@ -23,56 +23,13 @@ import platform.UserNotifications.UNNotificationContent
  * ```
  */
 public fun NotifierManager.onApplicationDidReceiveRemoteNotification(userInfo: Map<Any?, *>) {
-    val payloadData = userInfo.asPayloadData()
-    if (payloadData.containsKey(KEY_IOS_FIREBASE_NOTIFICATION)) {
-        NotifierManagerImpl.onPushPayloadData(payloadData)
-        NotifierManagerImpl.onPushNotificationWithPayloadData(data = payloadData)
-    }
+    KMPNotifier.onApplicationDidReceiveRemoteNotification(userInfo)
 }
 
 public fun NotifierManager.onUserNotification(notificationContent: UNNotificationContent) {
-    val userInfo = notificationContent.userInfo
-    val payloadData = userInfo.asPayloadData()
-    val hasNotification = notificationContent.title != null || notificationContent.body != null
-    if (notificationContent.isPushNotification() && hasNotification) {
-        NotifierManagerImpl.onPushNotification(
-            title = notificationContent.title,
-            body = notificationContent.body
-        )
-    }
-    if (notificationContent.isPushNotification()) {
-        NotifierManagerImpl.onPushPayloadData(payloadData)
-        NotifierManagerImpl.onPushNotificationWithPayloadData(
-            title = notificationContent.title,
-            body = notificationContent.body,
-            data = payloadData
-        )
-    }
+    emitPushEventsIfRemote(notificationContent)
 }
 
 public fun NotifierManager.onNotificationClicked(notificationContent: UNNotificationContent) {
-    NotifierManagerImpl.onNotificationClicked(notificationContent.userInfo.asPayloadData())
-}
-
-internal fun NotifierManager.shouldShowNotification(notificationContent: UNNotificationContent): Boolean {
-    val configuration =
-        NotifierManagerImpl.getConfiguration() as? NotificationPlatformConfiguration.Ios
-    val configurationShowPushNotificationEnabled = configuration?.showPushNotification ?: true
-    return when {
-        notificationContent.isPushNotification() && !configurationShowPushNotificationEnabled -> false
-        else -> true
-    }
-}
-
-internal fun Map<Any?, *>?.asPayloadData(): PayloadData {
-    return this.orEmpty().let { data ->
-        data.keys
-            .filterNotNull()
-            .filterIsInstance<String>()
-            .associateWith { key -> data[key] }
-    }
-}
-
-private fun UNNotificationContent.isPushNotification(): Boolean {
-    return userInfo.containsKey(KEY_IOS_FIREBASE_NOTIFICATION)
+    KMPNotifier.onNotificationClicked(notificationContent)
 }

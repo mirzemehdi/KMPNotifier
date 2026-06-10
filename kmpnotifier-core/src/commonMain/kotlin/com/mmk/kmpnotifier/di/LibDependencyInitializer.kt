@@ -1,0 +1,68 @@
+@file:OptIn(InternalKMPNotifierApi::class)
+
+package com.mmk.kmpnotifier.di
+
+import com.mmk.kmpnotifier.internal.InternalKMPNotifierApi
+import com.mmk.kmpnotifier.logger.currentLogger
+import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
+import com.mmk.kmpnotifier.permission.PermissionUtil
+import org.koin.core.Koin
+import org.koin.core.KoinApplication
+import org.koin.dsl.koinApplication
+import org.koin.dsl.module
+
+internal object LibDependencyInitializer {
+    var koinApp: KoinApplication? = null
+        private set
+
+
+    fun initialize(configuration: NotificationPlatformConfiguration) {
+        if (isInitialized()) return
+        val configModule = module {
+            single { configuration }
+        }
+        koinApp = koinApplication {
+            modules(configModule + platformModule)
+        }.also {
+            it.koin.onLibraryInitialized()
+        }
+
+    }
+
+    fun isInitialized() = koinApp != null
+
+    /**
+     * Closes the Koin container and clears initialization state.
+     * Intended for tests to restore a clean library state between runs.
+     */
+    fun reset() {
+        koinApp?.close()
+        koinApp = null
+    }
+
+}
+
+private fun Koin.onLibraryInitialized() {
+    currentLogger.log("Library is initialized")
+    val permissionUtil by inject<PermissionUtil>()
+    val platform by inject<Platform>()
+    val configuration by inject<NotificationPlatformConfiguration>()
+
+    when (platform) {
+        Platform.Android, Platform.Desktop -> Unit //In Android platform permission should be asked in activity
+        Platform.Ios -> {
+            val askNotificationPermissionOnStart =
+                (configuration as? NotificationPlatformConfiguration.Ios)?.askNotificationPermissionOnStart
+                    ?: true
+            if (askNotificationPermissionOnStart) permissionUtil.askNotificationPermission()
+        }
+
+        Platform.Web -> {
+            val askNotificationPermissionOnStart =
+                (configuration as? NotificationPlatformConfiguration.Web)?.askNotificationPermissionOnStart
+                    ?: true
+            if (askNotificationPermissionOnStart) permissionUtil.askNotificationPermission()
+        }
+
+    }
+}
