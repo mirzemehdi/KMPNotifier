@@ -29,6 +29,14 @@ internal object LibDependencyInitializer {
 
     fun isInitialized() = koinApp != null
 
+    /**
+     * Closes the Koin container and clears initialization state.
+     * Intended for tests to restore a clean library state between runs.
+     */
+    fun reset() {
+        koinApp?.close()
+        koinApp = null
+    }
 
 }
 

@@ -66,6 +66,14 @@ kotlin {
 
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutine.test)
+        }
+
+        androidUnitTest.dependencies {
+            implementation(libs.junit)
+            implementation(libs.robolectric)
+            implementation(libs.androidx.test.core.ktx)
+            implementation(libs.kotlinx.coroutine.android)
         }
 
     }
@@ -87,6 +95,9 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+    }
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

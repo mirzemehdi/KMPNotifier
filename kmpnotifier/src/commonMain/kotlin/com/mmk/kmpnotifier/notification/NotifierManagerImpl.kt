@@ -97,4 +97,12 @@ internal object NotifierManagerImpl : KMPKoinComponent() {
     fun setLogger(logger: Logger) {
         currentLogger = logger
     }
+
+    /**
+     * Clears all registered listeners.
+     * Intended for tests to restore a clean library state between runs.
+     */
+    fun reset() {
+        listeners.clear()
+    }
 }
