@@ -27,9 +27,11 @@ internal object NotifierManagerImpl {
             listeners.toList().forEach { it.onNotificationClicked(data) }
         }
 
-        override fun onAction(actionId: String, notificationId: Int, payload: Map<String, Any?>) {
+        override fun onAction(actionId: String, notificationId: Int, payload: PayloadData) {
+            @Suppress("UNCHECKED_CAST")
+            val legacyPayload = payload as Map<String, Any?>
             listeners.toList().forEach {
-                it.onAction(actionId = actionId, notificationId = notificationId, payload = payload)
+                it.onAction(actionId = actionId, notificationId = notificationId, payload = legacyPayload)
             }
         }
 
@@ -71,6 +73,11 @@ internal object NotifierManagerImpl {
 
     fun getPushNotifier(): PushNotifier {
         NotifierInternals.requireInitialized()
+        NotifierInternals.pushNotifierOrNull()?.let { return it }
+        // 1.x parity: the push notifier was a lazy Koin factory, created on first access.
+        // On iOS the Firebase notifier must not be created eagerly at initialize —
+        // local-only apps without FirebaseApp.configure() would crash.
+        installDefaultPushNotifier()
         return NotifierInternals.pushNotifierOrEmpty()
     }
 
@@ -102,7 +109,14 @@ internal object NotifierManagerImpl {
 
 /**
  * Extensions installed by the deprecated single-call [NotifierManager.initialize] so existing
- * applications keep working unchanged: local notifications everywhere, Firebase push on
- * android and iOS.
+ * applications keep working unchanged: local notifications everywhere, plus Firebase push on
+ * android (where eager creation only logs). On iOS the push notifier is installed lazily by
+ * [NotifierManagerImpl.getPushNotifier] — see [installDefaultPushNotifier].
  */
 internal expect fun defaultExtensions(): Array<com.mmk.kmpnotifier.KMPNotifierExtension>
+
+/**
+ * Installs the platform's default push notifier on demand (android/ios: FirebasePush;
+ * no-op elsewhere). Mirrors the 1.x lazy Koin factory semantics of `getPushNotifier()`.
+ */
+internal expect fun installDefaultPushNotifier()

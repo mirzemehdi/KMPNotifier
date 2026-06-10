@@ -36,10 +36,12 @@ public object LocalNotifications : KMPNotifierExtension {
             NotifierInternals.requireInitialized()
             val existing = NotifierInternals.localNotifierOrNull() as? Notifier
             if (existing != null) return existing
-            currentLogger.log(
-                "LocalNotifications was not passed to KMPNotifier.initialize; installing lazily. " +
-                        "Pass LocalNotifications (or FirebasePush) to initialize for reliable behavior."
-            )
+            val warning = "KMPNotifier: LocalNotifications was not passed to KMPNotifier.initialize; " +
+                    "installing lazily. Pass LocalNotifications (or FirebasePush) to initialize for " +
+                    "reliable behavior — on iOS a late install can miss cold-start notification clicks."
+            // Misconfiguration, not noise: surface it even when no logger is set.
+            println(warning)
+            currentLogger.log(warning)
             return installNotifier(NotifierInternals.runtime())
         }
 

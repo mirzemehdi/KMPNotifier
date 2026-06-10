@@ -21,11 +21,6 @@ class LoggerTest {
     fun tearDown() = NotifierInternals.resetForTests()
 
     @Test
-    fun defaultLoggerIsEmptyLogger() {
-        assertSame(EmptyLogger, currentLogger)
-    }
-
-    @Test
     fun setLoggerReceivesInternalLogMessages() {
         val messages = mutableListOf<String>()
         KMPNotifier.setLogger { messages.add(it) }

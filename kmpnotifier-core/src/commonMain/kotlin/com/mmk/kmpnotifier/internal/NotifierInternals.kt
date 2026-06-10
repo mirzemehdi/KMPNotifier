@@ -82,10 +82,17 @@ public object NotifierInternals {
     internal fun installExtensions(extensions: List<com.mmk.kmpnotifier.KMPNotifierExtension>) {
         val runtime = runtime()
         fun installRecursively(extension: com.mmk.kmpnotifier.KMPNotifierExtension, visiting: MutableSet<com.mmk.kmpnotifier.KMPNotifierExtension>) {
-            if (extension in installedExtensions || extension in visiting) return
+            if (extension in installedExtensions) return
+            check(extension in visiting == false) {
+                "Extension dependency cycle detected involving $extension"
+            }
             visiting.add(extension)
             extension.dependsOn.forEach { installRecursively(it, visiting) }
-            extension.install(runtime)
+            try {
+                extension.install(runtime)
+            } catch (e: Throwable) {
+                throw IllegalStateException("Failed to install KMPNotifier extension $extension", e)
+            }
             installedExtensions.add(extension)
         }
         extensions.forEach { installRecursively(it, mutableSetOf()) }

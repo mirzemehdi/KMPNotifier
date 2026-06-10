@@ -130,6 +130,6 @@ public object KMPNotifier {
          * @param notificationId the ID of the notification
          * @param payload the payload data of the notification
          */
-        public fun onAction(actionId: String, notificationId: Int, payload: Map<String, Any?>) {}
+        public fun onAction(actionId: String, notificationId: Int, payload: PayloadData) {}
     }
 }

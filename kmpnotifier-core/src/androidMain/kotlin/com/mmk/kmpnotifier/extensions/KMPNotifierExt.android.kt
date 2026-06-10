@@ -49,7 +49,6 @@ public fun KMPNotifier.onCreateOrOnNewIntent(intent: Intent?) {
     val isNotificationClicked =
         extras.containsKey(ACTION_NOTIFICATION_CLICK)
                 || extras.containsKey(KEY_ANDROID_FIREBASE_NOTIFICATION)
-                || payloadData.containsKey(ACTION_NOTIFICATION_CLICK)
 
     extras.keySet().forEach { key ->
         val value = extras.get(key)

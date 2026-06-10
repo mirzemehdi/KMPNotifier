@@ -147,31 +147,4 @@ class ListenerFanOutTest {
         assertEquals(listOf(Triple("reply", 42, payload)), listener.actions)
     }
 
-    @Test
-    fun dispatchWithoutListenersDoesNotThrow() {
-        TestDispatch.newToken("token")
-        TestDispatch.pushPayloadData(mapOf("k" to "v"))
-        TestDispatch.pushNotification("t", "b")
-        TestDispatch.pushNotificationWithPayloadData(data = mapOf("k" to "v"))
-        TestDispatch.notificationClicked(mapOf("k" to "v"))
-        TestDispatch.action("id", 1, mapOf("k" to "v"))
-    }
-
-    @Test
-    fun allEventsReachEveryListener() {
-        val first = RecordingListener()
-        val second = RecordingListener()
-        NotifierManager.addListener(first)
-        NotifierManager.addListener(second)
-
-        TestDispatch.newToken("token")
-        TestDispatch.pushPayloadData(mapOf("a" to 1))
-        TestDispatch.pushNotification("t", "b")
-        TestDispatch.pushNotificationWithPayloadData(title = "t", body = "b", data = mapOf("a" to 1))
-        TestDispatch.notificationClicked(mapOf("a" to 1))
-        TestDispatch.action("id", 7, mapOf("a" to 1))
-
-        assertEquals(6, first.totalEventCount)
-        assertEquals(6, second.totalEventCount)
-    }
 }

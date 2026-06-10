@@ -23,7 +23,7 @@ class EventOrderingTest {
             order.add("clicked")
         }
 
-        override fun onAction(actionId: String, notificationId: Int, payload: Map<String, Any?>) {
+        override fun onAction(actionId: String, notificationId: Int, payload: PayloadData) {
             order.add("action")
         }
 

@@ -34,14 +34,11 @@ public fun UNNotificationContent.isRemoteNotification(): Boolean {
 public fun emitPushEventsIfRemote(notificationContent: UNNotificationContent) {
     val userInfo = notificationContent.userInfo
     val payloadData = userInfo.asPayloadData()
-    val hasNotification = notificationContent.title != null || notificationContent.body != null
-    if (notificationContent.isRemoteNotification() && hasNotification) {
+    if (notificationContent.isRemoteNotification()) {
         NotifierEventHub.emitPushNotification(
             title = notificationContent.title,
             body = notificationContent.body
         )
-    }
-    if (notificationContent.isRemoteNotification()) {
         NotifierEventHub.emitPushPayloadData(payloadData)
         NotifierEventHub.emitPushNotificationWithPayloadData(
             title = notificationContent.title,

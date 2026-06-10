@@ -287,6 +287,10 @@ internal class IosNotifier(
             emitPushEventsIfRemote(notificationContent)
             if (shouldShowNotification(notificationContent)) {
                 withCompletionHandler(IOS_PRESENTATION_OPTIONS)
+            } else {
+                // UNUserNotificationCenter expects the handler to be called exactly once;
+                // pass no options to suppress the presentation.
+                withCompletionHandler(0u)
             }
         }
 
