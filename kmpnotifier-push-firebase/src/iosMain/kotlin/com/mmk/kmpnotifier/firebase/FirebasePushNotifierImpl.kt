@@ -2,8 +2,8 @@
 
 package com.mmk.kmpnotifier.firebase
 
-import cocoapods.FirebaseMessaging.FIRMessaging
-import cocoapods.FirebaseMessaging.FIRMessagingDelegateProtocol
+import swiftPMImport.io.github.mirzemehdi.kmpnotifier.push.firebase.FIRMessaging
+import swiftPMImport.io.github.mirzemehdi.kmpnotifier.push.firebase.FIRMessagingDelegateProtocol
 import com.mmk.kmpnotifier.internal.InternalKMPNotifierApi
 import com.mmk.kmpnotifier.internal.NotifierEventHub
 import com.mmk.kmpnotifier.logger.currentLogger
