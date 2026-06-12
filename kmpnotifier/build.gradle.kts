@@ -42,26 +42,20 @@ kotlin {
             isStatic = true
         }
         noPodspec()
-        pod("FirebaseMessaging")
+        // The FirebaseMessaging cinterop comes transitively from :kmpnotifier-push-firebase.
+        // linkOnly provides the framework at link time without generating a second
+        // (conflicting) cinterop binding.
+        pod("FirebaseMessaging") { linkOnly = true }
     }
 
 
 
     sourceSets {
 
-        androidMain.dependencies {
-            implementation(libs.androidx.startup.runtime)
-            implementation(libs.androidx.core.ktx)
-            implementation(libs.androidx.activity.ktx)
-            implementation(libs.firebase.messaging)
-
-        }
         commonMain.dependencies {
-            implementation(libs.koin.core)
-            implementation(libs.kotlinx.coroutine)
-        }
-        wasmJsMain.dependencies {
-            implementation(libs.kotlinx.browser)
+            api(projects.kmpnotifierCore)
+            api(projects.kmpnotifierLocal)
+            api(projects.kmpnotifierPushFirebase)
         }
 
         commonTest.dependencies {

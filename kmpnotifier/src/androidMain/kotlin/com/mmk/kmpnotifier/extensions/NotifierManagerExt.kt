@@ -2,10 +2,7 @@ package com.mmk.kmpnotifier.extensions
 
 import android.content.Context
 import android.content.Intent
-import androidx.core.os.bundleOf
-import com.mmk.kmpnotifier.Constants.ACTION_NOTIFICATION_CLICK
-import com.mmk.kmpnotifier.Constants.KEY_ANDROID_FIREBASE_NOTIFICATION
-import com.mmk.kmpnotifier.di.ContextInitializer
+import com.mmk.kmpnotifier.KMPNotifier
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.notification.NotifierManagerImpl
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
@@ -37,28 +34,7 @@ import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfig
  * ```
  */
 public fun NotifierManager.onCreateOrOnNewIntent(intent: Intent?) {
-    if (intent == null) return
-    val extras = intent.extras ?: bundleOf()
-    val payloadData = mutableMapOf<String, Any>()
-
-    val isNotificationClicked =
-        extras.containsKey(ACTION_NOTIFICATION_CLICK)
-                || extras.containsKey(KEY_ANDROID_FIREBASE_NOTIFICATION)
-                || payloadData.containsKey(ACTION_NOTIFICATION_CLICK)
-
-    extras.keySet().forEach { key ->
-        val value = extras.get(key)
-        value?.let { payloadData[key] = it }
-    }
-
-    if (extras.containsKey(KEY_ANDROID_FIREBASE_NOTIFICATION)) {
-        val payloadDataWithoutClickAction = payloadData.minus(ACTION_NOTIFICATION_CLICK)
-        NotifierManagerImpl.onPushPayloadData(payloadDataWithoutClickAction)
-        NotifierManagerImpl.onPushNotificationWithPayloadData(data = payloadDataWithoutClickAction)
-    }
-    if (isNotificationClicked) {
-        NotifierManagerImpl.onNotificationClicked(payloadData.minus(ACTION_NOTIFICATION_CLICK))
-    }
+    KMPNotifier.onCreateOrOnNewIntent(intent)
 }
 
 
@@ -74,12 +50,6 @@ public fun NotifierManager.initialize(
     context: Context,
     configuration: NotificationPlatformConfiguration
 ) {
-    ContextInitializer().create(context)
+    KMPNotifier.initialize(context, configuration)
     NotifierManagerImpl.initialize(configuration)
-}
-
-internal fun NotifierManagerImpl.shouldShowNotification(): Boolean {
-    val configuration =
-        NotifierManagerImpl.getConfiguration() as? NotificationPlatformConfiguration.Android
-    return configuration?.showPushNotification ?: true
 }

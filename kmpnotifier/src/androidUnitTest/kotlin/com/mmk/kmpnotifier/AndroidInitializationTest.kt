@@ -1,15 +1,15 @@
+@file:OptIn(InternalKMPNotifierApi::class)
+
 package com.mmk.kmpnotifier
 
 import android.Manifest
 import android.app.Application
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
-import com.mmk.kmpnotifier.di.ContextInitializer
 import com.mmk.kmpnotifier.extensions.initialize
-import com.mmk.kmpnotifier.firebase.FirebasePushNotifierImpl
-import com.mmk.kmpnotifier.notification.AndroidNotifier
+import com.mmk.kmpnotifier.internal.InternalKMPNotifierApi
+import com.mmk.kmpnotifier.internal.NotifierInternals
 import com.mmk.kmpnotifier.notification.NotifierManager
-import com.mmk.kmpnotifier.notification.NotifierManagerImpl
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import com.mmk.kmpnotifier.testutil.TestNotifierState
 import org.junit.After
@@ -19,6 +19,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
+import kotlin.test.assertEquals
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
@@ -39,23 +40,15 @@ class AndroidInitializationTest {
     fun tearDown() = TestNotifierState.resetAll()
 
     @Test
-    fun contextInitializerCapturesApplicationContext() {
-        ContextInitializer().create(context)
-        // Initialization through the common entry point works once context is set.
-        NotifierManager.initialize(configuration)
-        NotifierManager.getLocalNotifier()
-    }
-
-    @Test
     fun initializeWithContextProvidesAndroidNotifier() {
         NotifierManager.initialize(context, configuration)
-        assertTrue(NotifierManager.getLocalNotifier() is AndroidNotifier)
+        assertEquals("AndroidNotifier", NotifierManager.getLocalNotifier()::class.simpleName)
     }
 
     @Test
     fun initializeWithContextProvidesFirebasePushNotifier() {
         NotifierManager.initialize(context, configuration)
-        assertTrue(NotifierManager.getPushNotifier() is FirebasePushNotifierImpl)
+        assertEquals("FirebasePushNotifierImpl", NotifierManager.getPushNotifier()::class.simpleName)
     }
 
     @Test
@@ -65,7 +58,7 @@ class AndroidInitializationTest {
             context,
             NotificationPlatformConfiguration.Android(notificationIconResId = android.R.drawable.ic_dialog_alert),
         )
-        assertSame(configuration, NotifierManagerImpl.getConfiguration())
+        assertSame(configuration, NotifierInternals.configuration)
     }
 
     @Test

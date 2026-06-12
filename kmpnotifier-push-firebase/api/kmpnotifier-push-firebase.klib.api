@@ -1,0 +1,40 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64, iosX64, js, wasmJs]
+// Alias: ios => [iosArm64, iosSimulatorArm64, iosX64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <io.github.mirzemehdi:kmpnotifier-push-firebase>
+abstract interface com.mmk.kmpnotifier.push/PushListener { // com.mmk.kmpnotifier.push/PushListener|null[0]
+    open fun onNewToken(kotlin/String) // com.mmk.kmpnotifier.push/PushListener.onNewToken|onNewToken(kotlin.String){}[0]
+    open fun onPayloadData(kotlin.collections/Map<kotlin/String, *>) // com.mmk.kmpnotifier.push/PushListener.onPayloadData|onPayloadData(kotlin.collections.Map<kotlin.String,*>){}[0]
+    open fun onPushNotification(kotlin/String?, kotlin/String?) // com.mmk.kmpnotifier.push/PushListener.onPushNotification|onPushNotification(kotlin.String?;kotlin.String?){}[0]
+    open fun onPushNotificationWithPayloadData(kotlin/String?, kotlin/String?, kotlin.collections/Map<kotlin/String, *>) // com.mmk.kmpnotifier.push/PushListener.onPushNotificationWithPayloadData|onPushNotificationWithPayloadData(kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,*>){}[0]
+}
+
+final object com.mmk.kmpnotifier.push.firebase/FirebasePush : com.mmk.kmpnotifier/KMPNotifierExtension { // com.mmk.kmpnotifier.push.firebase/FirebasePush|null[0]
+    final val dependsOn // com.mmk.kmpnotifier.push.firebase/FirebasePush.dependsOn|{}dependsOn[0]
+        final fun <get-dependsOn>(): kotlin.collections/List<com.mmk.kmpnotifier/KMPNotifierExtension> // com.mmk.kmpnotifier.push.firebase/FirebasePush.dependsOn.<get-dependsOn>|<get-dependsOn>(){}[0]
+    final val notifier // com.mmk.kmpnotifier.push.firebase/FirebasePush.notifier|{}notifier[0]
+        final fun <get-notifier>(): com.mmk.kmpnotifier.notification/PushNotifier // com.mmk.kmpnotifier.push.firebase/FirebasePush.notifier.<get-notifier>|<get-notifier>(){}[0]
+
+    final fun addListener(com.mmk.kmpnotifier.push/PushListener) // com.mmk.kmpnotifier.push.firebase/FirebasePush.addListener|addListener(com.mmk.kmpnotifier.push.PushListener){}[0]
+    final fun install(com.mmk.kmpnotifier.internal/NotifierRuntime) // com.mmk.kmpnotifier.push.firebase/FirebasePush.install|install(com.mmk.kmpnotifier.internal.NotifierRuntime){}[0]
+    final fun removeListener(com.mmk.kmpnotifier.push/PushListener) // com.mmk.kmpnotifier.push.firebase/FirebasePush.removeListener|removeListener(com.mmk.kmpnotifier.push.PushListener){}[0]
+    final fun setListener(com.mmk.kmpnotifier.push/PushListener?) // com.mmk.kmpnotifier.push.firebase/FirebasePush.setListener|setListener(com.mmk.kmpnotifier.push.PushListener?){}[0]
+}
+
+final val com.mmk.kmpnotifier.push.firebase/firebasePushNotifier // com.mmk.kmpnotifier.push.firebase/firebasePushNotifier|@com.mmk.kmpnotifier.KMPNotifier{}firebasePushNotifier[0]
+    final fun (com.mmk.kmpnotifier/KMPNotifier).<get-firebasePushNotifier>(): com.mmk.kmpnotifier.notification/PushNotifier // com.mmk.kmpnotifier.push.firebase/firebasePushNotifier.<get-firebasePushNotifier>|<get-firebasePushNotifier>@com.mmk.kmpnotifier.KMPNotifier(){}[0]
+
+final fun (com.mmk.kmpnotifier/KMPNotifier).com.mmk.kmpnotifier.push.firebase/addPushListener(com.mmk.kmpnotifier.push/PushListener) // com.mmk.kmpnotifier.push.firebase/addPushListener|addPushListener@com.mmk.kmpnotifier.KMPNotifier(com.mmk.kmpnotifier.push.PushListener){}[0]
+final fun (com.mmk.kmpnotifier/KMPNotifier).com.mmk.kmpnotifier.push.firebase/removePushListener(com.mmk.kmpnotifier.push/PushListener) // com.mmk.kmpnotifier.push.firebase/removePushListener|removePushListener@com.mmk.kmpnotifier.KMPNotifier(com.mmk.kmpnotifier.push.PushListener){}[0]
+final fun (com.mmk.kmpnotifier/KMPNotifier).com.mmk.kmpnotifier.push.firebase/setPushListener(com.mmk.kmpnotifier.push/PushListener?) // com.mmk.kmpnotifier.push.firebase/setPushListener|setPushListener@com.mmk.kmpnotifier.KMPNotifier(com.mmk.kmpnotifier.push.PushListener?){}[0]
+
+// Targets: [ios]
+final fun (com.mmk.kmpnotifier/KMPNotifier).com.mmk.kmpnotifier.push.firebase/onApplicationDidReceiveRemoteNotification(kotlin.collections/Map<kotlin/Any?, *>) // com.mmk.kmpnotifier.push.firebase/onApplicationDidReceiveRemoteNotification|onApplicationDidReceiveRemoteNotification@com.mmk.kmpnotifier.KMPNotifier(kotlin.collections.Map<kotlin.Any?,*>){}[0]
+
+// Targets: [ios]
+final fun (com.mmk.kmpnotifier/KMPNotifier).com.mmk.kmpnotifier.push.firebase/onUserNotification(platform.UserNotifications/UNNotificationContent) // com.mmk.kmpnotifier.push.firebase/onUserNotification|onUserNotification@com.mmk.kmpnotifier.KMPNotifier(platform.UserNotifications.UNNotificationContent){}[0]

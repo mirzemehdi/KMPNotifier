@@ -18,5 +18,8 @@ dependencyResolutionManagement {
     }
 }
 
+include(":kmpnotifier-core")
+include(":kmpnotifier-local")
+include(":kmpnotifier-push-firebase")
 include(":kmpnotifier")
 include(":sample")

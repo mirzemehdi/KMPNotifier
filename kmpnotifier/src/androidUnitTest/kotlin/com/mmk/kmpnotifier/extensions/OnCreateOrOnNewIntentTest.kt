@@ -1,7 +1,10 @@
+@file:OptIn(InternalKMPNotifierApi::class)
+
 package com.mmk.kmpnotifier.extensions
 
 import android.content.Intent
 import com.mmk.kmpnotifier.Constants
+import com.mmk.kmpnotifier.internal.InternalKMPNotifierApi
 import com.mmk.kmpnotifier.notification.NotifierManager
 import com.mmk.kmpnotifier.testutil.RecordingListener
 import com.mmk.kmpnotifier.testutil.TestNotifierState

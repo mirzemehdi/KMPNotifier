@@ -1,37 +1,39 @@
+@file:OptIn(InternalKMPNotifierApi::class)
+
 package com.mmk.kmpnotifier.testutil
 
-import com.mmk.kmpnotifier.notification.NotifierManagerImpl
+import com.mmk.kmpnotifier.internal.InternalKMPNotifierApi
+import com.mmk.kmpnotifier.internal.NotifierEventHub
 import com.mmk.kmpnotifier.notification.PayloadData
 
 /**
  * Single indirection point for dispatching internal notifier events from tests.
- * Tests go through this object instead of calling internals directly, so that
- * a refactor of the internal event hub only requires rewiring this one file.
+ * Events are emitted into the core event hub, exactly like the platform event sources do.
  */
 internal object TestDispatch {
 
-    fun newToken(token: String): Unit = NotifierManagerImpl.onNewToken(token)
+    fun newToken(token: String): Unit = NotifierEventHub.emitNewToken(token)
 
-    fun pushPayloadData(data: PayloadData): Unit = NotifierManagerImpl.onPushPayloadData(data)
+    fun pushPayloadData(data: PayloadData): Unit = NotifierEventHub.emitPushPayloadData(data)
 
     fun pushNotification(title: String?, body: String?): Unit =
-        NotifierManagerImpl.onPushNotification(title = title, body = body)
+        NotifierEventHub.emitPushNotification(title = title, body = body)
 
     fun pushNotificationWithPayloadData(
         title: String? = null,
         body: String? = null,
         data: PayloadData,
-    ): Unit = NotifierManagerImpl.onPushNotificationWithPayloadData(
+    ): Unit = NotifierEventHub.emitPushNotificationWithPayloadData(
         title = title,
         body = body,
         data = data,
     )
 
     fun notificationClicked(data: PayloadData): Unit =
-        NotifierManagerImpl.onNotificationClicked(data)
+        NotifierEventHub.emitNotificationClicked(data)
 
     fun action(actionId: String, notificationId: Int, payload: Map<String, Any?>): Unit =
-        NotifierManagerImpl.onAction(
+        NotifierEventHub.emitAction(
             actionId = actionId,
             notificationId = notificationId,
             payload = payload,
