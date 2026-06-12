@@ -124,7 +124,8 @@ jobs:
 
       - name: Publish to MavenCentral
         run: |
-          ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache
+          # TODO remove -PpublishDeprecatedUmbrella after the 2.0.0 release — later versions must not publish the deprecated umbrella
+          ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache -PpublishDeprecatedUmbrella=true
 
 
       - name: Create new release from tag
