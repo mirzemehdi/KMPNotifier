@@ -1,4 +1,5 @@
 @file:OptIn(InternalKMPNotifierApi::class)
+@file:Suppress("DEPRECATION")
 
 package com.mmk.kmpnotifier.notification
 
