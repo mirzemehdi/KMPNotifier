@@ -43,16 +43,16 @@ public object NotifierInternals {
     public val configuration: NotificationPlatformConfiguration
         get() {
             requireInitialized()
-            return koinGet()
+            return requireNotNull(LibDependencyInitializer.dependencies).configuration
         }
 
     public fun configurationOrNull(): NotificationPlatformConfiguration? =
-        if (LibDependencyInitializer.isInitialized()) koinGet<NotificationPlatformConfiguration>() else null
+        LibDependencyInitializer.dependencies?.configuration
 
     public val permissionUtil: PermissionUtil
         get() {
             requireInitialized()
-            return koinGet()
+            return requireNotNull(LibDependencyInitializer.dependencies).permissionUtil
         }
 
     /** Builds the runtime handed to extensions, e.g. for lazy self-installation. */
@@ -111,6 +111,4 @@ public object NotifierInternals {
         currentLogger = EmptyLogger
     }
 
-    private inline fun <reified T : Any> koinGet(): T =
-        requireNotNull(LibDependencyInitializer.koinApp).koin.get()
 }

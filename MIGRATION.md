@@ -64,7 +64,7 @@ KMPNotifier.initialize(context, configuration, FirebasePush)
 | 1.x | 2.0 |
 |---|---|
 | `NotifierManager.initialize(config)` | `KMPNotifier.initialize(config, LocalNotifications)` / `KMPNotifier.initialize(config, FirebasePush)` |
-| `NotifierManager.initialize(context, config)` (android) | `KMPNotifier.initialize(context, config, ...extensions)` |
+| `NotifierManager.initialize(context, config)` (android) | `KMPNotifier.initialize(context, config, *extensions)` |
 | `NotifierManager.getLocalNotifier()` | `KMPNotifier.localNotifier` (or `LocalNotifications.notifier`) |
 | `NotifierManager.getPushNotifier()` | `KMPNotifier.firebasePushNotifier` (or `FirebasePush.notifier`) |
 | `NotifierManager.getPermissionUtil()` | `KMPNotifier.permissionUtil` |
@@ -156,5 +156,5 @@ CocoaPods Gradle plugin. For iOS apps this means:
   and held weakly — callbacks could silently stop). Local-only iOS setups no longer need
   Firebase for notification click handling.
 - Desktop/web: both the deprecated `getPushNotifier()` and the new
-  `KMPNotifier.firebasePushNotifier` return a no-op push notifier (token is null,
-  subscriptions do nothing) — same behavior as 1.x.
+  `KMPNotifier.firebasePushNotifier` (when `FirebasePush` is installed) return a no-op push
+  notifier (token is null, subscriptions do nothing) — same behavior as 1.x.

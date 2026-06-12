@@ -36,6 +36,8 @@ public object KMPNotifier {
 
     /**
      * Initializes the library. Call on application start.
+     * On iOS call it from the main thread (e.g. in `didFinishLaunchingWithOptions`) —
+     * the notification-center delegate is installed during initialization.
      * Calling it again is a no-op for the configuration; extensions not yet installed
      * are still installed.
      *
@@ -114,7 +116,7 @@ public object KMPNotifier {
      * Shared notification events, fired for both local and push notifications.
      *
      * Push-specific events (token changes, push payloads) are part of the push module —
-     * see `PushListener` and `FirebasePush.addListener` in `kmpnotifier-push-firebase`.
+     * see `PushListener`, registered via `KMPNotifier.addPushListener` (in `kmpnotifier-push-firebase`).
      */
     public interface Listener {
 

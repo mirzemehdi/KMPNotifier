@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 KMPNotifier is a Kotlin Multiplatform notification library (`io.github.mirzemehdi`) for local notifications (Android, iOS, desktop/JVM, JS, wasmJS) and Firebase push notifications (Android/iOS only). Gradle modules:
 
-- `:kmpnotifier-core` — shared core: `KMPNotifier` facade, configuration, permissions, logger, isolated Koin DI, internal event hub. All targets.
+- `:kmpnotifier-core` — shared core: `KMPNotifier` facade, configuration, permissions, logger, manual dependency wiring, internal event hub. All targets.
 - `:kmpnotifier-local` — local notifications (`LocalNotifications` extension, `Notifier` + platform impls). All targets. Depends on core.
 - `:kmpnotifier-push-firebase` — Firebase push (`FirebasePush` extension, `PushListener`). All targets — Firebase delivery on android/iOS, shared no-op mock elsewhere (1.x parity). Depends on local. Declares the Firebase iOS dependency via SwiftPM (`swiftPMDependencies`).
 - `:kmpnotifier` — deprecated compatibility umbrella: old `NotifierManager` API forwarding to the new API; `api()`-depends on all modules. Removal planned for 3.0.0.
@@ -44,7 +44,7 @@ Version is `kmpNotifierVersion` in `gradle.properties` (all four artifacts share
 
 ## Architecture
 
-**Facade + pluggable extensions.** `KMPNotifier.initialize(configuration, vararg extensions)` (core) initializes an isolated Koin container and installs `KMPNotifierExtension`s. `LocalNotifications` (local module) registers the platform `Notifier`; `FirebasePush` (push module) registers the Firebase `PushNotifier` and declares `dependsOn = [LocalNotifications]`, so users pass only `FirebasePush`. Accessors: `KMPNotifier.localNotifier` / `LocalNotifications.notifier`, `KMPNotifier.firebasePushNotifier` / `FirebasePush.notifier` (firebase delivery android/ios; no-op mock on jvm/js/wasm).
+**Facade + pluggable extensions.** `KMPNotifier.initialize(configuration, vararg extensions)` (core) wires dependencies manually (no DI framework) and installs `KMPNotifierExtension`s. `LocalNotifications` (local module) registers the platform `Notifier`; `FirebasePush` (push module) registers the Firebase `PushNotifier` and declares `dependsOn = [LocalNotifications]`, so users pass only `FirebasePush`. Accessors: `KMPNotifier.localNotifier` / `LocalNotifications.notifier`, `KMPNotifier.firebasePushNotifier` / `FirebasePush.notifier` (firebase delivery android/ios; no-op mock on jvm/js/wasm).
 
 **Cross-module wiring via `@InternalKMPNotifierApi`** (`com.mmk.kmpnotifier.internal`, opt-in ERROR level):
 - `NotifierInternals` — registries (local notifier as `Any` since `Notifier` lives downstream; push notifier), configuration/permission access, `resetForTests()`.
@@ -55,7 +55,7 @@ Version is `kmpNotifierVersion` in `gradle.properties` (all four artifacts share
 
 **iOS delegate ownership:** `UNUserNotificationCenter.delegate` is installed by `kmpnotifier-local` during `LocalNotifications.install` and retained strongly in `IosDelegateHolder` (the ObjC delegate property is weak — without the holder, callbacks silently die). The Firebase impl only sets the `FIRMessaging` delegate. Initialize must be called from the main thread on iOS (documented behavior).
 
-**Isolated Koin container** (core only; Koin is an `implementation` dep — no Koin type may cross any public surface, including `@InternalKMPNotifierApi` ones). `LibDependencyInitializer` creates its own `koinApplication` — deliberately NOT `startKoin`. Per-platform `internal actual val platformModule` (core di/) binds only `Platform` marker + `PermissionUtil` (+ android `applicationContext` captured via androidx.startup `ContextInitializer`).
+**Manual dependency wiring** (deliberate decision — no DI framework on the runtime classpath). `LibDependencyInitializer` (core di/) holds a `NotifierDependencies(configuration, permissionUtil)` created once at initialize; per-platform `internal actual val platform` + `internal actual fun createPermissionUtil()` provide the platform pieces (android `applicationContext` captured via androidx.startup `ContextInitializer`).
 
 **Umbrella compatibility layer** (`:kmpnotifier`): `NotifierManager` keeps the exact 1.x signatures; `NotifierManagerImpl` is a bridge object implementing `KMPNotifier.Listener + PushEventSink`, registered via the hub's internal-listener channel (immune to `KMPNotifier.setListener(null)`), forwarding all six callbacks to legacy `NotifierManager.Listener`s. Old `initialize` installs `defaultExtensions()` (expect/actual: local+push on android/ios, local elsewhere). Old `getPushNotifier()` falls back to `EmptyPushNotifierImpl` on jvm/js/wasm (core holds the `PushNotifier` abstraction for exactly this reason).
 

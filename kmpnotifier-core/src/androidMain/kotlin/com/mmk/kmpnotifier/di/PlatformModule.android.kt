@@ -4,9 +4,6 @@ import android.content.Context
 import androidx.startup.Initializer
 import com.mmk.kmpnotifier.permission.AndroidMockPermissionUtil
 import com.mmk.kmpnotifier.permission.PermissionUtil
-import org.koin.core.module.dsl.factoryOf
-import org.koin.dsl.bind
-import org.koin.dsl.module
 
 internal lateinit var applicationContext: Context
     private set
@@ -22,8 +19,12 @@ internal class ContextInitializer : Initializer<Unit> {
 }
 
 
-internal actual val platformModule = module {
-    factory { Platform.Android } bind Platform::class
-    single { applicationContext }
-    factoryOf(::AndroidMockPermissionUtil) bind PermissionUtil::class
+internal actual val platform: Platform = Platform.Android
+
+internal actual fun createPermissionUtil(): PermissionUtil {
+    check(::applicationContext.isInitialized) {
+        "Application context is not available. androidx-startup is disabled or did not run — " +
+                "initialize with KMPNotifier.initialize(context, configuration, ...extensions) instead."
+    }
+    return AndroidMockPermissionUtil(applicationContext)
 }

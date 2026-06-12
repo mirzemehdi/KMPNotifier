@@ -6,47 +6,45 @@ import com.mmk.kmpnotifier.internal.InternalKMPNotifierApi
 import com.mmk.kmpnotifier.logger.currentLogger
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import com.mmk.kmpnotifier.permission.PermissionUtil
-import org.koin.core.Koin
-import org.koin.core.KoinApplication
-import org.koin.dsl.koinApplication
-import org.koin.dsl.module
+
+/**
+ * Dependencies created once at [LibDependencyInitializer.initialize].
+ * Wired manually — the library deliberately has no dependency-injection framework
+ * on its runtime classpath.
+ */
+internal class NotifierDependencies(
+    val configuration: NotificationPlatformConfiguration,
+    val permissionUtil: PermissionUtil,
+)
 
 internal object LibDependencyInitializer {
-    var koinApp: KoinApplication? = null
-        private set
 
+    var dependencies: NotifierDependencies? = null
+        private set
 
     fun initialize(configuration: NotificationPlatformConfiguration) {
         if (isInitialized()) return
-        val configModule = module {
-            single { configuration }
-        }
-        koinApp = koinApplication {
-            modules(configModule + platformModule)
-        }.also {
-            it.koin.onLibraryInitialized()
-        }
-
+        dependencies = NotifierDependencies(
+            configuration = configuration,
+            permissionUtil = createPermissionUtil(),
+        ).also { onLibraryInitialized(it) }
     }
 
-    fun isInitialized() = koinApp != null
+    fun isInitialized() = dependencies != null
 
     /**
-     * Closes the Koin container and clears initialization state.
+     * Clears initialization state.
      * Intended for tests to restore a clean library state between runs.
      */
     fun reset() {
-        koinApp?.close()
-        koinApp = null
+        dependencies = null
     }
 
 }
 
-private fun Koin.onLibraryInitialized() {
+private fun onLibraryInitialized(dependencies: NotifierDependencies) {
     currentLogger.log("Library is initialized")
-    val permissionUtil by inject<PermissionUtil>()
-    val platform by inject<Platform>()
-    val configuration by inject<NotificationPlatformConfiguration>()
+    val configuration = dependencies.configuration
 
     when (platform) {
         Platform.Android, Platform.Desktop -> Unit //In Android platform permission should be asked in activity
@@ -54,14 +52,14 @@ private fun Koin.onLibraryInitialized() {
             val askNotificationPermissionOnStart =
                 (configuration as? NotificationPlatformConfiguration.Ios)?.askNotificationPermissionOnStart
                     ?: true
-            if (askNotificationPermissionOnStart) permissionUtil.askNotificationPermission()
+            if (askNotificationPermissionOnStart) dependencies.permissionUtil.askNotificationPermission()
         }
 
         Platform.Web -> {
             val askNotificationPermissionOnStart =
                 (configuration as? NotificationPlatformConfiguration.Web)?.askNotificationPermissionOnStart
                     ?: true
-            if (askNotificationPermissionOnStart) permissionUtil.askNotificationPermission()
+            if (askNotificationPermissionOnStart) dependencies.permissionUtil.askNotificationPermission()
         }
 
     }

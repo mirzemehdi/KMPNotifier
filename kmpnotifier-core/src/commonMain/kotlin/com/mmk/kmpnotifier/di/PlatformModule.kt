@@ -1,6 +1,6 @@
 package com.mmk.kmpnotifier.di
 
-import org.koin.core.module.Module
+import com.mmk.kmpnotifier.permission.PermissionUtil
 
 
 internal sealed interface Platform {
@@ -9,4 +9,9 @@ internal sealed interface Platform {
     data object Desktop : Platform
     data object Web : Platform
 }
-internal expect val platformModule: Module
+
+/** The platform this source set is compiled for. */
+internal expect val platform: Platform
+
+/** Creates the platform's permission util. Called once during initialization. */
+internal expect fun createPermissionUtil(): PermissionUtil

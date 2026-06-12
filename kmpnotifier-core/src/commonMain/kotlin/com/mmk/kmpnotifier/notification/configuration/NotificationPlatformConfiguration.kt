@@ -15,8 +15,8 @@ public sealed interface NotificationPlatformConfiguration {
      * @see NotificationChannelData
      * @param showPushNotification Default value is true, by default when push notification is
      * received it will be shown to user. When set to false, it will not be shown to user,
-     * but you can still get notification content using
-     * @see com.mmk.kmpnotifier.notification.NotifierManager.Listener.onPushNotification
+     * but you can still get notification content using a `PushListener`
+     * (`kmpnotifier-push-firebase`).
      */
     public class Android(
         public val notificationIconResId: Int,
@@ -47,8 +47,8 @@ public sealed interface NotificationPlatformConfiguration {
      *
      * @param showPushNotification Default value is true,
      * by default when push notification is received it will be shown to user.
-     * When set to false, it will not be shown to user, but you can still get notification content using
-     * @see com.mmk.kmpnotifier.notification.NotifierManager.Listener.onPushNotification
+     * When set to false, it will not be shown to user, but you can still get notification
+     * content using a `PushListener` (`kmpnotifier-push-firebase`).
      *
      * @param askNotificationPermissionOnStart Default value is true, when library is initialized it
      * will ask notification permission automatically from the user.
@@ -71,8 +71,8 @@ public sealed interface NotificationPlatformConfiguration {
      *
      * @param showPushNotification Default value is true,
      * by default when push notification is received it will be shown to user.
-     * When set to false, it will not be shown to user, but you can still get notification content using
-     * @see com.mmk.kmpnotifier.notification.NotifierManager.Listener.onPushNotification
+     * When set to false, it will not be shown to user, but you can still get notification
+     * content using a `PushListener` (`kmpnotifier-push-firebase`).
      *
      * @param  notificationIconPath Notification icon path
 

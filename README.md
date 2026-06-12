@@ -38,6 +38,7 @@ Since 2.0.0 the library is split into focused modules:
 
 | Artifact | Use it for | Targets |
 |---|---|---|
+| `kmpnotifier-core` | shared core (configuration, permissions, events) — pulled in automatically; export it in the iOS framework | android, ios, jvm, js, wasmJs |
 | `kmpnotifier-local` | local notifications (no Firebase) | android, ios, jvm, js, wasmJs |
 | `kmpnotifier-push-firebase` | Firebase push (includes local; no-op mock on desktop/web) | android, ios, jvm, js, wasmJs |
 | `kmpnotifier` | deprecated 1.x compatibility umbrella (includes everything) | all |
@@ -144,7 +145,7 @@ permissionUtil.askNotificationPermission() //this will ask permission in Android
   <summary>iOS</summary>
 
   ### iOS Setup
-  For push notifications, add the `firebase-ios-sdk` Swift package (FirebaseMessaging product) to your iOS app in Xcode (File → Add Package Dependencies), call FirebaseApp initialization, and set the apnsToken as below. The library itself links Firebase through Swift Package Manager — no CocoaPods setup is needed. Don't forget to add Push Notifications and Background Modes (Remote Notifications) signing capability in Xcode. For local-only usage, skip everything Firebase-related and pass `LocalNotifications` instead of `FirebasePush`.
+  For push notifications, add the `firebase-ios-sdk` Swift package (FirebaseMessaging product, version **12.1.0 exact** — the version the library is built against) to your iOS app in Xcode (File → Add Package Dependencies), call FirebaseApp initialization, and set the apnsToken as below. The library itself links Firebase through Swift Package Manager — no CocoaPods setup is needed. Don't forget to add Push Notifications and Background Modes (Remote Notifications) signing capability in Xcode. For local-only usage, skip everything Firebase-related and pass `LocalNotifications` instead of `FirebasePush`.
 
 ```swift
 import SwiftUI
@@ -212,7 +213,6 @@ fun main() = application {
         LocalNotifications,
     )
     
-    AppInitializer.onApplicationStart()
     Window(
         onCloseRequest = ::exitApplication,
         title = "KMPNotifier Desktop",
@@ -331,16 +331,15 @@ And you need to call below platform-specific functions in order to receive paylo
 Call `KMPNotifier.onCreateOrOnNewIntent(intent)` on launcher Activity's `onCreate` and `onNewIntent` methods.
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
-   super.onCreate(savedInstanceState)
-      KMPNotifier.onCreateOrOnNewIntent(intent)
-      ...
-    }
+    super.onCreate(savedInstanceState)
+    KMPNotifier.onCreateOrOnNewIntent(intent)
+    ...
+}
 
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        KMPNotifier.onCreateOrOnNewIntent(intent)
-    }
-
+override fun onNewIntent(intent: Intent?) {
+    super.onNewIntent(intent)
+    KMPNotifier.onCreateOrOnNewIntent(intent)
+}
 ```
 
 ##### iOS
@@ -357,6 +356,7 @@ Call `KMPNotifier.onApplicationDidReceiveRemoteNotification(userInfo: userInfo)`
 
 #### Other functions
 ```kotlin
+// All push notifier functions are suspend — call them from a coroutine.
 KMPNotifier.firebasePushNotifier.getToken() //Get current user push notification token
 KMPNotifier.firebasePushNotifier.deleteMyToken() //Delete user's token for example when user logs out 
 KMPNotifier.firebasePushNotifier.subscribeToTopic("new_users") 

@@ -9,7 +9,6 @@ androidx-activityCompose = "1.12.1"
 androidx-core-ktx = "1.17.0"
 androidx-startup-runtime = "1.2.0"
 kotlin = "2.4.0"
-koin = "4.2.1"
 kotlinx-binary-validator = "0.18.1"
 dokka = "2.0.0"
 firebase-messaging = "25.0.1"
@@ -34,7 +33,6 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "androidx-activityCompose" }
 androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "androidx-startup-runtime" }
-koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" ,version.ref="firebase-messaging"}
 kotlinx-coroutine-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutine" }
 kotlinx-coroutine-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutine" }

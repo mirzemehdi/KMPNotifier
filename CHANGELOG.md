@@ -29,6 +29,9 @@ pull in Firebase. See [MIGRATION.md](MIGRATION.md) for a step-by-step guide.
 
 ### Changed
 
+- The library no longer depends on Koin (or any DI framework) at runtime — dependencies are
+  wired manually inside the core module. One fewer transitive dependency for consumers.
+
 - `io.github.mirzemehdi:kmpnotifier` is now a compatibility umbrella that depends on the new
   modules. Existing code keeps compiling and working unchanged.
 - iOS: Firebase is now consumed through Swift Package Manager instead of the CocoaPods Gradle

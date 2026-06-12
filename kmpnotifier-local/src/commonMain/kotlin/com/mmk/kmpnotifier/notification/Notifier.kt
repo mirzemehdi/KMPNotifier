@@ -6,6 +6,7 @@ package com.mmk.kmpnotifier.notification
 public interface Notifier {
 
     public companion object {
+        /** Payload key whose value (a URL) is attached as intent data on Android for deep linking. */
         public var KEY_URL: String = "URL"
     }
 

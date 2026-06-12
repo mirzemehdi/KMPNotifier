@@ -53,8 +53,13 @@ public object NotifierManager {
      * Creates push Notifier instance (Firebase Push Notification)
      */
     @Deprecated(
-        message = "Use KMPNotifier.firebasePushNotifier (or FirebasePush.notifier) from kmpnotifier-push-firebase " +
-                "on android/ios. See MIGRATION.md.",
+        message = "Use KMPNotifier.firebasePushNotifier (or FirebasePush.notifier) from " +
+                "kmpnotifier-push-firebase. See MIGRATION.md.",
+        replaceWith = ReplaceWith(
+            "KMPNotifier.firebasePushNotifier",
+            "com.mmk.kmpnotifier.KMPNotifier",
+            "com.mmk.kmpnotifier.push.firebase.firebasePushNotifier",
+        ),
     )
     public fun getPushNotifier(): PushNotifier {
         return NotifierManagerImpl.getPushNotifier()
@@ -66,7 +71,7 @@ public object NotifierManager {
      */
     @Deprecated(
         message = "Shared events (clicks, actions) moved to KMPNotifier.addListener(KMPNotifier.Listener); " +
-                "push events moved to FirebasePush.addListener(PushListener). See MIGRATION.md.",
+                "push events moved to KMPNotifier.addPushListener(PushListener). See MIGRATION.md.",
     )
     public fun addListener(listener: Listener) {
         NotifierManagerImpl.addListener(listener)
@@ -78,7 +83,7 @@ public object NotifierManager {
      */
     @Deprecated(
         message = "Shared events (clicks, actions) moved to KMPNotifier.setListener(KMPNotifier.Listener); " +
-                "push events moved to FirebasePush.setListener(PushListener). See MIGRATION.md.",
+                "push events moved to KMPNotifier.setPushListener(PushListener). See MIGRATION.md.",
     )
     public fun setListener(listener: Listener?) {
         NotifierManagerImpl.setListener(listener)

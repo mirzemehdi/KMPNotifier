@@ -5,7 +5,7 @@ import com.mmk.kmpnotifier.notification.PayloadData
 /**
  * Push notification events.
  *
- * Register with `FirebasePush.addListener(...)`.
+ * Register with `KMPNotifier.addPushListener(...)` (or `FirebasePush.addListener(...)`).
  * Shared events (notification clicks, action buttons) are part of the core API —
  * see `KMPNotifier.Listener`.
  */

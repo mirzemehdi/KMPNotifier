@@ -41,7 +41,6 @@ kotlin {
             implementation(libs.androidx.activity.ktx)
         }
         commonMain.dependencies {
-            implementation(libs.koin.core)
             implementation(libs.kotlinx.coroutine)
         }
         wasmJsMain.dependencies {
