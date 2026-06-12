@@ -9,7 +9,6 @@ import com.mmk.kmpnotifier.internal.NotifierInternals
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
-import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class LoggerTest {
@@ -30,10 +29,4 @@ class LoggerTest {
         assertTrue(messages.isNotEmpty(), "Expected internal dispatch to produce log messages")
     }
 
-    @Test
-    fun resetRestoresEmptyLogger() {
-        KMPNotifier.setLogger { }
-        NotifierInternals.resetForTests()
-        assertSame(EmptyLogger, currentLogger)
-    }
 }

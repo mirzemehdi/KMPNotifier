@@ -12,6 +12,8 @@ KMPNotifier is a Kotlin Multiplatform notification library (`io.github.mirzemehd
 - `:kmpnotifier` — deprecated compatibility umbrella: old `NotifierManager` API forwarding to the new API; `api()`-depends on all modules. Removal planned for 3.0.0.
 - `:sample` — Compose Multiplatform demo app (excluded from API validation and publishing); its iOS host project lives in `iosApp/`
 
+All four library modules apply the `kmpnotifier.library` convention plugin from the `build-logic/` included build (targets, android block, shared test deps, Maven Central publishing). Module build files declare only: dependencies, `android.namespace`, POM name/description, and module-specific blocks (push: `swiftPMDependencies`).
+
 ## Commands
 
 JDK 17+ required (e.g. `JAVA_HOME=$(/usr/libexec/java_home -v 17)`).
@@ -40,7 +42,7 @@ Sample app:
 
 ## Releasing
 
-Version is `kmpNotifierVersion` in `gradle.properties` (all four artifacts share it). Pushing a `v*` tag triggers CI release: Dokka docs to GitHub Pages + `publishAndReleaseToMavenCentral`. CI runs `apiCheck` before any build, so a public API change without a committed `apiDump` fails the pipeline. artifactIds are hardcoded per module in the `coordinates(...)` call.
+Version is `kmpNotifierVersion` in `gradle.properties` (all four artifacts share it). Pushing a `v*` tag triggers CI release: Dokka docs to GitHub Pages + `publishAndReleaseToMavenCentral`. CI runs `apiCheck` before any build, so a public API change without a committed `apiDump` fails the pipeline. artifactId == Gradle project name (set by the convention plugin) — renaming a module directory changes the published coordinates.
 
 ## Architecture
 

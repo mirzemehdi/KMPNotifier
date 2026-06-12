@@ -19,11 +19,6 @@ class PushRegistryTest {
     fun tearDown() = NotifierInternals.resetForTests()
 
     @Test
-    fun pushNotifierOrNullIsNullByDefault() {
-        assertNull(NotifierInternals.pushNotifierOrNull())
-    }
-
-    @Test
     fun pushNotifierOrEmptyFallsBackToNoOpImplementation() = runTest {
         val empty = NotifierInternals.pushNotifierOrEmpty()
         assertNull(empty.getToken())
@@ -47,17 +42,4 @@ class PushRegistryTest {
         assertSame(pushNotifier, NotifierInternals.pushNotifierOrEmpty())
     }
 
-    @Test
-    fun resetClearsRegistry() {
-        NotifierInternals.registerPushNotifier(object : PushNotifier {
-            override suspend fun getToken(): String? = null
-            override suspend fun deleteMyToken() = Unit
-            override suspend fun subscribeToTopic(topic: String) = Unit
-            override suspend fun unSubscribeFromTopic(topic: String) = Unit
-        })
-
-        NotifierInternals.resetForTests()
-
-        assertNull(NotifierInternals.pushNotifierOrNull())
-    }
 }

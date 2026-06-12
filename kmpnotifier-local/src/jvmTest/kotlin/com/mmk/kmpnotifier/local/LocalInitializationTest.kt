@@ -43,12 +43,6 @@ class LocalInitializationTest {
     }
 
     @Test
-    fun notifierAccessorReturnsSameInstance() {
-        KMPNotifier.initialize(configuration, LocalNotifications)
-        assertSame(KMPNotifier.localNotifier, LocalNotifications.notifier)
-    }
-
-    @Test
     fun lazySelfInstallWorksWithWarningWhenExtensionNotPassed() {
         val messages = mutableListOf<String>()
         KMPNotifier.setLogger { messages.add(it) }

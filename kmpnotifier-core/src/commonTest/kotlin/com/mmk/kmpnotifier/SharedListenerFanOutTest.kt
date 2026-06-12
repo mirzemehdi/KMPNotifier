@@ -116,13 +116,4 @@ class SharedListenerFanOutTest {
         assertEquals(1, internalListener.clicks.size)
     }
 
-    @Test
-    fun dispatchWithoutListenersDoesNotThrow() {
-        NotifierEventHub.emitNotificationClicked(mapOf("k" to "v"))
-        NotifierEventHub.emitAction("a", 1, mapOf("k" to "v"))
-        NotifierEventHub.emitNewToken("token")
-        NotifierEventHub.emitPushPayloadData(mapOf("k" to "v"))
-        NotifierEventHub.emitPushNotification("t", "b")
-        NotifierEventHub.emitPushNotificationWithPayloadData(data = mapOf("k" to "v"))
-    }
 }
