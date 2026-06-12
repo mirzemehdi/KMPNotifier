@@ -16,7 +16,7 @@ kotlin {
         discoverClangModulesImplicitly = false
         swiftPackage(
             url = url("https://github.com/firebase/firebase-ios-sdk.git"),
-            version = exact("12.1.0"),
+            version = exact("12.14.0"),
             products = listOf(product("FirebaseMessaging")),
             importedClangModules = listOf("FirebaseMessaging"),
         )

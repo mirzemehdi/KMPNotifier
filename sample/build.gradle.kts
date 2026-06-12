@@ -41,8 +41,9 @@ kotlin {
         binaries.executable()
     }
     jvm("desktop")
+    // iosX64 removed: Compose Multiplatform 1.11+ no longer ships Intel-simulator artifacts.
+    // The library modules still build iosX64; only the Compose sample is Apple-Silicon-only.
     listOf(
-        iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach { iosTarget ->

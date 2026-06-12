@@ -145,7 +145,7 @@ permissionUtil.askNotificationPermission() //this will ask permission in Android
   <summary>iOS</summary>
 
   ### iOS Setup
-  For push notifications, add the `firebase-ios-sdk` Swift package (FirebaseMessaging product, version **12.1.0 exact** — the version the library is built against) to your iOS app in Xcode (File → Add Package Dependencies), call FirebaseApp initialization, and set the apnsToken as below. The library itself links Firebase through Swift Package Manager — no CocoaPods setup is needed. Don't forget to add Push Notifications and Background Modes (Remote Notifications) signing capability in Xcode. For local-only usage, skip everything Firebase-related and pass `LocalNotifications` instead of `FirebasePush`.
+  For push notifications, add the `firebase-ios-sdk` Swift package (FirebaseMessaging product, version **12.14.0 exact** — the version the library is built against) to your iOS app in Xcode (File → Add Package Dependencies), call FirebaseApp initialization, and set the apnsToken as below. The library itself links Firebase through Swift Package Manager — no CocoaPods setup is needed. Don't forget to add Push Notifications and Background Modes (Remote Notifications) signing capability in Xcode. For local-only usage, skip everything Firebase-related and pass `LocalNotifications` instead of `FirebasePush`.
 
 ```swift
 import SwiftUI
