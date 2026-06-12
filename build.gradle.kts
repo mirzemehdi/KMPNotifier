@@ -6,7 +6,6 @@ plugins {
     alias(libs.plugins.androidApplication) apply false
     alias(libs.plugins.androidLibrary) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
-    alias(libs.plugins.kotlinNativeCocoaPods) apply false
     alias(libs.plugins.dokka) apply false
     alias(libs.plugins.kotlinx.binary.validator)
     alias(libs.plugins.mavenPublish) apply false

@@ -6,7 +6,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
-    alias(libs.plugins.kotlinNativeCocoaPods)
     alias(libs.plugins.mavenPublish)
 }
 
@@ -33,20 +32,6 @@ kotlin {
     iosX64()
     iosArm64()
     iosSimulatorArm64()
-
-
-    cocoapods {
-        ios.deploymentTarget = "15.4"
-        framework {
-            baseName = "KMPNotifier"
-            isStatic = true
-        }
-        noPodspec()
-        // The FirebaseMessaging cinterop comes transitively from :kmpnotifier-push-firebase.
-        // linkOnly provides the framework at link time without generating a second
-        // (conflicting) cinterop binding.
-        pod("FirebaseMessaging") { linkOnly = true }
-    }
 
 
 
@@ -113,7 +98,7 @@ mavenPublishing {
     )
     pom {
         name = "KMPNotifier"
-        description = "Kotlin Multiplatform Push Notification Library targeting ios and android"
+        description = "Deprecated compatibility umbrella of KMPNotifier; depends on kmpnotifier-core, kmpnotifier-local and kmpnotifier-push-firebase"
         url = "https://github.com/mirzemehdi/KMPNotifier/"
         licenses {
             license {

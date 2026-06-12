@@ -1,3 +1,5 @@
+@file:OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
+
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinMultiplatform
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -6,7 +8,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
-    alias(libs.plugins.kotlinNativeCocoaPods)
     alias(libs.plugins.mavenPublish)
 }
 
@@ -35,14 +36,17 @@ kotlin {
     iosSimulatorArm64()
 
 
-    cocoapods {
-        ios.deploymentTarget = "15.4"
-        framework {
-            baseName = "KMPNotifierPushFirebase"
-            isStatic = true
-        }
-        noPodspec()
-        pod("FirebaseMessaging")
+    swiftPMDependencies {
+        iosMinimumDeploymentTarget = "16.0"
+        // Firebase's transitive C/C++ modules (gRPC, abseil, ...) fail cinterop generation;
+        // import only the FirebaseMessaging Clang module explicitly.
+        discoverClangModulesImplicitly = false
+        swiftPackage(
+            url = url("https://github.com/firebase/firebase-ios-sdk.git"),
+            version = exact("12.1.0"),
+            products = listOf(product("FirebaseMessaging")),
+            importedClangModules = listOf("FirebaseMessaging"),
+        )
     }
 
 
