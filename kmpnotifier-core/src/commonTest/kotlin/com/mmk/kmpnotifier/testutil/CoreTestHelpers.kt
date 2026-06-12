@@ -10,7 +10,7 @@ import com.mmk.kmpnotifier.notification.PayloadData
 /** Records shared notification events for assertions. */
 internal class RecordingCoreListener : KMPNotifier.Listener {
     val clicks = mutableListOf<PayloadData>()
-    val actions = mutableListOf<Triple<String, Int, Map<String, Any?>>>()
+    val actions = mutableListOf<Triple<String, Int, PayloadData>>()
 
     val totalEventCount: Int get() = clicks.size + actions.size
 
@@ -18,7 +18,7 @@ internal class RecordingCoreListener : KMPNotifier.Listener {
         clicks.add(data)
     }
 
-    override fun onAction(actionId: String, notificationId: Int, payload: Map<String, Any?>) {
+    override fun onAction(actionId: String, notificationId: Int, payload: PayloadData) {
         actions.add(Triple(actionId, notificationId, payload))
     }
 }

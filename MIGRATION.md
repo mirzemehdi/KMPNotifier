@@ -30,6 +30,13 @@ commonMain.dependencies {
 Keeping `io.github.mirzemehdi:kmpnotifier:2.0.0` also works — it brings in everything,
 exactly like 1.x.
 
+> **Requirements:** your project needs Kotlin **2.4.0+** to consume 2.0.0 artifacts.
+>
+> **Duplicate classes:** if any *transitive* dependency still pulls `kmpnotifier:1.x` while you
+> depend on the new modules, the same classes exist in two different artifacts and Android builds
+> fail with duplicate-class errors. Force-upgrade or exclude the old artifact:
+> `implementation("...") { exclude(group = "io.github.mirzemehdi", module = "kmpnotifier") }`
+
 ## Initialization
 
 Initialization now takes the capabilities (extensions) you want:
@@ -130,6 +137,17 @@ No action needed. The Firebase messaging service moved to the `kmpnotifier-push-
 manifest and the notification receiver / startup provider to `kmpnotifier-local` /
 `kmpnotifier-core` — class names are unchanged, and the merged manifest of your app
 is equivalent to 1.x.
+
+## iOS dependency manager
+
+2.0 consumes Firebase via Swift Package Manager (Kotlin `swiftPMDependencies`) instead of the
+CocoaPods Gradle plugin. For iOS apps this means:
+
+- Add Firebase to your app via SPM (File → Add Package Dependencies → `firebase-ios-sdk`),
+  if you used CocoaPods for it before.
+- The iOS minimum deployment target of the library is now 16.0.
+- If your shared module re-exported KMPNotifier and used the CocoaPods plugin only for it,
+  you can drop the `pod("FirebaseMessaging")` declaration.
 
 ## Behavior changes
 

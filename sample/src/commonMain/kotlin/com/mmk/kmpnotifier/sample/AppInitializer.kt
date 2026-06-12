@@ -16,7 +16,7 @@ object AppInitializer {
         }
 
         KMPNotifier.addListener(object : KMPNotifier.Listener {
-            override fun onAction(actionId: String, notificationId: Int, payload: Map<String, Any?>) {
+            override fun onAction(actionId: String, notificationId: Int, payload: PayloadData) {
                 val actionMessage = "Action '$actionId' triggered on notification '$notificationId' with payload: $payload"
                 println("Action triggered: $actionMessage")
                 val localNotifier = KMPNotifier.localNotifier

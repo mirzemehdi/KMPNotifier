@@ -30,41 +30,44 @@ public interface PushEventSink {
 @InternalKMPNotifierApi
 public object NotifierEventHub {
 
+    // Registries use copy-on-write: emits snapshot an immutable collection, so events
+    // arriving on background threads (e.g. FCM) never iterate a collection that the main
+    // thread is mutating.
+
     /** Listeners registered through the public [KMPNotifier] API. */
-    private val listeners = linkedSetOf<KMPNotifier.Listener>()
+    private var listeners = setOf<KMPNotifier.Listener>()
 
     /** Listeners registered by other library modules (e.g. the legacy bridge). */
-    private val internalListeners = linkedSetOf<KMPNotifier.Listener>()
+    private var internalListeners = setOf<KMPNotifier.Listener>()
 
-    private val pushEventSinks = linkedSetOf<PushEventSink>()
+    private var pushEventSinks = setOf<PushEventSink>()
 
     internal fun addListener(listener: KMPNotifier.Listener) {
-        listeners.add(listener)
+        listeners = listeners + listener
     }
 
     internal fun removeListener(listener: KMPNotifier.Listener) {
-        listeners.remove(listener)
+        listeners = listeners - listener
     }
 
     internal fun setListener(listener: KMPNotifier.Listener?) {
-        listeners.clear()
-        listener?.let { listeners.add(it) }
+        listeners = if (listener != null) setOf(listener) else emptySet()
     }
 
     public fun registerInternalListener(listener: KMPNotifier.Listener) {
-        internalListeners.add(listener)
+        internalListeners = internalListeners + listener
     }
 
     public fun unregisterInternalListener(listener: KMPNotifier.Listener) {
-        internalListeners.remove(listener)
+        internalListeners = internalListeners - listener
     }
 
     public fun registerPushEventSink(sink: PushEventSink) {
-        pushEventSinks.add(sink)
+        pushEventSinks = pushEventSinks + sink
     }
 
     public fun unregisterPushEventSink(sink: PushEventSink) {
-        pushEventSinks.remove(sink)
+        pushEventSinks = pushEventSinks - sink
     }
 
     private fun allListeners(): List<KMPNotifier.Listener> =
@@ -77,7 +80,7 @@ public object NotifierEventHub {
         targets.forEach { it.onNotificationClicked(data) }
     }
 
-    public fun emitAction(actionId: String, notificationId: Int, payload: Map<String, Any?>) {
+    public fun emitAction(actionId: String, notificationId: Int, payload: PayloadData) {
         currentLogger.log("Received action")
         val targets = allListeners()
         if (targets.isEmpty()) currentLogger.log("There is no listener to notify onAction")
@@ -87,6 +90,8 @@ public object NotifierEventHub {
     }
 
     public fun emitNewToken(token: String) {
+        currentLogger.log("Received new push token")
+        if (pushEventSinks.isEmpty()) currentLogger.log("There is no listener to notify onNewToken")
         pushEventSinks.toList().forEach { it.onNewToken(token) }
     }
 
@@ -115,8 +120,8 @@ public object NotifierEventHub {
     }
 
     internal fun reset() {
-        listeners.clear()
-        internalListeners.clear()
-        pushEventSinks.clear()
+        listeners = emptySet()
+        internalListeners = emptySet()
+        pushEventSinks = emptySet()
     }
 }

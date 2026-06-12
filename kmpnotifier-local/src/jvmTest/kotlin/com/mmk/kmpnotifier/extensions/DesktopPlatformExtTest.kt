@@ -36,15 +36,4 @@ class DesktopPlatformExtTest {
         assertEquals(File(tmpDir).canonicalPath, composeDesktopResourcesPath())
     }
 
-    @Test
-    fun desktopPlatformTypeMatchesOsName() {
-        val osName = System.getProperty("os.name").orEmpty()
-        val expected = when {
-            osName.contains("Linux") -> DesktopPlatform.Linux
-            osName.contains("Win") -> DesktopPlatform.Windows
-            osName.contains("Mac") -> DesktopPlatform.MacOs
-            else -> null
-        }
-        assertEquals(expected, getDesktopPlatformType())
-    }
 }

@@ -1,6 +1,6 @@
 # KMPNotifier - Kotlin Multiplatform Notification
 [![Build](https://github.com/mirzemehdi/KMPNotifier/actions/workflows/build.yml/badge.svg)](https://github.com/mirzemehdi/KMPNotifier/actions/workflows/build.yml) 
-[![Kotlin](https://img.shields.io/badge/Kotlin-2.2.21-blue.svg?style=flat&logo=kotlin)](https://kotlinlang.org)
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.4.0-blue.svg?style=flat&logo=kotlin)](https://kotlinlang.org)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.mirzemehdi/kmpnotifier-core?color=blue)](https://search.maven.org/search?q=g:io.github.mirzemehdi)
 
 ![badge-android](http://img.shields.io/badge/platform-android-6EDB8D.svg?style=flat)
@@ -51,8 +51,9 @@ For push notifications you need the basic Firebase setup following the official 
 
 ## Minimum Requirements
 
+- **Kotlin:** `2.4.0+` (the library is built with Kotlin 2.4 and consumes Firebase via Swift Package Manager)
 - **Android:** `minSdkVersion 23`
-- **iOS:** `iOS 15.4`
+- **iOS:** `iOS 16.0` for push (`kmpnotifier-push-firebase`); local-only modules work on lower targets
 
 
 ### Gradle Setup
@@ -143,7 +144,7 @@ permissionUtil.askNotificationPermission() //this will ask permission in Android
   <summary>iOS</summary>
 
   ### iOS Setup
-  For push notifications, include the FirebaseMessaging library in your iOS app from Xcode, call FirebaseApp initialization, and set the apnsToken as below. Don't forget to add Push Notifications and Background Modes (Remote Notifications) signing capability in Xcode. For local-only usage, skip everything Firebase-related and pass `LocalNotifications` instead of `FirebasePush`.
+  For push notifications, add the `firebase-ios-sdk` Swift package (FirebaseMessaging product) to your iOS app in Xcode (File → Add Package Dependencies), call FirebaseApp initialization, and set the apnsToken as below. The library itself links Firebase through Swift Package Manager — no CocoaPods setup is needed. Don't forget to add Push Notifications and Background Modes (Remote Notifications) signing capability in Xcode. For local-only usage, skip everything Firebase-related and pass `LocalNotifications` instead of `FirebasePush`.
 
 ```swift
 import SwiftUI

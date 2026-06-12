@@ -2,6 +2,7 @@
 
 package com.mmk.kmpnotifier.notification
 
+import com.mmk.kmpnotifier.notification.PayloadData
 import android.app.RemoteInput
 import android.content.Context
 import android.content.Intent
@@ -28,7 +29,7 @@ class NotificationReceiverTest {
 
     private val context: Context = ApplicationProvider.getApplicationContext()
 
-    private val actions = mutableListOf<Triple<String, Int, Map<String, Any?>>>()
+    private val actions = mutableListOf<Triple<String, Int, PayloadData>>()
     private lateinit var receiver: NotificationReceiver
 
     @Before
@@ -36,7 +37,7 @@ class NotificationReceiverTest {
         NotifierInternals.resetForTests()
         actions.clear()
         KMPNotifier.addListener(object : KMPNotifier.Listener {
-            override fun onAction(actionId: String, notificationId: Int, payload: Map<String, Any?>) {
+            override fun onAction(actionId: String, notificationId: Int, payload: PayloadData) {
                 actions.add(Triple(actionId, notificationId, payload))
             }
         })

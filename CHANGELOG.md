@@ -31,6 +31,9 @@ pull in Firebase. See [MIGRATION.md](MIGRATION.md) for a step-by-step guide.
 
 - `io.github.mirzemehdi:kmpnotifier` is now a compatibility umbrella that depends on the new
   modules. Existing code keeps compiling and working unchanged.
+- iOS: Firebase is now consumed through Swift Package Manager instead of the CocoaPods Gradle
+  plugin (Kotlin `swiftPMDependencies`, firebase-ios-sdk 12.1.0). Kotlin is updated to 2.4.0
+  and the iOS minimum deployment target is now 16.0 (was 15.4).
 - Android: the Firebase messaging service is declared by `kmpnotifier-push-firebase`;
   the notification receiver and startup provider are declared by `kmpnotifier-local`/`kmpnotifier-core`.
   The merged manifest of existing apps is equivalent — no action needed.

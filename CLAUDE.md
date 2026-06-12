@@ -8,7 +8,7 @@ KMPNotifier is a Kotlin Multiplatform notification library (`io.github.mirzemehd
 
 - `:kmpnotifier-core` — shared core: `KMPNotifier` facade, configuration, permissions, logger, isolated Koin DI, internal event hub. All targets.
 - `:kmpnotifier-local` — local notifications (`LocalNotifications` extension, `Notifier` + platform impls). All targets. Depends on core.
-- `:kmpnotifier-push-firebase` — Firebase push (`FirebasePush` extension, `PushListener`). Android + iOS only. Depends on local. Owns the CocoaPods `FirebaseMessaging` pod.
+- `:kmpnotifier-push-firebase` — Firebase push (`FirebasePush` extension, `PushListener`). All targets — Firebase delivery on android/iOS, shared no-op mock elsewhere (1.x parity). Depends on local. Declares the Firebase iOS dependency via SwiftPM (`swiftPMDependencies`).
 - `:kmpnotifier` — deprecated compatibility umbrella: old `NotifierManager` API forwarding to the new API; `api()`-depends on all modules. Removal planned for 3.0.0.
 - `:sample` — Compose Multiplatform demo app (excluded from API validation and publishing); its iOS host project lives in `iosApp/`
 
@@ -44,12 +44,12 @@ Version is `kmpNotifierVersion` in `gradle.properties` (all four artifacts share
 
 ## Architecture
 
-**Facade + pluggable extensions.** `KMPNotifier.initialize(configuration, vararg extensions)` (core) initializes an isolated Koin container and installs `KMPNotifierExtension`s. `LocalNotifications` (local module) registers the platform `Notifier`; `FirebasePush` (push module) registers the Firebase `PushNotifier` and declares `dependsOn = [LocalNotifications]`, so users pass only `FirebasePush`. Accessors: `KMPNotifier.localNotifier` / `LocalNotifications.notifier`, `KMPNotifier.firebasePushNotifier` / `FirebasePush.notifier` (push exists only on android/ios — compile-time capability).
+**Facade + pluggable extensions.** `KMPNotifier.initialize(configuration, vararg extensions)` (core) initializes an isolated Koin container and installs `KMPNotifierExtension`s. `LocalNotifications` (local module) registers the platform `Notifier`; `FirebasePush` (push module) registers the Firebase `PushNotifier` and declares `dependsOn = [LocalNotifications]`, so users pass only `FirebasePush`. Accessors: `KMPNotifier.localNotifier` / `LocalNotifications.notifier`, `KMPNotifier.firebasePushNotifier` / `FirebasePush.notifier` (firebase delivery android/ios; no-op mock on jvm/js/wasm).
 
 **Cross-module wiring via `@InternalKMPNotifierApi`** (`com.mmk.kmpnotifier.internal`, opt-in ERROR level):
 - `NotifierInternals` — registries (local notifier as `Any` since `Notifier` lives downstream; push notifier), configuration/permission access, `resetForTests()`.
 - `NotifierEventHub` — single fan-out point. Shared events (click, action) → `KMPNotifier.Listener`s + internal listeners (umbrella bridge). Push events (token, payloads) → `PushEventSink`s (push module's `PushListener` forwarding; umbrella bridge). Listener/sink registries are sets — re-registration is idempotent.
-- Event sources: Android `MyFirebaseMessagingService` (push), `NotificationReceiver` (local), `KMPNotifier.onCreateOrOnNewIntent` (core androidMain — inspects intent extras for firebase markers in `Constants`); iOS `IosNotifier.NotificationDelegate` (local — handles BOTH local and push content via `gcm.message_id` marker, no Firebase types) and `FirebasePush.onApplicationDidReceiveRemoteNotification` (push iosMain).
+- Event sources: Android `MyFirebaseMessagingService` (push), `NotificationReceiver` (local), `KMPNotifier.onCreateOrOnNewIntent` (core androidMain — inspects intent extras for firebase markers in `Constants`); iOS `IosNotifier.NotificationDelegate` (local — handles BOTH local and push content via `gcm.message_id` marker, no Firebase types) and `KMPNotifier.onApplicationDidReceiveRemoteNotification` (push iosMain, KMPNotifier-receiver extension).
 
 **Listener split (deliberate API decision):** `KMPNotifier.Listener` carries only shared events (`onNotificationClicked`, `onAction` — fired for both local and push notifications). Push-only callbacks (`onNewToken`, `onPayloadData`, `onPushNotification`, `onPushNotificationWithPayloadData`) live in `PushListener` in the push module. Don't add push concerns to core/local public API.
 
@@ -61,7 +61,7 @@ Version is `kmpNotifierVersion` in `gradle.properties` (all four artifacts share
 
 **Android manifests:** core declares POST_NOTIFICATIONS + the startup provider; local declares `NotificationReceiver`; push declares `MyFirebaseMessagingService` with its FULLY QUALIFIED class name (module namespaces differ — a relative `.firebase.` name would resolve wrongly during manifest merge). Class FQNs are unchanged from 1.x, so merged app manifests are equivalent.
 
-**CocoaPods:** only `:kmpnotifier-push-firebase` declares `pod("FirebaseMessaging")`. The umbrella keeps a cocoapods block (framework `KMPNotifier`) but NO pod — its iOS test binary links the cinterop transitively; declaring the pod in two modules causes "symbol multiply defined" at link time.
+**SwiftPM (no CocoaPods):** only `:kmpnotifier-push-firebase` declares `swiftPMDependencies { swiftPackage(firebase-ios-sdk, exact 12.1.0, products [FirebaseMessaging], discoverClangModulesImplicitly = false) }`. Kotlin imports use `swiftPMImport.io.github.mirzemehdi.kmpnotifier.push.firebase.*` (declaring module's group+name). Never declare the same package's cinterop in two modules of one dependency graph — duplicate bindings fail the link. The iosApp consumes Firebase via Xcode SPM (exact 12.1.0 — keep versions in sync) and needs `:sample:integrateLinkagePackage` re-run when products change (generates `iosApp/KotlinMultiplatformLinkedPackage/`).
 
 **JS and wasmJs**: near-identical duplicated sources (`WebConsoleNotifier`, `WebPermissionUtilImpl`, `PlatformModule.web.kt`) — changes to one usually must be mirrored in the other.
 
@@ -72,5 +72,5 @@ Version is `kmpNotifierVersion` in `gradle.properties` (all four artifacts share
 - FQNs of symbols moved between modules must stay `com.mmk.kmpnotifier.*` (binary compatibility with 1.x relies on it).
 - Tests: NO commonTest may call `initialize()` — iOS test binaries crash on UNUserNotificationCenter/FIRMessaging/Dispatchers.Main. Initialization tests live in jvmTest (Desktop config) and androidUnitTest (Robolectric, `@Config(sdk = [34])`). Use `NotifierInternals.resetForTests()` between tests.
 - Avoid pure data-holder tests (data classes, plain defaults) — they were pruned deliberately; test behavior, not language features.
-- Min versions: Android SDK 23, iOS deployment target 15.4, JVM toolchain 17.
+- Min versions: Kotlin 2.4.0 (SwiftPM import support), Android SDK 23, iOS 16.0 for the push module, JVM toolchain 17.
 - Keep KDoc on public API — Dokka output is the published documentation site. Keep `CHANGELOG.md`/`MIGRATION.md` in sync with API changes.
