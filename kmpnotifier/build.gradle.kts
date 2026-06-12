@@ -3,6 +3,10 @@ plugins {
 }
 
 kotlin {
+    android {
+        namespace = "com.mmk.kmpnotifier"
+    }
+
     sourceSets {
         commonMain.dependencies {
             api(projects.kmpnotifierCore)
@@ -10,10 +14,6 @@ kotlin {
             api(projects.kmpnotifierPushFirebase)
         }
     }
-}
-
-android {
-    namespace = "com.mmk.kmpnotifier"
 }
 
 mavenPublishing {

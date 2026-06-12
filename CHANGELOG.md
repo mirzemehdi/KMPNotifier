@@ -29,6 +29,9 @@ pull in Firebase. See [MIGRATION.md](MIGRATION.md) for a step-by-step guide.
 
 ### Changed
 
+- Built with AGP 9 (`com.android.kotlin.multiplatform.library`). The android target is now
+  single-variant: the `-android-debug` artifacts published by 1.x no longer exist; consumers
+  always get the release variant (standard for KMP libraries).
 - The library no longer depends on Koin (or any DI framework) at runtime — dependencies are
   wired manually inside the core module. One fewer transitive dependency for consumers.
 

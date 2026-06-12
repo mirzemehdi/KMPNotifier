@@ -4,12 +4,19 @@ plugins {
     alias(libs.plugins.jetbrainsCompose) apply false
     alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.androidApplication) apply false
-    alias(libs.plugins.androidLibrary) apply false
+    alias(libs.plugins.androidKmpLibrary) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
-    alias(libs.plugins.dokka) apply false
+    alias(libs.plugins.dokka)
     alias(libs.plugins.kotlinx.binary.validator)
     alias(libs.plugins.mavenPublish) apply false
     alias(libs.plugins.google.services) apply false
+}
+
+dependencies {
+    dokka(projects.kmpnotifierCore)
+    dokka(projects.kmpnotifierLocal)
+    dokka(projects.kmpnotifierPushFirebase)
+    dokka(projects.kmpnotifier)
 }
 
 apiValidation {
@@ -18,6 +25,7 @@ apiValidation {
         enabled = true
     }
     ignoredProjects += "sample"
+    ignoredProjects += "sample-android"
 }
 
 allprojects {
@@ -25,7 +33,7 @@ allprojects {
     version = project.properties["kmpNotifierVersion"] as String
 
 
-    val excludedModules = listOf(":sample")
+    val excludedModules = listOf(":sample", ":sample-android")
     if (project.path in excludedModules) return@allprojects
 
     apply(plugin = "org.jetbrains.dokka")

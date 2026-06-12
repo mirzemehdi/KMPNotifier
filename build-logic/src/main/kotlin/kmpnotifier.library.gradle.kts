@@ -8,15 +8,15 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 /**
  * Convention plugin shared by all published KMPNotifier library modules.
  *
- * Configures: targets (android, ios x3, jvm, js, wasmJs), explicit API mode, the android
- * library block, shared test dependencies, and Maven Central publishing. The artifactId is
- * the Gradle project name; modules only declare their `android.namespace`, dependencies,
- * POM name/description and any module-specific blocks (e.g. swiftPMDependencies).
+ * Configures: targets (android via the AGP 9 KMP library plugin, ios x3, jvm, js, wasmJs),
+ * explicit API mode, shared test dependencies, and Maven Central publishing. The artifactId
+ * is the Gradle project name; modules declare only their `kotlin.android.namespace`,
+ * dependencies, POM name/description and module-specific blocks (e.g. swiftPMDependencies).
  */
 
 plugins {
     id("org.jetbrains.kotlin.multiplatform")
-    id("com.android.library")
+    id("com.android.kotlin.multiplatform.library")
     id("com.vanniktech.maven.publish")
 }
 
@@ -24,10 +24,18 @@ val libs = the<LibrariesForLibs>()
 
 kotlin {
     explicitApi()
-    androidTarget {
-        publishLibraryVariants("release", "debug")
+
+    android {
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
+
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_17)
+        }
+
+        // JVM-based unit tests (Robolectric) run on the host machine.
+        withHostTest {
+            isIncludeAndroidResources = true
         }
     }
 
@@ -51,7 +59,7 @@ kotlin {
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutine.test)
         }
-        androidUnitTest.dependencies {
+        getByName("androidHostTest").dependencies {
             implementation(libs.junit)
             implementation(libs.robolectric)
             implementation(libs.androidx.test.core.ktx)
@@ -60,33 +68,10 @@ kotlin {
     }
 }
 
-android {
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-
-    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-
-    defaultConfig {
-        minSdk = libs.versions.android.minSdk.get().toInt()
-    }
-
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    testOptions {
-        unitTests.isIncludeAndroidResources = true
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-}
-
 configure<MavenPublishBaseExtension> {
     configure(
         KotlinMultiplatform(
-            javadocJar = JavadocJar.Dokka("dokkaHtml"),
+            javadocJar = JavadocJar.Dokka("dokkaGeneratePublicationHtml"),
             sourcesJar = true
         )
     )

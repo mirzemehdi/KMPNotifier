@@ -3,6 +3,7 @@ package com.mmk.kmpnotifier.sample
 import android.content.ContentResolver
 import android.net.Uri
 import com.mmk.kmpnotifier.KMPNotifier
+import com.mmk.kmpnotifier.sample.shared.R
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import com.mmk.kmpnotifier.push.firebase.FirebasePush
 

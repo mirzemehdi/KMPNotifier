@@ -5,6 +5,10 @@ plugins {
 }
 
 kotlin {
+    android {
+        namespace = "com.mmk.kmpnotifier.push.firebase"
+    }
+
     swiftPMDependencies {
         iosMinimumDeploymentTarget = "16.0"
         // Firebase's transitive C/C++ modules (gRPC, abseil, ...) fail cinterop generation;
@@ -27,10 +31,6 @@ kotlin {
             implementation(libs.kotlinx.coroutine)
         }
     }
-}
-
-android {
-    namespace = "com.mmk.kmpnotifier.push.firebase"
 }
 
 mavenPublishing {

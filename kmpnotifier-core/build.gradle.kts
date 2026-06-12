@@ -3,6 +3,10 @@ plugins {
 }
 
 kotlin {
+    android {
+        namespace = "com.mmk.kmpnotifier.core"
+    }
+
     sourceSets {
         androidMain.dependencies {
             implementation(libs.androidx.startup.runtime)
@@ -16,10 +20,6 @@ kotlin {
             implementation(libs.kotlinx.browser)
         }
     }
-}
-
-android {
-    namespace = "com.mmk.kmpnotifier.core"
 }
 
 mavenPublishing {

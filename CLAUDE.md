@@ -10,9 +10,9 @@ KMPNotifier is a Kotlin Multiplatform notification library (`io.github.mirzemehd
 - `:kmpnotifier-local` — local notifications (`LocalNotifications` extension, `Notifier` + platform impls). All targets. Depends on core.
 - `:kmpnotifier-push-firebase` — Firebase push (`FirebasePush` extension, `PushListener`). All targets — Firebase delivery on android/iOS, shared no-op mock elsewhere (1.x parity). Depends on local. Declares the Firebase iOS dependency via SwiftPM (`swiftPMDependencies`).
 - `:kmpnotifier` — deprecated compatibility umbrella: old `NotifierManager` API forwarding to the new API; `api()`-depends on all modules. Removal planned for 3.0.0.
-- `:sample` — Compose Multiplatform demo app (excluded from API validation and publishing); its iOS host project lives in `iosApp/`
+- `:sample` — Compose Multiplatform demo shared library (desktop/wasm/iOS entry points + shared UI); `:sample-android` — the Android app entry point (AGP 9 forbids `com.android.application` + KMP in one module); the iOS host project lives in `iosApp/`
 
-All four library modules apply the `kmpnotifier.library` convention plugin from the `build-logic/` included build (targets, android block, shared test deps, Maven Central publishing). Module build files declare only: dependencies, `android.namespace`, POM name/description, and module-specific blocks (push: `swiftPMDependencies`).
+All four library modules apply the `kmpnotifier.library` convention plugin from the `build-logic/` included build (targets incl. the AGP 9 `com.android.kotlin.multiplatform.library` android target — single variant, so no `-android-debug` artifacts; shared test deps; Maven Central publishing). Android unit tests live in `src/androidHostTest/`. Module build files declare only: dependencies, `android.namespace`, POM name/description, and module-specific blocks (push: `swiftPMDependencies`).
 
 ## Commands
 
@@ -21,7 +21,7 @@ JDK 17+ required (e.g. `JAVA_HOME=$(/usr/libexec/java_home -v 17)`).
 ```sh
 ./gradlew apiCheck                                 # binary compatibility check (runs first in CI)
 ./gradlew apiDump                                  # regenerate <module>/api/* after intentional public API changes (run on macOS)
-./gradlew testDebugUnitTest testReleaseUnitTest    # Android unit tests (incl. Robolectric), all modules
+./gradlew testAndroidHostTest                      # Android host (unit) tests incl. Robolectric, all modules
 ./gradlew jvmTest jsNodeTest                       # desktop + js tests
 ./gradlew iosX64Test iosSimulatorArm64Test         # iOS tests (macOS only)
 ./gradlew :kmpnotifier-core:jvmTest --tests "com.mmk.kmpnotifier.SomeTest"  # single test class
@@ -33,7 +33,7 @@ JDK 17+ required (e.g. `JAVA_HOME=$(/usr/libexec/java_home -v 17)`).
 Sample app:
 
 ```sh
-./gradlew :sample:installDebug                     # Android
+./gradlew :sample-android:installDebug             # Android
 ./gradlew :sample:run                              # Desktop
 ./gradlew :sample:wasmJsBrowserDevelopmentRun      # Web (wasm)
 ```
@@ -70,7 +70,7 @@ Version is `kmpNotifierVersion` in `gradle.properties` (all four artifacts share
 ## Constraints
 
 - `explicitApi()` on all library modules; public declarations need explicit visibility and return types.
-- BCV (klib included) covers all four published modules; any public API change requires `./gradlew apiDump` (macOS) and committing the `*/api/` files.
+- BCV (klib included) covers all four published modules for jvm + klib targets; the AGP 9 KMP android target is NOT yet supported by BCV 0.18.x, so android-only public API (e.g. `NotificationReceiver`) has no automated ABI gate — review such changes manually. Any public API change requires `./gradlew apiDump` (macOS) and committing the `*/api/` files.
 - FQNs of symbols moved between modules must stay `com.mmk.kmpnotifier.*` (binary compatibility with 1.x relies on it).
 - Tests: NO commonTest may call `initialize()` — iOS test binaries crash on UNUserNotificationCenter/FIRMessaging/Dispatchers.Main. Initialization tests live in jvmTest (Desktop config) and androidUnitTest (Robolectric, `@Config(sdk = [34])`). Use `NotifierInternals.resetForTests()` between tests.
 - Avoid pure data-holder tests (data classes, plain defaults) — they were pruned deliberately; test behavior, not language features.
