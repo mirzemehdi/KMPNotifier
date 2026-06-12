@@ -10,7 +10,7 @@ KMPNotifier is a Kotlin Multiplatform notification library (`io.github.mirzemehd
 - `:kmpnotifier-local` — local notifications (`LocalNotifications` extension, `Notifier` + platform impls). All targets. Depends on core.
 - `:kmpnotifier-push-firebase` — Firebase push (`FirebasePush` extension, `PushListener`). All targets — Firebase delivery on android/iOS, shared no-op mock elsewhere (1.x parity). Depends on local. Declares the Firebase iOS dependency via SwiftPM (`swiftPMDependencies`).
 - `:kmpnotifier` — deprecated compatibility umbrella: old `NotifierManager` API forwarding to the new API; `api()`-depends on all modules. Removal planned for 3.0.0.
-- `:sample` — Compose Multiplatform demo shared library (desktop/wasm/iOS entry points + shared UI); `:sample-android` — the Android app entry point (AGP 9 forbids `com.android.application` + KMP in one module); the iOS host project lives in `iosApp/`
+- `:sample` — Compose Multiplatform demo shared library (desktop/wasm/iOS entry points + shared UI; no iosX64 — CMP 1.11+ has no Intel-simulator artifacts); `:sample-android` — the Android app entry point (AGP 9 forbids `com.android.application` + KMP in one module); the iOS host project lives in `iosApp/`
 
 All four library modules apply the `kmpnotifier.library` convention plugin from the `build-logic/` included build (targets incl. the AGP 9 `com.android.kotlin.multiplatform.library` android target — single variant, so no `-android-debug` artifacts; shared test deps; Maven Central publishing). Android unit tests live in `src/androidHostTest/`. Module build files declare only: dependencies, `android.namespace`, POM name/description, and module-specific blocks (push: `swiftPMDependencies`).
 
@@ -25,7 +25,7 @@ JDK 17+ required (e.g. `JAVA_HOME=$(/usr/libexec/java_home -v 17)`).
 ./gradlew jvmTest jsNodeTest                       # desktop + js tests
 ./gradlew iosX64Test iosSimulatorArm64Test         # iOS tests (macOS only)
 ./gradlew :kmpnotifier-core:jvmTest --tests "com.mmk.kmpnotifier.SomeTest"  # single test class
-./gradlew dokkaHtmlMultiModule                     # generate docs (published to GitHub Pages on release)
+./gradlew :dokkaGenerate                           # docs site (Dokka V2 aggregate, output build/dokka/html; published to GitHub Pages on release)
 ./gradlew publishToMavenLocal                      # local publish (signing is skipped for this task)
 ./gradlew kotlinUpgradeYarnLock                    # after js dependency changes (yarn.lock check fails otherwise)
 ```
@@ -63,7 +63,7 @@ Version is `kmpNotifierVersion` in `gradle.properties` (all four artifacts share
 
 **Android manifests:** core declares POST_NOTIFICATIONS + the startup provider; local declares `NotificationReceiver`; push declares `MyFirebaseMessagingService` with its FULLY QUALIFIED class name (module namespaces differ — a relative `.firebase.` name would resolve wrongly during manifest merge). Class FQNs are unchanged from 1.x, so merged app manifests are equivalent.
 
-**SwiftPM (no CocoaPods):** only `:kmpnotifier-push-firebase` declares `swiftPMDependencies { swiftPackage(firebase-ios-sdk, exact 12.14.0, products [FirebaseMessaging], discoverClangModulesImplicitly = false) }`. Kotlin imports use `swiftPMImport.io.github.mirzemehdi.kmpnotifier.push.firebase.*` (declaring module's group+name). Never declare the same package's cinterop in two modules of one dependency graph — duplicate bindings fail the link. The iosApp consumes Firebase via Xcode SPM (exact 12.14.0 — keep versions in sync) and needs `:sample:integrateLinkagePackage` re-run when products change (generates `iosApp/KotlinMultiplatformLinkedPackage/`).
+**SwiftPM (no CocoaPods):** only `:kmpnotifier-push-firebase` declares `swiftPMDependencies { swiftPackage(firebase-ios-sdk, exact 12.14.0, products [FirebaseMessaging], discoverClangModulesImplicitly = false) }`. Kotlin imports use `swiftPMImport.io.github.mirzemehdi.kmpnotifier.push.firebase.*` (declaring module's group+name). Never declare the same package's cinterop in two modules of one dependency graph — duplicate bindings fail the link. The iosApp consumes Firebase via Xcode SPM (exact 12.14.0 — keep versions in sync) and needs `:sample:integrateLinkagePackage` re-run whenever the version pin or products change — the committed `iosApp/KotlinMultiplatformLinkedPackage/` embeds the firebase version and Xcode resolution conflicts if it drifts.
 
 **JS and wasmJs**: near-identical duplicated sources (`WebConsoleNotifier`, `WebPermissionUtilImpl`, `PlatformModule.web.kt`) — changes to one usually must be mirrored in the other.
 
@@ -72,7 +72,7 @@ Version is `kmpNotifierVersion` in `gradle.properties` (all four artifacts share
 - `explicitApi()` on all library modules; public declarations need explicit visibility and return types.
 - BCV (klib included) covers all four published modules for jvm + klib targets; the AGP 9 KMP android target is NOT yet supported by BCV 0.18.x, so android-only public API (e.g. `NotificationReceiver`) has no automated ABI gate — review such changes manually. Any public API change requires `./gradlew apiDump` (macOS) and committing the `*/api/` files.
 - FQNs of symbols moved between modules must stay `com.mmk.kmpnotifier.*` (binary compatibility with 1.x relies on it).
-- Tests: NO commonTest may call `initialize()` — iOS test binaries crash on UNUserNotificationCenter/FIRMessaging/Dispatchers.Main. Initialization tests live in jvmTest (Desktop config) and androidUnitTest (Robolectric, `@Config(sdk = [34])`). Use `NotifierInternals.resetForTests()` between tests.
+- Tests: NO commonTest may call `initialize()` — iOS test binaries crash on UNUserNotificationCenter/FIRMessaging/Dispatchers.Main. Initialization tests live in jvmTest (Desktop config) and androidHostTest (Robolectric, `@Config(sdk = [34])`). Use `NotifierInternals.resetForTests()` between tests.
 - Avoid pure data-holder tests (data classes, plain defaults) — they were pruned deliberately; test behavior, not language features.
-- Min versions: Kotlin 2.4.0 (SwiftPM import support), Android SDK 23, iOS 16.0 for the push module, JVM toolchain 17.
+- Build stack: AGP 9.2.1 (`com.android.kotlin.multiplatform.library`) + Gradle 9.5.1 + Dokka 2.2 (V2 mode) + compileSdk 37. Min versions: Kotlin 2.4.0 (SwiftPM import support), Android minSdk 23, iOS 16.0 for the push module, JVM toolchain 17.
 - Keep KDoc on public API — Dokka output is the published documentation site. Keep `CHANGELOG.md`/`MIGRATION.md` in sync with API changes.
