@@ -11,7 +11,7 @@ Removal of the deprecated API is planned for 3.0.0.
 |---|---|---|
 | `kmpnotifier-core` | configuration, permissions, logging, shared events | android, ios, jvm, js, wasmJs |
 | `kmpnotifier-local` | local notifications (depends on core) | android, ios, jvm, js, wasmJs |
-| `kmpnotifier-push-firebase` | Firebase Cloud Messaging push (depends on local) | android, ios |
+| `kmpnotifier-push-firebase` | Firebase Cloud Messaging push (depends on local; no-op mock on desktop/web) | android, ios, jvm, js, wasmJs |
 | `kmpnotifier` | deprecated umbrella, pulls in all of the above | android, ios, jvm, js, wasmJs |
 
 Pick your dependency:
@@ -20,13 +20,9 @@ Pick your dependency:
 commonMain.dependencies {
     // Local notifications only — no Firebase anywhere:
     api("io.github.mirzemehdi:kmpnotifier-local:2.0.0")
-}
 
-// Push (android/ios): add the push module too
-androidMain.dependencies {
-    api("io.github.mirzemehdi:kmpnotifier-push-firebase:2.0.0")
-}
-iosMain.dependencies {
+    // Push: add the push module too (delivers on android/ios; no-op mock on desktop/web,
+    // so it is safe in commonMain — exactly like 1.x getPushNotifier()):
     api("io.github.mirzemehdi:kmpnotifier-push-firebase:2.0.0")
 }
 ```
@@ -67,8 +63,8 @@ KMPNotifier.initialize(context, configuration, FirebasePush)
 | `NotifierManager.getPermissionUtil()` | `KMPNotifier.permissionUtil` |
 | `NotifierManager.setLogger { }` | `KMPNotifier.setLogger { }` |
 | `NotifierManager.onCreateOrOnNewIntent(intent)` (android) | `KMPNotifier.onCreateOrOnNewIntent(intent)` |
-| `NotifierManager.onApplicationDidReceiveRemoteNotification(userInfo)` (ios) | `FirebasePush.onApplicationDidReceiveRemoteNotification(userInfo)` |
-| `NotifierManager.onUserNotification(content)` (ios) | handled automatically by the delegate; `FirebasePush.onUserNotification(content)` if called manually |
+| `NotifierManager.onApplicationDidReceiveRemoteNotification(userInfo)` (ios) | `KMPNotifier.onApplicationDidReceiveRemoteNotification(userInfo)` |
+| `NotifierManager.onUserNotification(content)` (ios) | handled automatically by the delegate; `KMPNotifier.onUserNotification(content)` if called manually |
 | `NotifierManager.onNotificationClicked(content)` (ios) | `KMPNotifier.onNotificationClicked(content)` |
 
 ### Swift call sites
@@ -78,11 +74,24 @@ KMPNotifier.initialize(context, configuration, FirebasePush)
 NotifierManager.shared.onApplicationDidReceiveRemoteNotification(userInfo: userInfo)
 
 // After:
-FirebasePush.shared.onApplicationDidReceiveRemoteNotification(userInfo: userInfo)
+KMPNotifier.shared.onApplicationDidReceiveRemoteNotification(userInfo: userInfo)
 ```
 
-From Swift, prefer the member accessors: `LocalNotifications.shared.notifier`,
-`FirebasePush.shared.notifier`.
+Listener registration from Swift also starts at `KMPNotifier`:
+
+```swift
+KMPNotifier.shared.addPushListener(listener: myPushListener)
+```
+
+The notifier accessors also start at `KMPNotifier` in Swift:
+
+```swift
+let localNotifier = KMPNotifier.shared.localNotifier
+let pushNotifier = KMPNotifier.shared.firebasePushNotifier
+```
+
+(The object members `LocalNotifications.shared.notifier` / `FirebasePush.shared.notifier`
+exist as well.)
 
 ## Listeners
 
@@ -94,7 +103,7 @@ The single 6-method `NotifierManager.Listener` is split by concern:
 - **Push events** — `PushListener` (in `kmpnotifier-push-firebase`):
   `onNewToken(token)`, `onPayloadData(data)`, `onPushNotification(title, body)`,
   `onPushNotificationWithPayloadData(title, body, data)`.
-  Register with `FirebasePush.addListener(...)`.
+  Register with `KMPNotifier.addPushListener(...)` (or `FirebasePush.addListener(...)`).
 
 ```kotlin
 // Before:
@@ -107,7 +116,7 @@ NotifierManager.addListener(object : NotifierManager.Listener {
 KMPNotifier.addListener(object : KMPNotifier.Listener {
     override fun onNotificationClicked(data: PayloadData) { ... }
 })
-FirebasePush.addListener(object : PushListener {
+KMPNotifier.addPushListener(object : PushListener {
     override fun onNewToken(token: String) { ... }
 })
 ```
@@ -128,6 +137,6 @@ is equivalent to 1.x.
   `initialize` and retained strongly (previously it was installed by the Firebase initializer
   and held weakly — callbacks could silently stop). Local-only iOS setups no longer need
   Firebase for notification click handling.
-- Desktop/web: `getPushNotifier()` on the deprecated API still returns a no-op push notifier.
-  The new `KMPNotifier.firebasePushNotifier` accessor simply does not exist on these targets — push is now a
-  compile-time capability of android/ios only.
+- Desktop/web: both the deprecated `getPushNotifier()` and the new
+  `KMPNotifier.firebasePushNotifier` return a no-op push notifier (token is null,
+  subscriptions do nothing) — same behavior as 1.x.

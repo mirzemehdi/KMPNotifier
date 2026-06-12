@@ -15,14 +15,14 @@ pull in Firebase. See [MIGRATION.md](MIGRATION.md) for a step-by-step guide.
 - New artifacts:
   - `io.github.mirzemehdi:kmpnotifier-core` — shared core (configuration, permissions, logging, shared events). All targets.
   - `io.github.mirzemehdi:kmpnotifier-local` — local notifications, no Firebase dependency. All targets.
-  - `io.github.mirzemehdi:kmpnotifier-push-firebase` — Firebase Cloud Messaging push. Android and iOS.
+  - `io.github.mirzemehdi:kmpnotifier-push-firebase` — Firebase Cloud Messaging push. All targets: delivers on android/iOS, no-op mock on desktop/web (1.x parity).
 - New entry point `KMPNotifier` with pluggable extensions:
   `KMPNotifier.initialize(configuration, LocalNotifications)` or
   `KMPNotifier.initialize(configuration, FirebasePush)` (FirebasePush installs LocalNotifications automatically).
 - `KMPNotifier.localNotifier` / `LocalNotifications.notifier` — local notifier accessor.
 - `KMPNotifier.firebasePushNotifier` / `FirebasePush.notifier` — push notifier accessor (push module only).
 - `KMPNotifier.Listener` — shared events (notification clicks, action buttons) for both local and push notifications.
-- `PushListener` + `FirebasePush.addListener/removeListener/setListener` — push-only events
+- `PushListener` + `KMPNotifier.addPushListener/removePushListener/setPushListener` (sugar over `FirebasePush.addListener/...`) — push-only events
   (token updates, push payloads), no longer part of the shared listener surface.
 - `CHANGELOG.md` and `MIGRATION.md`.
 - Cross-platform test suite (jvm, android, ios, js).

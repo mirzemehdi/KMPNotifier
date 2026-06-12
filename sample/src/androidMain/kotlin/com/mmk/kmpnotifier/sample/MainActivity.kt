@@ -6,9 +6,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import com.mmk.kmpnotifier.KMPNotifier
 import com.mmk.kmpnotifier.extensions.onCreateOrOnNewIntent
-import com.mmk.kmpnotifier.notification.NotifierManager
-import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import com.mmk.kmpnotifier.permission.permissionUtil
 
 class MainActivity : ComponentActivity() {
@@ -16,7 +15,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val permissionUtil by permissionUtil()
         permissionUtil.askNotificationPermission()
-        NotifierManager.onCreateOrOnNewIntent(intent)
+        KMPNotifier.onCreateOrOnNewIntent(intent)
         setContent {
             App()
         }
@@ -24,7 +23,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        NotifierManager.onCreateOrOnNewIntent(intent)
+        KMPNotifier.onCreateOrOnNewIntent(intent)
     }
 
 }

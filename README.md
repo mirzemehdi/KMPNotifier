@@ -39,7 +39,7 @@ Since 2.0.0 the library is split into focused modules:
 | Artifact | Use it for | Targets |
 |---|---|---|
 | `kmpnotifier-local` | local notifications (no Firebase) | android, ios, jvm, js, wasmJs |
-| `kmpnotifier-push-firebase` | Firebase push (includes local) | android, ios |
+| `kmpnotifier-push-firebase` | Firebase push (includes local; no-op mock on desktop/web) | android, ios, jvm, js, wasmJs |
 | `kmpnotifier` | deprecated 1.x compatibility umbrella (includes everything) | all |
 
 Upgrading from 1.x? Your code keeps working — see [MIGRATION.md](MIGRATION.md) for the
@@ -71,12 +71,7 @@ sourceSets {
   commonMain.dependencies {
     // Local notifications (all targets, no Firebase):
     api("io.github.mirzemehdi:kmpnotifier-local:<version>")
-  }
-  // Firebase push (android and ios only):
-  androidMain.dependencies {
-    api("io.github.mirzemehdi:kmpnotifier-push-firebase:<version>")
-  }
-  iosMain.dependencies {
+    // Firebase push (delivers on android/ios; no-op mock on desktop and web):
     api("io.github.mirzemehdi:kmpnotifier-push-firebase:<version>")
   }
 }
@@ -305,13 +300,13 @@ KMPNotifier.addListener(object : KMPNotifier.Listener {
 ```
 
 ### Push Notification
-Push notifications are supported only for Android and iOS, using the `kmpnotifier-push-firebase` module.
+Push notifications are delivered on Android and iOS via the `kmpnotifier-push-firebase` module. The module compiles on every target — on desktop and web the notifier is a no-op mock (token is null), so shared code needs no expect/actual.
 
 #### Listen for push notification events
 Push-specific events (token updates, push payloads) use `PushListener`:
 
 ```kotlin
-FirebasePush.addListener(object : PushListener {
+KMPNotifier.addPushListener(object : PushListener {
   override fun onNewToken(token: String) {
     println("onNewToken: $token") //Update user token in the server if needed
   }
@@ -348,11 +343,11 @@ override fun onCreate(savedInstanceState: Bundle?) {
 ```
 
 ##### iOS
-Call `FirebasePush.onApplicationDidReceiveRemoteNotification(userInfo: userInfo)` on application's `didReceiveRemoteNotification` method.
+Call `KMPNotifier.onApplicationDidReceiveRemoteNotification(userInfo: userInfo)` on application's `didReceiveRemoteNotification` method.
 
 ```swift
  func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) async -> UIBackgroundFetchResult {
-      FirebasePush.shared.onApplicationDidReceiveRemoteNotification(userInfo: userInfo)
+      KMPNotifier.shared.onApplicationDidReceiveRemoteNotification(userInfo: userInfo)
       return UIBackgroundFetchResult.newData
  }
 
