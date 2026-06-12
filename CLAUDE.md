@@ -10,7 +10,7 @@ KMPNotifier is a Kotlin Multiplatform notification library (`io.github.mirzemehd
 - `:kmpnotifier-local` — local notifications (`LocalNotifications` extension, `Notifier` + platform impls). All targets. Depends on core.
 - `:kmpnotifier-push-firebase` — Firebase push (`FirebasePush` extension, `PushListener`). All targets — Firebase delivery on android/iOS, shared no-op mock elsewhere (1.x parity). Depends on local. Declares the Firebase iOS dependency via SwiftPM (`swiftPMDependencies`).
 - `:kmpnotifier` — deprecated compatibility umbrella: old `NotifierManager` API forwarding to the new API; `api()`-depends on all modules. Removal planned for 3.0.0.
-- `:sample` — Compose Multiplatform demo shared library (desktop/wasm/iOS entry points + shared UI; no iosX64 — CMP 1.11+ has no Intel-simulator artifacts); `:sample-android` — the Android app entry point (AGP 9 forbids `com.android.application` + KMP in one module); the iOS host project lives in `iosApp/`
+- Demo app (JetBrains default structure, AGP 9 Path C): `:shared` — Compose Multiplatform shared UI + platform actuals + the iOS framework (baseName `shared`; no iosX64 — CMP 1.11+ has no Intel-simulator artifacts); `:androidApp`, `:desktopApp`, `:webApp` — per-platform entry points; `iosApp/` — Xcode project (its build phase runs `:shared:embedAndSignAppleFrameworkForXcode`)
 
 All four library modules apply the `kmpnotifier.library` convention plugin from the `build-logic/` included build (targets incl. the AGP 9 `com.android.kotlin.multiplatform.library` android target — single variant, so no `-android-debug` artifacts; shared test deps; Maven Central publishing). Android unit tests live in `src/androidHostTest/`. Module build files declare only: dependencies, `android.namespace`, POM name/description, and module-specific blocks (push: `swiftPMDependencies`).
 
@@ -33,9 +33,9 @@ JDK 17+ required (e.g. `JAVA_HOME=$(/usr/libexec/java_home -v 17)`).
 Sample app:
 
 ```sh
-./gradlew :sample-android:installDebug             # Android
-./gradlew :sample:run                              # Desktop
-./gradlew :sample:wasmJsBrowserDevelopmentRun      # Web (wasm)
+./gradlew :androidApp:installDebug                 # Android
+./gradlew :desktopApp:run                          # Desktop
+./gradlew :webApp:wasmJsBrowserDevelopmentRun      # Web (wasm)
 ```
 
 `firebase_push_notification_sender.py` sends test FCM pushes (requires a Firebase service-account JSON and project ID filled in at the top of the script).
@@ -63,7 +63,7 @@ Version is `kmpNotifierVersion` in `gradle.properties` (all four artifacts share
 
 **Android manifests:** core declares POST_NOTIFICATIONS + the startup provider; local declares `NotificationReceiver`; push declares `MyFirebaseMessagingService` with its FULLY QUALIFIED class name (module namespaces differ — a relative `.firebase.` name would resolve wrongly during manifest merge). Class FQNs are unchanged from 1.x, so merged app manifests are equivalent.
 
-**SwiftPM (no CocoaPods):** only `:kmpnotifier-push-firebase` declares `swiftPMDependencies { swiftPackage(firebase-ios-sdk, exact 12.14.0, products [FirebaseMessaging], discoverClangModulesImplicitly = false) }`. Kotlin imports use `swiftPMImport.io.github.mirzemehdi.kmpnotifier.push.firebase.*` (declaring module's group+name). Never declare the same package's cinterop in two modules of one dependency graph — duplicate bindings fail the link. The iosApp consumes Firebase via Xcode SPM (exact 12.14.0 — keep versions in sync) and needs `:sample:integrateLinkagePackage` re-run whenever the version pin or products change — the committed `iosApp/KotlinMultiplatformLinkedPackage/` embeds the firebase version and Xcode resolution conflicts if it drifts.
+**SwiftPM (no CocoaPods):** only `:kmpnotifier-push-firebase` declares `swiftPMDependencies { swiftPackage(firebase-ios-sdk, exact 12.14.0, products [FirebaseMessaging], discoverClangModulesImplicitly = false) }`. Kotlin imports use `swiftPMImport.io.github.mirzemehdi.kmpnotifier.push.firebase.*` (declaring module's group+name). Never declare the same package's cinterop in two modules of one dependency graph — duplicate bindings fail the link. The iosApp consumes Firebase via Xcode SPM (exact 12.14.0 — keep versions in sync) and needs `:shared:integrateLinkagePackage` re-run whenever the version pin or products change — the committed `iosApp/KotlinMultiplatformLinkedPackage/` embeds the firebase version and Xcode resolution conflicts if it drifts.
 
 **JS and wasmJs**: near-identical duplicated sources (`WebConsoleNotifier`, `WebPermissionUtilImpl`, `PlatformModule.web.kt`) — changes to one usually must be mirrored in the other.
 

@@ -44,6 +44,6 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":sample"))
+    implementation(project(":shared"))
     implementation(libs.androidx.activity.compose)
 }

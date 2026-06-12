@@ -1,7 +1,5 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -26,23 +24,10 @@ kotlin {
     }
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        outputModuleName.set("sample")
-        browser {
-            commonWebpackConfig {
-                outputFileName = "sample.js"
-                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-                    static = (static ?: mutableListOf()).apply {
-                        // Serve sources to debug inside browser
-                        add(project.projectDir.path)
-                    }
-                }
-            }
-        }
-        binaries.executable()
+        browser()
     }
     jvm("desktop")
-    // iosX64 removed: Compose Multiplatform 1.11+ no longer ships Intel-simulator artifacts.
-    // The library modules still build iosX64; only the Compose sample is Apple-Silicon-only.
+    // No iosX64: Compose Multiplatform 1.11+ has no Intel-simulator artifacts.
     listOf(
         iosArm64(),
         iosSimulatorArm64()
@@ -51,7 +36,7 @@ kotlin {
             export(project(":kmpnotifier-core"))
             export(project(":kmpnotifier-local"))
             export(project(":kmpnotifier-push-firebase"))
-            baseName = "sample"
+            baseName = "shared"
             isStatic = true
         }
     }
@@ -71,20 +56,7 @@ kotlin {
             api(project(":kmpnotifier-push-firebase"))
         }
         desktopMain.dependencies {
-            implementation(compose.desktop.currentOs)
             implementation(compose.desktop.common)
-        }
-    }
-}
-
-compose.desktop {
-    application {
-        mainClass = "com.mmk.kmpnotifier.sample.MainKt"
-        nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "KMPNotifier"
-            packageVersion = "1.0.0"
-            appResourcesRootDir.set(project.layout.projectDirectory.dir("resources"))
         }
     }
 }

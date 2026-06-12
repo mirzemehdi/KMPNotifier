@@ -43,7 +43,7 @@ kotlin {
     wasmJs {
         browser()
     }
-    js(IR) {
+    js {
         nodejs()
         browser()
         binaries.library()

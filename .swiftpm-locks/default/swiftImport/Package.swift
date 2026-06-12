@@ -16,7 +16,7 @@ let package = Package(
     .package(path: "subpackages/_kmpnotifier"),
     .package(path: "subpackages/_kmpnotifier-push-firebase"),
     .package(path: "subpackages/_kmpnotifier_push_firebase"),
-    .package(path: "subpackages/_sample")
+    .package(path: "subpackages/_shared")
   ],
   targets: [
     .target(
@@ -25,7 +25,7 @@ let package = Package(
         .product(name: "_kmpnotifier", package: "_kmpnotifier"),
         .product(name: "_kmpnotifier-push-firebase", package: "_kmpnotifier-push-firebase"),
         .product(name: "_kmpnotifier_push_firebase", package: "_kmpnotifier_push_firebase"),
-        .product(name: "_sample", package: "_sample")
+        .product(name: "_shared", package: "_shared")
       ]
     )
   ]
