@@ -1,22 +1,24 @@
 [versions]
-compose = "1.10.0"
-compose-plugin = "1.9.3"
-agp = "8.12.3"
+compose = "1.11.2"
+compose-plugin = "1.11.1"
+agp = "9.2.1"
 android-minSdk = "23"
-android-compileSdk = "36"
-android-targetSdk = "36"
-androidx-activityCompose = "1.12.1"
-androidx-core-ktx = "1.17.0"
+android-compileSdk = "37"
+android-targetSdk = "37"
+androidx-activityCompose = "1.13.0"
+androidx-core-ktx = "1.19.0"
 androidx-startup-runtime = "1.2.0"
-kotlin = "2.2.21"
-koin = "4.2.0-beta2"
+kotlin = "2.4.0"
 kotlinx-binary-validator = "0.18.1"
-dokka = "2.0.0"
-firebase-messaging = "25.0.1"
-kotlinx-coroutine = "1.10.2"
+dokka = "2.2.0"
+firebase-messaging = "25.0.2"
+kotlinx-coroutine = "1.11.0"
 kotlinx-browser = "0.5.0"
-mavenPublish = "0.35.0"
+mavenPublish = "0.36.0"
 googleServices = "4.4.4"
+robolectric = "4.16.1"
+androidx-test-core = "1.7.0"
+junit = "4.13.2"
 
 
 
@@ -31,17 +33,26 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "androidx-activityCompose" }
 androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "androidx-startup-runtime" }
-koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" ,version.ref="firebase-messaging"}
+kotlinx-coroutine-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutine" }
+kotlinx-coroutine-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutine" }
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+androidx-test-core-ktx = { module = "androidx.test:core-ktx", version.ref = "androidx-test-core" }
+junit = { module = "junit:junit", version.ref = "junit" }
+
+# used by build-logic convention plugins
+gradlePlugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+gradlePlugin-android = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+gradlePlugin-mavenPublish = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "mavenPublish" }
 
 
 [plugins]
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 androidApplication = { id = "com.android.application", version.ref = "agp" }
-androidLibrary = { id = "com.android.library", version.ref = "agp" }
+androidKmpLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-kotlinNativeCocoaPods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
+kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinx-binary-validator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "kotlinx-binary-validator" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 mavenPublish = { id = "com.vanniktech.maven.publish", version.ref = "mavenPublish" }

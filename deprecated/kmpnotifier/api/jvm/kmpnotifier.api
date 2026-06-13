@@ -1,0 +1,29 @@
+public final class com/mmk/kmpnotifier/notification/NotifierManager {
+	public static final field INSTANCE Lcom/mmk/kmpnotifier/notification/NotifierManager;
+	public final fun addListener (Lcom/mmk/kmpnotifier/notification/NotifierManager$Listener;)V
+	public final fun getLocalNotifier ()Lcom/mmk/kmpnotifier/notification/Notifier;
+	public final fun getPermissionUtil ()Lcom/mmk/kmpnotifier/permission/PermissionUtil;
+	public final fun getPushNotifier ()Lcom/mmk/kmpnotifier/notification/PushNotifier;
+	public final fun initialize (Lcom/mmk/kmpnotifier/notification/configuration/NotificationPlatformConfiguration;)V
+	public final fun setListener (Lcom/mmk/kmpnotifier/notification/NotifierManager$Listener;)V
+	public final fun setLogger (Lcom/mmk/kmpnotifier/logger/Logger;)V
+}
+
+public abstract interface class com/mmk/kmpnotifier/notification/NotifierManager$Listener {
+	public fun onAction (Ljava/lang/String;ILjava/util/Map;)V
+	public fun onNewToken (Ljava/lang/String;)V
+	public fun onNotificationClicked (Ljava/util/Map;)V
+	public fun onPayloadData (Ljava/util/Map;)V
+	public fun onPushNotification (Ljava/lang/String;Ljava/lang/String;)V
+	public fun onPushNotificationWithPayloadData (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)V
+}
+
+public final class com/mmk/kmpnotifier/notification/NotifierManager$Listener$DefaultImpls {
+	public static fun onAction (Lcom/mmk/kmpnotifier/notification/NotifierManager$Listener;Ljava/lang/String;ILjava/util/Map;)V
+	public static fun onNewToken (Lcom/mmk/kmpnotifier/notification/NotifierManager$Listener;Ljava/lang/String;)V
+	public static fun onNotificationClicked (Lcom/mmk/kmpnotifier/notification/NotifierManager$Listener;Ljava/util/Map;)V
+	public static fun onPayloadData (Lcom/mmk/kmpnotifier/notification/NotifierManager$Listener;Ljava/util/Map;)V
+	public static fun onPushNotification (Lcom/mmk/kmpnotifier/notification/NotifierManager$Listener;Ljava/lang/String;Ljava/lang/String;)V
+	public static fun onPushNotificationWithPayloadData (Lcom/mmk/kmpnotifier/notification/NotifierManager$Listener;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)V
+}
+

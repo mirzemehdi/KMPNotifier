@@ -1,0 +1,199 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64, iosX64, js, wasmJs]
+// Alias: ios => [iosArm64, iosSimulatorArm64, iosX64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <io.github.mirzemehdi:kmpnotifier-core>
+open annotation class com.mmk.kmpnotifier.internal/InternalKMPNotifierApi : kotlin/Annotation { // com.mmk.kmpnotifier.internal/InternalKMPNotifierApi|null[0]
+    constructor <init>() // com.mmk.kmpnotifier.internal/InternalKMPNotifierApi.<init>|<init>(){}[0]
+}
+
+abstract fun interface com.mmk.kmpnotifier.logger/Logger { // com.mmk.kmpnotifier.logger/Logger|null[0]
+    abstract fun log(kotlin/String) // com.mmk.kmpnotifier.logger/Logger.log|log(kotlin.String){}[0]
+}
+
+abstract interface com.mmk.kmpnotifier.internal/NotifierRuntime { // com.mmk.kmpnotifier.internal/NotifierRuntime|null[0]
+    abstract val configuration // com.mmk.kmpnotifier.internal/NotifierRuntime.configuration|{}configuration[0]
+        abstract fun <get-configuration>(): com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration // com.mmk.kmpnotifier.internal/NotifierRuntime.configuration.<get-configuration>|<get-configuration>(){}[0]
+    abstract val permissionUtil // com.mmk.kmpnotifier.internal/NotifierRuntime.permissionUtil|{}permissionUtil[0]
+        abstract fun <get-permissionUtil>(): com.mmk.kmpnotifier.permission/PermissionUtil // com.mmk.kmpnotifier.internal/NotifierRuntime.permissionUtil.<get-permissionUtil>|<get-permissionUtil>(){}[0]
+}
+
+abstract interface com.mmk.kmpnotifier.internal/PushEventSink { // com.mmk.kmpnotifier.internal/PushEventSink|null[0]
+    open fun onNewToken(kotlin/String) // com.mmk.kmpnotifier.internal/PushEventSink.onNewToken|onNewToken(kotlin.String){}[0]
+    open fun onPushNotification(kotlin/String?, kotlin/String?) // com.mmk.kmpnotifier.internal/PushEventSink.onPushNotification|onPushNotification(kotlin.String?;kotlin.String?){}[0]
+    open fun onPushNotificationWithPayloadData(kotlin/String?, kotlin/String?, kotlin.collections/Map<kotlin/String, *>) // com.mmk.kmpnotifier.internal/PushEventSink.onPushNotificationWithPayloadData|onPushNotificationWithPayloadData(kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,*>){}[0]
+    open fun onPushPayloadData(kotlin.collections/Map<kotlin/String, *>) // com.mmk.kmpnotifier.internal/PushEventSink.onPushPayloadData|onPushPayloadData(kotlin.collections.Map<kotlin.String,*>){}[0]
+}
+
+abstract interface com.mmk.kmpnotifier.notification/PushNotifier { // com.mmk.kmpnotifier.notification/PushNotifier|null[0]
+    abstract suspend fun deleteMyToken() // com.mmk.kmpnotifier.notification/PushNotifier.deleteMyToken|deleteMyToken(){}[0]
+    abstract suspend fun getToken(): kotlin/String? // com.mmk.kmpnotifier.notification/PushNotifier.getToken|getToken(){}[0]
+    abstract suspend fun subscribeToTopic(kotlin/String) // com.mmk.kmpnotifier.notification/PushNotifier.subscribeToTopic|subscribeToTopic(kotlin.String){}[0]
+    abstract suspend fun unSubscribeFromTopic(kotlin/String) // com.mmk.kmpnotifier.notification/PushNotifier.unSubscribeFromTopic|unSubscribeFromTopic(kotlin.String){}[0]
+}
+
+abstract interface com.mmk.kmpnotifier.permission/PermissionUtil { // com.mmk.kmpnotifier.permission/PermissionUtil|null[0]
+    abstract fun askNotificationPermission(kotlin/Function1<kotlin/Boolean, kotlin/Unit> = ...) // com.mmk.kmpnotifier.permission/PermissionUtil.askNotificationPermission|askNotificationPermission(kotlin.Function1<kotlin.Boolean,kotlin.Unit>){}[0]
+    abstract fun hasNotificationPermission(kotlin/Function1<kotlin/Boolean, kotlin/Unit> = ...) // com.mmk.kmpnotifier.permission/PermissionUtil.hasNotificationPermission|hasNotificationPermission(kotlin.Function1<kotlin.Boolean,kotlin.Unit>){}[0]
+}
+
+abstract interface com.mmk.kmpnotifier/KMPNotifierExtension { // com.mmk.kmpnotifier/KMPNotifierExtension|null[0]
+    open val dependsOn // com.mmk.kmpnotifier/KMPNotifierExtension.dependsOn|{}dependsOn[0]
+        open fun <get-dependsOn>(): kotlin.collections/List<com.mmk.kmpnotifier/KMPNotifierExtension> // com.mmk.kmpnotifier/KMPNotifierExtension.dependsOn.<get-dependsOn>|<get-dependsOn>(){}[0]
+
+    abstract fun install(com.mmk.kmpnotifier.internal/NotifierRuntime) // com.mmk.kmpnotifier/KMPNotifierExtension.install|install(com.mmk.kmpnotifier.internal.NotifierRuntime){}[0]
+}
+
+sealed interface com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration { // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration|null[0]
+    final class Android : com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration { // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Android|null[0]
+        constructor <init>(kotlin/Int, kotlin/Int? = ..., com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Android.NotificationChannelData = ..., kotlin/Boolean = ...) // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Android.<init>|<init>(kotlin.Int;kotlin.Int?;com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration.Android.NotificationChannelData;kotlin.Boolean){}[0]
+
+        final val notificationChannelData // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Android.notificationChannelData|{}notificationChannelData[0]
+            final fun <get-notificationChannelData>(): com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Android.NotificationChannelData // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Android.notificationChannelData.<get-notificationChannelData>|<get-notificationChannelData>(){}[0]
+        final val notificationIconColorResId // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Android.notificationIconColorResId|{}notificationIconColorResId[0]
+            final fun <get-notificationIconColorResId>(): kotlin/Int? // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Android.notificationIconColorResId.<get-notificationIconColorResId>|<get-notificationIconColorResId>(){}[0]
+        final val notificationIconResId // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Android.notificationIconResId|{}notificationIconResId[0]
+            final fun <get-notificationIconResId>(): kotlin/Int // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Android.notificationIconResId.<get-notificationIconResId>|<get-notificationIconResId>(){}[0]
+        final val showPushNotification // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Android.showPushNotification|{}showPushNotification[0]
+            final fun <get-showPushNotification>(): kotlin/Boolean // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Android.showPushNotification.<get-showPushNotification>|<get-showPushNotification>(){}[0]
+
+        final class NotificationChannelData { // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Android.NotificationChannelData|null[0]
+            constructor <init>(kotlin/String = ..., kotlin/String = ..., kotlin/String = ..., kotlin/String? = ...) // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Android.NotificationChannelData.<init>|<init>(kotlin.String;kotlin.String;kotlin.String;kotlin.String?){}[0]
+
+            final val description // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Android.NotificationChannelData.description|{}description[0]
+                final fun <get-description>(): kotlin/String // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Android.NotificationChannelData.description.<get-description>|<get-description>(){}[0]
+            final val id // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Android.NotificationChannelData.id|{}id[0]
+                final fun <get-id>(): kotlin/String // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Android.NotificationChannelData.id.<get-id>|<get-id>(){}[0]
+            final val name // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Android.NotificationChannelData.name|{}name[0]
+                final fun <get-name>(): kotlin/String // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Android.NotificationChannelData.name.<get-name>|<get-name>(){}[0]
+            final val soundUri // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Android.NotificationChannelData.soundUri|{}soundUri[0]
+                final fun <get-soundUri>(): kotlin/String? // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Android.NotificationChannelData.soundUri.<get-soundUri>|<get-soundUri>(){}[0]
+        }
+    }
+
+    final class Desktop : com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration { // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Desktop|null[0]
+        constructor <init>(kotlin/Boolean = ..., kotlin/String? = ...) // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Desktop.<init>|<init>(kotlin.Boolean;kotlin.String?){}[0]
+
+        final val notificationIconPath // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Desktop.notificationIconPath|{}notificationIconPath[0]
+            final fun <get-notificationIconPath>(): kotlin/String? // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Desktop.notificationIconPath.<get-notificationIconPath>|<get-notificationIconPath>(){}[0]
+        final val showPushNotification // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Desktop.showPushNotification|{}showPushNotification[0]
+            final fun <get-showPushNotification>(): kotlin/Boolean // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Desktop.showPushNotification.<get-showPushNotification>|<get-showPushNotification>(){}[0]
+
+        final fun component1(): kotlin/Boolean // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Desktop.component1|component1(){}[0]
+        final fun component2(): kotlin/String? // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Desktop.component2|component2(){}[0]
+        final fun copy(kotlin/Boolean = ..., kotlin/String? = ...): com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Desktop // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Desktop.copy|copy(kotlin.Boolean;kotlin.String?){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Desktop.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Desktop.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Desktop.toString|toString(){}[0]
+    }
+
+    final class Ios : com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration { // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Ios|null[0]
+        constructor <init>(kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/String? = ...) // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Ios.<init>|<init>(kotlin.Boolean;kotlin.Boolean;kotlin.String?){}[0]
+
+        final val askNotificationPermissionOnStart // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Ios.askNotificationPermissionOnStart|{}askNotificationPermissionOnStart[0]
+            final fun <get-askNotificationPermissionOnStart>(): kotlin/Boolean // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Ios.askNotificationPermissionOnStart.<get-askNotificationPermissionOnStart>|<get-askNotificationPermissionOnStart>(){}[0]
+        final val notificationSoundName // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Ios.notificationSoundName|{}notificationSoundName[0]
+            final fun <get-notificationSoundName>(): kotlin/String? // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Ios.notificationSoundName.<get-notificationSoundName>|<get-notificationSoundName>(){}[0]
+        final val showPushNotification // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Ios.showPushNotification|{}showPushNotification[0]
+            final fun <get-showPushNotification>(): kotlin/Boolean // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Ios.showPushNotification.<get-showPushNotification>|<get-showPushNotification>(){}[0]
+
+        final fun component1(): kotlin/Boolean // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Ios.component1|component1(){}[0]
+        final fun component2(): kotlin/Boolean // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Ios.component2|component2(){}[0]
+        final fun component3(): kotlin/String? // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Ios.component3|component3(){}[0]
+        final fun copy(kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/String? = ...): com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Ios // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Ios.copy|copy(kotlin.Boolean;kotlin.Boolean;kotlin.String?){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Ios.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Ios.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Ios.toString|toString(){}[0]
+    }
+
+    final class Web : com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration { // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Web|null[0]
+        constructor <init>(kotlin/Boolean = ..., kotlin/String? = ...) // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Web.<init>|<init>(kotlin.Boolean;kotlin.String?){}[0]
+
+        final val askNotificationPermissionOnStart // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Web.askNotificationPermissionOnStart|{}askNotificationPermissionOnStart[0]
+            final fun <get-askNotificationPermissionOnStart>(): kotlin/Boolean // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Web.askNotificationPermissionOnStart.<get-askNotificationPermissionOnStart>|<get-askNotificationPermissionOnStart>(){}[0]
+        final val notificationIconPath // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Web.notificationIconPath|{}notificationIconPath[0]
+            final fun <get-notificationIconPath>(): kotlin/String? // com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration.Web.notificationIconPath.<get-notificationIconPath>|<get-notificationIconPath>(){}[0]
+    }
+}
+
+final object com.mmk.kmpnotifier.internal/NotifierEventHub { // com.mmk.kmpnotifier.internal/NotifierEventHub|null[0]
+    final fun emitAction(kotlin/String, kotlin/Int, kotlin.collections/Map<kotlin/String, *>) // com.mmk.kmpnotifier.internal/NotifierEventHub.emitAction|emitAction(kotlin.String;kotlin.Int;kotlin.collections.Map<kotlin.String,*>){}[0]
+    final fun emitNewToken(kotlin/String) // com.mmk.kmpnotifier.internal/NotifierEventHub.emitNewToken|emitNewToken(kotlin.String){}[0]
+    final fun emitNotificationClicked(kotlin.collections/Map<kotlin/String, *>) // com.mmk.kmpnotifier.internal/NotifierEventHub.emitNotificationClicked|emitNotificationClicked(kotlin.collections.Map<kotlin.String,*>){}[0]
+    final fun emitPushNotification(kotlin/String?, kotlin/String?) // com.mmk.kmpnotifier.internal/NotifierEventHub.emitPushNotification|emitPushNotification(kotlin.String?;kotlin.String?){}[0]
+    final fun emitPushNotificationWithPayloadData(kotlin/String? = ..., kotlin/String? = ..., kotlin.collections/Map<kotlin/String, *>) // com.mmk.kmpnotifier.internal/NotifierEventHub.emitPushNotificationWithPayloadData|emitPushNotificationWithPayloadData(kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,*>){}[0]
+    final fun emitPushPayloadData(kotlin.collections/Map<kotlin/String, *>) // com.mmk.kmpnotifier.internal/NotifierEventHub.emitPushPayloadData|emitPushPayloadData(kotlin.collections.Map<kotlin.String,*>){}[0]
+    final fun registerInternalListener(com.mmk.kmpnotifier/KMPNotifier.Listener) // com.mmk.kmpnotifier.internal/NotifierEventHub.registerInternalListener|registerInternalListener(com.mmk.kmpnotifier.KMPNotifier.Listener){}[0]
+    final fun registerPushEventSink(com.mmk.kmpnotifier.internal/PushEventSink) // com.mmk.kmpnotifier.internal/NotifierEventHub.registerPushEventSink|registerPushEventSink(com.mmk.kmpnotifier.internal.PushEventSink){}[0]
+    final fun unregisterInternalListener(com.mmk.kmpnotifier/KMPNotifier.Listener) // com.mmk.kmpnotifier.internal/NotifierEventHub.unregisterInternalListener|unregisterInternalListener(com.mmk.kmpnotifier.KMPNotifier.Listener){}[0]
+    final fun unregisterPushEventSink(com.mmk.kmpnotifier.internal/PushEventSink) // com.mmk.kmpnotifier.internal/NotifierEventHub.unregisterPushEventSink|unregisterPushEventSink(com.mmk.kmpnotifier.internal.PushEventSink){}[0]
+}
+
+final object com.mmk.kmpnotifier.internal/NotifierInternals { // com.mmk.kmpnotifier.internal/NotifierInternals|null[0]
+    final val configuration // com.mmk.kmpnotifier.internal/NotifierInternals.configuration|{}configuration[0]
+        final fun <get-configuration>(): com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration // com.mmk.kmpnotifier.internal/NotifierInternals.configuration.<get-configuration>|<get-configuration>(){}[0]
+    final val permissionUtil // com.mmk.kmpnotifier.internal/NotifierInternals.permissionUtil|{}permissionUtil[0]
+        final fun <get-permissionUtil>(): com.mmk.kmpnotifier.permission/PermissionUtil // com.mmk.kmpnotifier.internal/NotifierInternals.permissionUtil.<get-permissionUtil>|<get-permissionUtil>(){}[0]
+
+    final fun configurationOrNull(): com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration? // com.mmk.kmpnotifier.internal/NotifierInternals.configurationOrNull|configurationOrNull(){}[0]
+    final fun localNotifierOrNull(): kotlin/Any? // com.mmk.kmpnotifier.internal/NotifierInternals.localNotifierOrNull|localNotifierOrNull(){}[0]
+    final fun pushNotifierOrEmpty(): com.mmk.kmpnotifier.notification/PushNotifier // com.mmk.kmpnotifier.internal/NotifierInternals.pushNotifierOrEmpty|pushNotifierOrEmpty(){}[0]
+    final fun pushNotifierOrNull(): com.mmk.kmpnotifier.notification/PushNotifier? // com.mmk.kmpnotifier.internal/NotifierInternals.pushNotifierOrNull|pushNotifierOrNull(){}[0]
+    final fun registerLocalNotifier(kotlin/Any) // com.mmk.kmpnotifier.internal/NotifierInternals.registerLocalNotifier|registerLocalNotifier(kotlin.Any){}[0]
+    final fun registerPushNotifier(com.mmk.kmpnotifier.notification/PushNotifier) // com.mmk.kmpnotifier.internal/NotifierInternals.registerPushNotifier|registerPushNotifier(com.mmk.kmpnotifier.notification.PushNotifier){}[0]
+    final fun requireInitialized() // com.mmk.kmpnotifier.internal/NotifierInternals.requireInitialized|requireInitialized(){}[0]
+    final fun resetForTests() // com.mmk.kmpnotifier.internal/NotifierInternals.resetForTests|resetForTests(){}[0]
+    final fun runtime(): com.mmk.kmpnotifier.internal/NotifierRuntime // com.mmk.kmpnotifier.internal/NotifierInternals.runtime|runtime(){}[0]
+}
+
+final object com.mmk.kmpnotifier.logger/EmptyLogger : com.mmk.kmpnotifier.logger/Logger { // com.mmk.kmpnotifier.logger/EmptyLogger|null[0]
+    final fun log(kotlin/String) // com.mmk.kmpnotifier.logger/EmptyLogger.log|log(kotlin.String){}[0]
+}
+
+final object com.mmk.kmpnotifier/Constants { // com.mmk.kmpnotifier/Constants|null[0]
+    final const val ACTION_NOTIFICATION_CLICK // com.mmk.kmpnotifier/Constants.ACTION_NOTIFICATION_CLICK|{}ACTION_NOTIFICATION_CLICK[0]
+        final fun <get-ACTION_NOTIFICATION_CLICK>(): kotlin/String // com.mmk.kmpnotifier/Constants.ACTION_NOTIFICATION_CLICK.<get-ACTION_NOTIFICATION_CLICK>|<get-ACTION_NOTIFICATION_CLICK>(){}[0]
+    final const val KEY_ANDROID_FIREBASE_NOTIFICATION // com.mmk.kmpnotifier/Constants.KEY_ANDROID_FIREBASE_NOTIFICATION|{}KEY_ANDROID_FIREBASE_NOTIFICATION[0]
+        final fun <get-KEY_ANDROID_FIREBASE_NOTIFICATION>(): kotlin/String // com.mmk.kmpnotifier/Constants.KEY_ANDROID_FIREBASE_NOTIFICATION.<get-KEY_ANDROID_FIREBASE_NOTIFICATION>|<get-KEY_ANDROID_FIREBASE_NOTIFICATION>(){}[0]
+    final const val KEY_IOS_FIREBASE_NOTIFICATION // com.mmk.kmpnotifier/Constants.KEY_IOS_FIREBASE_NOTIFICATION|{}KEY_IOS_FIREBASE_NOTIFICATION[0]
+        final fun <get-KEY_IOS_FIREBASE_NOTIFICATION>(): kotlin/String // com.mmk.kmpnotifier/Constants.KEY_IOS_FIREBASE_NOTIFICATION.<get-KEY_IOS_FIREBASE_NOTIFICATION>|<get-KEY_IOS_FIREBASE_NOTIFICATION>(){}[0]
+}
+
+final object com.mmk.kmpnotifier/KMPNotifier { // com.mmk.kmpnotifier/KMPNotifier|null[0]
+    final val isInitialized // com.mmk.kmpnotifier/KMPNotifier.isInitialized|{}isInitialized[0]
+        final fun <get-isInitialized>(): kotlin/Boolean // com.mmk.kmpnotifier/KMPNotifier.isInitialized.<get-isInitialized>|<get-isInitialized>(){}[0]
+    final val permissionUtil // com.mmk.kmpnotifier/KMPNotifier.permissionUtil|{}permissionUtil[0]
+        final fun <get-permissionUtil>(): com.mmk.kmpnotifier.permission/PermissionUtil // com.mmk.kmpnotifier/KMPNotifier.permissionUtil.<get-permissionUtil>|<get-permissionUtil>(){}[0]
+
+    final fun addListener(com.mmk.kmpnotifier/KMPNotifier.Listener) // com.mmk.kmpnotifier/KMPNotifier.addListener|addListener(com.mmk.kmpnotifier.KMPNotifier.Listener){}[0]
+    final fun initialize(com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration, kotlin.collections/List<com.mmk.kmpnotifier/KMPNotifierExtension>) // com.mmk.kmpnotifier/KMPNotifier.initialize|initialize(com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration;kotlin.collections.List<com.mmk.kmpnotifier.KMPNotifierExtension>){}[0]
+    final fun initialize(com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration, kotlin/Array<out com.mmk.kmpnotifier/KMPNotifierExtension>...) // com.mmk.kmpnotifier/KMPNotifier.initialize|initialize(com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration;kotlin.Array<out|com.mmk.kmpnotifier.KMPNotifierExtension>...){}[0]
+    final fun removeListener(com.mmk.kmpnotifier/KMPNotifier.Listener) // com.mmk.kmpnotifier/KMPNotifier.removeListener|removeListener(com.mmk.kmpnotifier.KMPNotifier.Listener){}[0]
+    final fun setListener(com.mmk.kmpnotifier/KMPNotifier.Listener?) // com.mmk.kmpnotifier/KMPNotifier.setListener|setListener(com.mmk.kmpnotifier.KMPNotifier.Listener?){}[0]
+    final fun setLogger(com.mmk.kmpnotifier.logger/Logger) // com.mmk.kmpnotifier/KMPNotifier.setLogger|setLogger(com.mmk.kmpnotifier.logger.Logger){}[0]
+
+    abstract interface Listener { // com.mmk.kmpnotifier/KMPNotifier.Listener|null[0]
+        open fun onAction(kotlin/String, kotlin/Int, kotlin.collections/Map<kotlin/String, *>) // com.mmk.kmpnotifier/KMPNotifier.Listener.onAction|onAction(kotlin.String;kotlin.Int;kotlin.collections.Map<kotlin.String,*>){}[0]
+        open fun onNotificationClicked(kotlin.collections/Map<kotlin/String, *>) // com.mmk.kmpnotifier/KMPNotifier.Listener.onNotificationClicked|onNotificationClicked(kotlin.collections.Map<kotlin.String,*>){}[0]
+    }
+}
+
+final var com.mmk.kmpnotifier.logger/currentLogger // com.mmk.kmpnotifier.logger/currentLogger|{}currentLogger[0]
+    final fun <get-currentLogger>(): com.mmk.kmpnotifier.logger/Logger // com.mmk.kmpnotifier.logger/currentLogger.<get-currentLogger>|<get-currentLogger>(){}[0]
+    final fun <set-currentLogger>(com.mmk.kmpnotifier.logger/Logger) // com.mmk.kmpnotifier.logger/currentLogger.<set-currentLogger>|<set-currentLogger>(com.mmk.kmpnotifier.logger.Logger){}[0]
+
+// Targets: [ios]
+final fun (com.mmk.kmpnotifier/KMPNotifier).com.mmk.kmpnotifier.extensions/onNotificationClicked(platform.UserNotifications/UNNotificationContent) // com.mmk.kmpnotifier.extensions/onNotificationClicked|onNotificationClicked@com.mmk.kmpnotifier.KMPNotifier(platform.UserNotifications.UNNotificationContent){}[0]
+
+// Targets: [ios]
+final fun (kotlin.collections/Map<kotlin/Any?, *>?).com.mmk.kmpnotifier.extensions/asPayloadData(): kotlin.collections/Map<kotlin/String, *> // com.mmk.kmpnotifier.extensions/asPayloadData|asPayloadData@kotlin.collections.Map<kotlin.Any?,*>?(){}[0]
+
+// Targets: [ios]
+final fun (platform.UserNotifications/UNNotificationContent).com.mmk.kmpnotifier.extensions/isRemoteNotification(): kotlin/Boolean // com.mmk.kmpnotifier.extensions/isRemoteNotification|isRemoteNotification@platform.UserNotifications.UNNotificationContent(){}[0]
+
+// Targets: [ios]
+final fun com.mmk.kmpnotifier.extensions/emitPushEventsIfRemote(platform.UserNotifications/UNNotificationContent) // com.mmk.kmpnotifier.extensions/emitPushEventsIfRemote|emitPushEventsIfRemote(platform.UserNotifications.UNNotificationContent){}[0]

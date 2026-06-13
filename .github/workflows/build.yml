@@ -7,7 +7,7 @@ on:
     paths-ignore:
       - '**/README.md'
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "rel_v*", "kmp-2.0/**" ]
 
 
 
@@ -44,8 +44,9 @@ jobs:
     strategy:
       matrix:
         config: [
-          { target: android, os: ubuntu-latest, tasks: testDebugUnitTest testReleaseUnitTest, continueOnError: false },
+          { target: android, os: ubuntu-latest, tasks: testAndroidHostTest, continueOnError: false },
           { target: apple, os: macos-latest, tasks: iosX64Test iosSimulatorArm64Test, continueOnError: false },
+          { target: desktop-web, os: ubuntu-latest, tasks: jvmTest jsNodeTest, continueOnError: false },
         ]
     runs-on: ${{ matrix.config.os }}
     name: Build ${{ matrix.config.target }}
@@ -90,12 +91,12 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Generate docs with dokka
-        run: ./gradlew dokkaHtmlMultiModule
+        run: ./gradlew :dokkaGenerate
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ${{ github.workspace }}/build/dokka/htmlMultiModule
+          path: ${{ github.workspace }}/build/dokka/html
 
       - name: Release to GitHub Pages
         id: deployment
@@ -123,7 +124,8 @@ jobs:
 
       - name: Publish to MavenCentral
         run: |
-          ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache
+          # TODO remove -PpublishDeprecatedUmbrella after the 2.0.0 release — later versions must not publish the deprecated umbrella
+          ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache -PpublishDeprecatedUmbrella=true
 
 
       - name: Create new release from tag

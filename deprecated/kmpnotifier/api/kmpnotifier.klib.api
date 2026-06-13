@@ -1,0 +1,36 @@
+// Klib ABI Dump
+// Targets: [iosArm64, iosSimulatorArm64, iosX64, js, wasmJs]
+// Alias: ios => [iosArm64, iosSimulatorArm64, iosX64]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <io.github.mirzemehdi:kmpnotifier>
+final object com.mmk.kmpnotifier.notification/NotifierManager { // com.mmk.kmpnotifier.notification/NotifierManager|null[0]
+    final fun addListener(com.mmk.kmpnotifier.notification/NotifierManager.Listener) // com.mmk.kmpnotifier.notification/NotifierManager.addListener|addListener(com.mmk.kmpnotifier.notification.NotifierManager.Listener){}[0]
+    final fun getLocalNotifier(): com.mmk.kmpnotifier.notification/Notifier // com.mmk.kmpnotifier.notification/NotifierManager.getLocalNotifier|getLocalNotifier(){}[0]
+    final fun getPermissionUtil(): com.mmk.kmpnotifier.permission/PermissionUtil // com.mmk.kmpnotifier.notification/NotifierManager.getPermissionUtil|getPermissionUtil(){}[0]
+    final fun getPushNotifier(): com.mmk.kmpnotifier.notification/PushNotifier // com.mmk.kmpnotifier.notification/NotifierManager.getPushNotifier|getPushNotifier(){}[0]
+    final fun initialize(com.mmk.kmpnotifier.notification.configuration/NotificationPlatformConfiguration) // com.mmk.kmpnotifier.notification/NotifierManager.initialize|initialize(com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration){}[0]
+    final fun setListener(com.mmk.kmpnotifier.notification/NotifierManager.Listener?) // com.mmk.kmpnotifier.notification/NotifierManager.setListener|setListener(com.mmk.kmpnotifier.notification.NotifierManager.Listener?){}[0]
+    final fun setLogger(com.mmk.kmpnotifier.logger/Logger) // com.mmk.kmpnotifier.notification/NotifierManager.setLogger|setLogger(com.mmk.kmpnotifier.logger.Logger){}[0]
+
+    abstract interface Listener { // com.mmk.kmpnotifier.notification/NotifierManager.Listener|null[0]
+        open fun onAction(kotlin/String, kotlin/Int, kotlin.collections/Map<kotlin/String, kotlin/Any?>) // com.mmk.kmpnotifier.notification/NotifierManager.Listener.onAction|onAction(kotlin.String;kotlin.Int;kotlin.collections.Map<kotlin.String,kotlin.Any?>){}[0]
+        open fun onNewToken(kotlin/String) // com.mmk.kmpnotifier.notification/NotifierManager.Listener.onNewToken|onNewToken(kotlin.String){}[0]
+        open fun onNotificationClicked(kotlin.collections/Map<kotlin/String, *>) // com.mmk.kmpnotifier.notification/NotifierManager.Listener.onNotificationClicked|onNotificationClicked(kotlin.collections.Map<kotlin.String,*>){}[0]
+        open fun onPayloadData(kotlin.collections/Map<kotlin/String, *>) // com.mmk.kmpnotifier.notification/NotifierManager.Listener.onPayloadData|onPayloadData(kotlin.collections.Map<kotlin.String,*>){}[0]
+        open fun onPushNotification(kotlin/String?, kotlin/String?) // com.mmk.kmpnotifier.notification/NotifierManager.Listener.onPushNotification|onPushNotification(kotlin.String?;kotlin.String?){}[0]
+        open fun onPushNotificationWithPayloadData(kotlin/String?, kotlin/String?, kotlin.collections/Map<kotlin/String, *>) // com.mmk.kmpnotifier.notification/NotifierManager.Listener.onPushNotificationWithPayloadData|onPushNotificationWithPayloadData(kotlin.String?;kotlin.String?;kotlin.collections.Map<kotlin.String,*>){}[0]
+    }
+}
+
+// Targets: [ios]
+final fun (com.mmk.kmpnotifier.notification/NotifierManager).com.mmk.kmpnotifier.extensions/onApplicationDidReceiveRemoteNotification(kotlin.collections/Map<kotlin/Any?, *>) // com.mmk.kmpnotifier.extensions/onApplicationDidReceiveRemoteNotification|onApplicationDidReceiveRemoteNotification@com.mmk.kmpnotifier.notification.NotifierManager(kotlin.collections.Map<kotlin.Any?,*>){}[0]
+
+// Targets: [ios]
+final fun (com.mmk.kmpnotifier.notification/NotifierManager).com.mmk.kmpnotifier.extensions/onNotificationClicked(platform.UserNotifications/UNNotificationContent) // com.mmk.kmpnotifier.extensions/onNotificationClicked|onNotificationClicked@com.mmk.kmpnotifier.notification.NotifierManager(platform.UserNotifications.UNNotificationContent){}[0]
+
+// Targets: [ios]
+final fun (com.mmk.kmpnotifier.notification/NotifierManager).com.mmk.kmpnotifier.extensions/onUserNotification(platform.UserNotifications/UNNotificationContent) // com.mmk.kmpnotifier.extensions/onUserNotification|onUserNotification@com.mmk.kmpnotifier.notification.NotifierManager(platform.UserNotifications.UNNotificationContent){}[0]
