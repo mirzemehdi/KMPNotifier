@@ -27,10 +27,30 @@ You can check out [Documentation](https://mirzemehdi.github.io/KMPNotifier) for 
 
 
 ## Features
-  - 🔔 Local Notification (android, ios, desktop, js and wasm targets)  
-  - 🔔 Push Notification (Firebase Cloud Messaging) (android and ios only)  
-  - 📱 Multiplatform (android, iOS, desktop and web (js and wasm))  
+  - 🔔 Local notifications (android, ios, desktop, js and wasm)
+  - ⏰ Scheduled notifications (android and ios)
+  - 🎬 Action buttons, with optional inline text input (android and ios)
+  - 🖼️ Rich notifications with images, from URL or local file (android and ios)
+  - 🔗 Click & payload delivery for deep linking
+  - ☁️ Push notifications (Firebase Cloud Messaging) (android and ios only)
+  - 📱 Multiplatform (android, iOS, desktop and web (js and wasm))
   - 📦 Modular: use local notifications without pulling in Firebase
+
+### Feature / platform support
+
+| Feature | Android | iOS | Desktop | JS / wasmJs |
+|---|:---:|:---:|:---:|:---:|
+| Local notification (title/body/payload) | ✅ | ✅ | ✅ | ✅ |
+| Remove / remove all | ✅ | ✅ | ✅ | ✅ |
+| Scheduled notification (`scheduledAt`) | ✅ | ✅ | ⛔️ shows now | ⛔️ shows now |
+| Image (`NotificationImage.Url` / `.File`) | ✅ | ✅ | ⛔️ | ⛔️ |
+| Action buttons | ✅ | ✅ | ⛔️ | ⛔️ |
+| Action with text input | ✅ | ✅ | ⛔️ | ⛔️ |
+| Click & action listener | ✅ | ✅ | ✅ | ✅ |
+| Custom sound | ✅ channel | ✅ bundle | ⛔️ | ⛔️ |
+| Push notification (FCM) | ✅ | ✅ | ⛔️ no-op mock | ⛔️ no-op mock |
+
+`⛔️ shows now` = the call is accepted but the notification is shown immediately (the schedule is ignored). `no-op mock` = API exists and compiles, token is `null`, calls do nothing — so shared code needs no expect/actual.
 
 ## Modules
 
@@ -98,7 +118,7 @@ plugins {
 
 
 ### Platform Setup
-On application start you initialize the library with the platform configuration and the capabilities (extensions) you want:
+On application start you initialize the library once with the platform configuration and the capabilities (extensions) you want:
 
 ```kotlin 
 // Local notifications only:
@@ -107,6 +127,8 @@ KMPNotifier.initialize(configuration, LocalNotifications)
 // Local + Firebase push (android/ios; FirebasePush installs LocalNotifications automatically):
 KMPNotifier.initialize(configuration, FirebasePush)
 ```
+
+> **Note:** on iOS, `initialize` must be called from the **main thread** — the notification delegate is installed during init and is required to receive cold-start clicks. Calling `initialize` again is a no-op for the configuration, but it does install any extension not yet installed.
 
 <details>
   <summary>Android</summary>
@@ -125,6 +147,8 @@ class MyApplication : Application() {
             configuration = NotificationPlatformConfiguration.Android(
                 notificationIconResId = R.drawable.ic_launcher_foreground,
                 showPushNotification = true,
+                // optional — customize the notification channel (see "Notification channel & sound"):
+                notificationChannelData = NotificationPlatformConfiguration.Android.NotificationChannelData(),
             ),
             FirebasePush, // omit for local-only usage (pass LocalNotifications instead)
         )
@@ -132,11 +156,7 @@ class MyApplication : Application() {
 }
 ```
 
-Also starting from Android 13(API Level 33) you need to ask runtime `POST_NOTIFICATIONS` permission in activity. I created utility function that you can use in activity.
-```kotlin
-val permissionUtil by permissionUtil()
-permissionUtil.askNotificationPermission() //this will ask permission in Android 13(API Level 33) or above, otherwise permission will be granted.
-```
+Starting from Android 13 (API Level 33) you need to request the runtime `POST_NOTIFICATIONS` permission from an Activity. See [Asking notification permission](#asking-notification-permission).
   
   
 </details>
@@ -208,6 +228,7 @@ fun main() = application {
 
     KMPNotifier.initialize(
         NotificationPlatformConfiguration.Desktop(
+            showPushNotification = true,
             notificationIconPath = composeDesktopResourcesPath() + File.separator + "ic_notification.png"
         ),
         LocalNotifications,
@@ -254,15 +275,23 @@ If you are using mac make sure you also allow notifications for browser from sys
 </details>
 
 ## Usage
-You can send either local or push notification.
 
-### Local Notification
-Local notifications are supported on Android, iOS, desktop, JS and wasm targets. Image is supported on Android and iOS 
-#### Send notification
+You access the two notifiers through the `KMPNotifier` facade:
+
+- `KMPNotifier.localNotifier` — local notifications (all platforms).
+- `KMPNotifier.firebasePushNotifier` — push token / topic management (real on android/ios, no-op mock elsewhere).
+
+> All snippets below need the library to be initialized first (see [Platform Setup](#platform-setup)). Accessing a notifier before `initialize` throws `IllegalStateException`. Use `KMPNotifier.isInitialized` to guard if needed.
+
+### Local Notifications
+
+Local notifications are supported on all targets. The richest entry point is the `notify { }` builder DSL.
+
+#### Send a notification (builder DSL)
 
 ```kotlin
 KMPNotifier.localNotifier.notify {
-  id = Random.nextInt(0, Int.MAX_VALUE)
+  id = Random.nextInt(0, Int.MAX_VALUE)   // omit to auto-generate; reuse the id to update/remove later
   title = "Title from KMPNotifier"
   body = "Body message from KMPNotifier"
   payloadData = mapOf(
@@ -273,62 +302,170 @@ KMPNotifier.localNotifier.notify {
 }
 ```
 
-#### Remove notification by Id or all notifications
+Every builder property:
+
+| Property | Type | Default | Notes |
+|---|---|---|---|
+| `id` | `Int` | random non-negative | Reuse to update or remove the notification later. |
+| `title` | `String` | `""` | |
+| `body` | `String` | `""` | |
+| `payloadData` | `Map<String, String>` | `{}` | Delivered back on click and action events. |
+| `image` | `NotificationImage?` | `null` | `Url` or `File`; android & ios only. |
+| `actions` | `List<NotificationAction>` | `[]` | Action buttons; android & ios only. |
+| `scheduledAt` | `Long` | `0L` | Epoch millis to fire; `0` shows immediately. android & ios only. |
+
+There is also a `payload { }` sub-DSL if you prefer building the map inline:
+
+```kotlin
+KMPNotifier.localNotifier.notify {
+  title = "Order shipped"
+  body = "Tap to track"
+  payload {
+    put(Notifier.KEY_URL, "myapp://orders/42")
+    put("orderId", "42")
+  }
+}
+```
+
+#### Send quickly (without the DSL)
 
 ```kotlin
 val notifier = KMPNotifier.localNotifier
 
-notifier.remove(notificationId) //Removes notification by Id  
+// auto id, returns the generated id:
+val id: Int = notifier.notify(title = "Hi", body = "Quick notification")
 
-notifier.removeAll() //Removes all notification
-
+// your own id (reuse it to update/remove):
+notifier.notify(id = 100, title = "Hi", body = "Quick notification")
 ```
 
-#### Notification click and action buttons
+#### Schedule a notification
 
-Clicks and action buttons are shared events — they work for both local and push notifications:
+Set `scheduledAt` to the **epoch milliseconds** at which the notification should fire. Supported on **Android** (via `AlarmManager`) and **iOS** (via `UNTimeIntervalNotificationTrigger`). On desktop and web the value is ignored and the notification shows immediately.
+
+```kotlin
+// fire 1 minute from now
+KMPNotifier.localNotifier.notify {
+  id = 777
+  title = "Reminder"
+  body = "Stand up and stretch 🧘"
+  scheduledAt = Clock.System.now().toEpochMilliseconds() + 60_000  // kotlinx-datetime
+}
+```
+
+Cancel a scheduled (not-yet-fired) notification the same way you remove a shown one — `remove(id)` cancels the pending alarm too:
+
+```kotlin
+KMPNotifier.localNotifier.remove(777)
+```
+
+> **Android exact alarms:** the library uses an exact alarm and falls back to an inexact one if the OS denies exact scheduling. There is no repeating-notification API.
+
+#### Action buttons (and inline text input)
+
+Add `NotificationAction`s in the builder. Supported on **Android** and **iOS**.
+
+```kotlin
+KMPNotifier.localNotifier.notify {
+  id = 200
+  title = "New message"
+  body = "Alex: are we still on for lunch?"
+  actions = listOf(
+    NotificationAction(id = "OPEN", title = "Open"),
+    NotificationAction(
+      id = "REPLY",
+      title = "Reply",
+      allowsTextInput = true,
+      inputLabel = "Type your reply…"
+    ),
+  )
+}
+```
+
+`NotificationAction`:
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `id` | `String` | — | The `actionId` you receive in `onAction`. |
+| `title` | `String` | — | Button label. |
+| `allowsTextInput` | `Boolean` | `false` | Shows an inline text field. |
+| `inputLabel` | `String?` | `null` | Placeholder/label for the text field. |
+
+When the user taps an action it is delivered to `onAction` (see below). If the action allows text input, the entered text arrives in the payload under the key `"remote_input"`.
+
+#### Notification images
+
+```kotlin
+image = NotificationImage.Url("https://example.com/picture.png")  // requires internet permission
+image = NotificationImage.File("/path/to/local/picture.png")      // app must be able to read the file
+```
+
+Rendered as a big picture on Android and as an attachment on iOS. Only `Url` and `File` exist (no resource variant).
+
+#### Remove notifications
+
+```kotlin
+val notifier = KMPNotifier.localNotifier
+
+notifier.remove(notificationId) // removes a shown notification (and cancels it if still scheduled)
+notifier.removeAll()            // removes all notifications
+```
+
+#### Notification click & action listener
+
+Clicks and action buttons are **shared** events — they fire for both local and push notifications. Register a `KMPNotifier.Listener`:
 
 ```kotlin
 KMPNotifier.addListener(object : KMPNotifier.Listener {
   override fun onNotificationClicked(data: PayloadData) {
-    println("Notification clicked, payload: $data")
+    println("Notification clicked, payload: $data") // PayloadData = Map<String, *>
   }
 
-  override fun onAction(actionId: String, notificationId: Int, payload: Map<String, Any?>) {
-    println("Notification action $actionId triggered")
+  override fun onAction(actionId: String, notificationId: Int, payload: PayloadData) {
+    println("Action $actionId on notification $notificationId, payload: $payload")
+    if (actionId == "REPLY") {
+      val text = payload["remote_input"] as? String  // inline text-input result
+    }
   }
 })
 ```
 
-### Push Notification
-Push notifications are delivered on Android and iOS via the `kmpnotifier-push-firebase` module. The module compiles on every target — on desktop and web the notifier is a no-op mock (token is null), so shared code needs no expect/actual.
+Both callbacks have default empty bodies, so override only what you need. Manage listeners with `addListener` / `removeListener` / `setListener(null)` (the last removes all).
 
-#### Listen for push notification events
-Push-specific events (token updates, push payloads) use `PushListener`:
+### Push Notifications
+
+Push notifications are delivered on **Android and iOS** via the `kmpnotifier-push-firebase` module. The module compiles on every target — on desktop and web the notifier is a no-op mock (token is `null`), so shared code needs no expect/actual.
+
+#### Listen for push events
+
+Push-specific events (token updates, push payloads) use `PushListener`. Register it via `KMPNotifier.addPushListener`:
 
 ```kotlin
 KMPNotifier.addPushListener(object : PushListener {
   override fun onNewToken(token: String) {
-    println("onNewToken: $token") //Update user token in the server if needed
+    println("onNewToken: $token") // update the user's token on your server if needed
   }
 
   override fun onPushNotification(title: String?, body: String?) {
-    println("Push Notification notification title: $title")
+    println("Push received — title: $title, body: $body")
   }
 
   override fun onPayloadData(data: PayloadData) {
-    println("Push Notification payloadData: $data") //PayloadData is just typeAlias for Map<String,*>.
+    println("Push payloadData: $data") // PayloadData is a typeAlias for Map<String, *>
   }
 
   override fun onPushNotificationWithPayloadData(title: String?, body: String?, data: PayloadData) {
-    println("Push Notification is received: Title: $title and Body: $body and payloadData: $data")
+    println("Push received — title: $title, body: $body, payloadData: $data")
   }
-}) 
+})
 ```
 
-And you need to call below platform-specific functions in order to receive payload data properly.
+All callbacks default to empty, so override only the ones you use. Manage with `addPushListener` / `removePushListener` / `setPushListener(null)`.
+
+To receive the payload data correctly you must call the platform hooks below.
+
 ##### Android
-Call `KMPNotifier.onCreateOrOnNewIntent(intent)` on launcher Activity's `onCreate` and `onNewIntent` methods.
+Call `KMPNotifier.onCreateOrOnNewIntent(intent)` in your launcher Activity's `onCreate` and `onNewIntent`:
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -343,36 +480,72 @@ override fun onNewIntent(intent: Intent?) {
 ```
 
 ##### iOS
-Call `KMPNotifier.onApplicationDidReceiveRemoteNotification(userInfo: userInfo)` on application's `didReceiveRemoteNotification` method.
+Call `KMPNotifier.onApplicationDidReceiveRemoteNotification(userInfo:)` in your app's `didReceiveRemoteNotification`:
 
 ```swift
  func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) async -> UIBackgroundFetchResult {
       KMPNotifier.shared.onApplicationDidReceiveRemoteNotification(userInfo: userInfo)
       return UIBackgroundFetchResult.newData
  }
-
 ```  
 
+#### Token & topic management
 
-#### Other functions
 ```kotlin
 // All push notifier functions are suspend — call them from a coroutine.
-KMPNotifier.firebasePushNotifier.getToken() //Get current user push notification token
-KMPNotifier.firebasePushNotifier.deleteMyToken() //Delete user's token for example when user logs out 
-KMPNotifier.firebasePushNotifier.subscribeToTopic("new_users") 
-KMPNotifier.firebasePushNotifier.unSubscribeFromTopic("new_users") 
+KMPNotifier.firebasePushNotifier.getToken()                       // current push token (null on desktop/web)
+KMPNotifier.firebasePushNotifier.deleteMyToken()                  // delete the token, e.g. on logout
+KMPNotifier.firebasePushNotifier.subscribeToTopic("new_users")
+KMPNotifier.firebasePushNotifier.unSubscribeFromTopic("new_users")
 ```
-For setting custom notification sound, check https://github.com/mirzemehdi/KMPNotifier/pull/61#issuecomment-2275850021  
-For setting Intent data in Android (for deeplink), check https://github.com/mirzemehdi/KMPNotifier/pull/60#issue-2454489089    
-For permissionUtil, or manually asking notification permission check https://github.com/mirzemehdi/KMPNotifier/pull/27#issuecomment-2083639907  
+
+### Permissions
+
+`KMPNotifier.permissionUtil` exposes callback-based notification-permission helpers on every platform:
+
+```kotlin
+val permissionUtil = KMPNotifier.permissionUtil
+
+permissionUtil.hasNotificationPermission { granted -> /* ... */ }
+permissionUtil.askNotificationPermission { granted -> /* ... */ }
+```
+
+On iOS and web the configuration's `askNotificationPermissionOnStart` flag asks for permission automatically at init.
+
+#### Asking notification permission (Android 13+)
+
+`POST_NOTIFICATIONS` (API 33+) must be requested from an `Activity`. The library provides a `ComponentActivity` extension that wires `ActivityResultContracts.RequestPermission` for you. On API < 33 it reports `true` immediately.
+
+```kotlin
+class MainActivity : ComponentActivity() {
+    private val permissionUtil by permissionUtil() // com.mmk.kmpnotifier.permission.permissionUtil
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        permissionUtil.askNotificationPermission { granted ->
+            // optionally react to the result
+        }
+    }
+}
+```
+
+### Notification channel & sound
+
+- **Android:** the channel is configured through `NotificationPlatformConfiguration.Android.NotificationChannelData(id, name, description, soundUri)`. Pass a `soundUri` (as a `String`) to set a custom sound. A single high-importance channel is created automatically on first `notify`.
+- **iOS:** set `notificationSoundName` in `NotificationPlatformConfiguration.Ios` to a sound file added to your app's *Copy Bundle Resources*; `null` uses the default sound.
+- **Desktop / web:** no custom-sound API.
+
+For more detail and examples:
+- Custom notification sound: https://github.com/mirzemehdi/KMPNotifier/pull/61#issuecomment-2275850021
+- Setting Intent data on Android (deep links): https://github.com/mirzemehdi/KMPNotifier/pull/60#issue-2454489089
+- Manually asking notification permission: https://github.com/mirzemehdi/KMPNotifier/pull/27#issuecomment-2083639907
 
 ### Logging
 
-If you want to see internal logs of the library, you can set a logger using:
+To see the library's internal logs, set a logger:
 
 ```kotlin
 KMPNotifier.setLogger { message ->
-    // Log the message
     println(message)
 }
 ```
