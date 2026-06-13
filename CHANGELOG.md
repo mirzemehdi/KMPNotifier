@@ -24,6 +24,9 @@ pull in Firebase. See [MIGRATION.md](MIGRATION.md) for a step-by-step guide.
 - `KMPNotifier.Listener` — shared events (notification clicks, action buttons) for both local and push notifications.
 - `PushListener` + `KMPNotifier.addPushListener/removePushListener/setPushListener` (sugar over `FirebasePush.addListener/...`) — push-only events
   (token updates, push payloads), no longer part of the shared listener surface.
+- Scheduled local notifications via the `scheduledAt` (epoch millis) builder property — delivered on android (`AlarmManager`) and iOS (`UNTimeIntervalNotificationTrigger`); shown immediately on desktop/web. `remove(id)` cancels a pending schedule.
+- Notification action buttons via `NotificationAction` (the `actions` builder property), including inline text input (`allowsTextInput` / `inputLabel`; entered text delivered under the `remote_input` payload key). Android and iOS. Triggered actions arrive in `KMPNotifier.Listener.onAction`.
+- Builder DSL (`KMPNotifier.localNotifier.notify { }`) with `id`, `title`, `body`, `payloadData` (and a `payload { }` sub-DSL), `image`, `actions`, `scheduledAt`.
 - `CHANGELOG.md` and `MIGRATION.md`.
 - Cross-platform test suite (jvm, android, ios, js).
 
@@ -38,7 +41,7 @@ pull in Firebase. See [MIGRATION.md](MIGRATION.md) for a step-by-step guide.
 - `io.github.mirzemehdi:kmpnotifier` is now a compatibility umbrella that depends on the new
   modules. Existing code keeps compiling and working unchanged.
 - iOS: Firebase is now consumed through Swift Package Manager instead of the CocoaPods Gradle
-  plugin (Kotlin `swiftPMDependencies`, firebase-ios-sdk 12.1.0). Kotlin is updated to 2.4.0
+  plugin (Kotlin `swiftPMDependencies`, firebase-ios-sdk 12.14.0). Kotlin is updated to 2.4.0
   and the iOS minimum deployment target is now 16.0 (was 15.4).
 - Android: the Firebase messaging service is declared by `kmpnotifier-push-firebase`;
   the notification receiver and startup provider are declared by `kmpnotifier-local`/`kmpnotifier-core`.
