@@ -124,8 +124,9 @@ jobs:
 
       - name: Publish to MavenCentral
         run: |
-          # TODO remove -PpublishDeprecatedUmbrella after the 2.0.0 release — later versions must not publish the deprecated umbrella
-          ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache -PpublishDeprecatedUmbrella=true
+          # The deprecated :kmpnotifier umbrella shipped its final version with 2.0.0 and is
+          # no longer published (its publish tasks are disabled without -PpublishDeprecatedUmbrella).
+          ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache
 
 
       - name: Create new release from tag

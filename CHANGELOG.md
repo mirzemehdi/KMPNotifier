@@ -5,14 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2.0.1] - 2026-08-14
 
 ### Changed
 
 - `kmpnotifier-push-firebase` now declares its `firebase-ios-sdk` SwiftPM dependency as a
   range (`from: 12.14.0`, up to the next major) instead of an exact pin. Apps that also
   depend on `firebase-ios-sdk` directly can resolve any 12.x version ≥ 12.14.0 (e.g. to use
-  the FID registration API added in 12.16.0) without a dependency-resolution conflict. (#177)
+  the FID registration API added in 12.16.0) without a dependency-resolution conflict.
+  Thanks @utamori! (#177, #178)
+- The deprecated `kmpnotifier` umbrella artifact is no longer published; 2.0.0 is its final
+  version. It remains a compatibility bridge for 1.x upgraders — new code should depend on
+  `kmpnotifier-local` / `kmpnotifier-push-firebase` directly.
+
+### Security
+
+- All npm advisories in the Kotlin/JS build toolchain lock resolved (49 Dependabot alerts,
+  13 packages — dev/build tooling only, nothing shipped in published artifacts). (#179)
 
 ## [2.0.0] - 2026-06-12
 
