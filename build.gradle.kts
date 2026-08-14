@@ -61,6 +61,16 @@ plugins.withType<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin> {
         resolution("picomatch", "^2.3.2")
         resolution("flatted", "^3.4.2")
         resolution("brace-expansion", "^2.1.4")
+        resolution("ajv", "^8.18.0")
+        resolution("cross-spawn", "^7.0.5")
+        resolution("diff", "^8.0.3")
+        resolution("webpack", "^5.104.1")
+        // minimatch has vulnerable 3.x AND 9.x lines in the lock. 9.x consumers get the
+        // bare resolution; glob@7 and Kotlin's karma fork call minimatch as a function
+        // (removed in v9), so their copies are scoped to the fixed 3.x instead.
+        resolution("minimatch", "^9.0.7")
+        resolution("glob/minimatch", "^3.1.4")
+        resolution("karma/minimatch", "^3.1.4")
     }
 }
 plugins.withType<org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnPlugin> {
