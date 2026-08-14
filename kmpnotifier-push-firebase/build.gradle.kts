@@ -16,7 +16,11 @@ kotlin {
         discoverClangModulesImplicitly = false
         swiftPackage(
             url = url("https://github.com/firebase/firebase-ios-sdk.git"),
-            version = exact("12.14.0"),
+            // Range instead of exact: the bindings baked into the published klib are generated
+            // against this minimum version, and firebase-ios-sdk keeps ObjC ABI compatibility
+            // within a major. An exact pin makes this library the version bottleneck for every
+            // consumer that needs a newer SDK feature (e.g. FID registration in 12.16.0).
+            version = from("12.14.0"),
             products = listOf(product("FirebaseMessaging")),
             importedClangModules = listOf("FirebaseMessaging"),
         )

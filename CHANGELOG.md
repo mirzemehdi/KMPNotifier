@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- `kmpnotifier-push-firebase` now declares its `firebase-ios-sdk` SwiftPM dependency as a
+  range (`from: 12.14.0`, up to the next major) instead of an exact pin. Apps that also
+  depend on `firebase-ios-sdk` directly can resolve any 12.x version ≥ 12.14.0 (e.g. to use
+  the FID registration API added in 12.16.0) without a dependency-resolution conflict. (#177)
+
 ## [2.0.0] - 2026-06-12
 
 The library is split into focused modules so that local-notification users no longer
