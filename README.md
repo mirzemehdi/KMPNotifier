@@ -554,3 +554,12 @@ KMPNotifier.setLogger { message ->
 
 The old `NotifierManager` API (from the `kmpnotifier` artifact) keeps working in 2.x —
 it is deprecated and forwards to the new API. See [MIGRATION.md](MIGRATION.md).
+
+---
+
+## Where else this is used
+
+I'm also building **[KAppMaker AI](https://kappmaker.com)** — an always-on
+cloud machine that runs Claude Code unattended and builds Compose
+Multiplatform apps overnight, driven from Telegram.
+[See a full run replayed →](https://kappmaker.com/demo)
