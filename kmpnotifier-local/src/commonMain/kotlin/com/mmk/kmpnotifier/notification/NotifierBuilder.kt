@@ -33,6 +33,14 @@ public class NotifierBuilder {
      */
     public var actions: List<NotificationAction> = emptyList()
 
+    /**
+     * Android only: id of an existing notification channel to post this notification into.
+     * Useful when the app defines multiple channels so users can mute categories independently.
+     * When null (or when the channel doesn't exist), the channel configured in
+     * [com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration.Android] is used.
+     */
+    public var channelId: String? = null
+
     /** Epoch millis (or millis from now for small values) to schedule the notification; 0 shows immediately. */
     public var scheduledAt: Long = 0L //0L means show immediately
 

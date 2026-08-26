@@ -11,6 +11,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -92,11 +93,25 @@ internal class AndroidNotifier(
 
         scope.launch {
             val imageBitmap = builder.image?.asBitmap()
+            val defaultChannelId = androidNotificationConfiguration.notificationChannelData.id
+            val targetChannelId = builder.channelId.takeIf { customChannelId ->
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+                        notificationManager.getNotificationChannel(customChannelId) != null
+            } ?: run {
+                if (builder.channelId != null) {
+                    Log.w(
+                        "AndroidNotifier",
+                        "Notification channel '${builder.channelId}' does not exist, " +
+                                "falling back to '$defaultChannelId'. Make sure to create it first."
+                    )
+                }
+                defaultChannelId
+            }
             val notification = NotificationCompat.Builder(
                 context,
-                androidNotificationConfiguration.notificationChannelData.id
+                targetChannelId
             ).apply {
-                setChannelId(androidNotificationConfiguration.notificationChannelData.id)
+                setChannelId(targetChannelId)
                 setContentTitle(builder.title)
                 setContentText(builder.body)
                 imageBitmap?.let {
