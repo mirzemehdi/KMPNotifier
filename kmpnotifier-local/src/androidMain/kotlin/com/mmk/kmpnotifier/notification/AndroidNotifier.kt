@@ -5,25 +5,15 @@ package com.mmk.kmpnotifier.notification
 import com.mmk.kmpnotifier.internal.InternalKMPNotifierApi
 import android.app.AlarmManager
 import android.app.PendingIntent
-import android.app.PendingIntent.FLAG_MUTABLE
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
+import android.os.Build
 import android.util.Log
-import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat
-import com.mmk.kmpnotifier.Constants.ACTION_NOTIFICATION_CLICK
 import com.mmk.kmpnotifier.extensions.notificationManager
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import com.mmk.kmpnotifier.permission.PermissionUtil
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.net.URL
-import kotlin.coroutines.cancellation.CancellationException
 import kotlin.random.Random
 
 public const val ACTION_SCHEDULED_NOTIFICATION_FIRED: String =
@@ -40,6 +30,12 @@ internal class AndroidNotifier(
 ) : Notifier {
 
     private val scope by lazy { MainScope() }
+
+    private val poster = AndroidNotificationPoster(
+        context = context,
+        androidNotificationConfiguration = androidNotificationConfiguration,
+        notificationChannelFactory = notificationChannelFactory,
+    )
 
     private val alarmManager by lazy { context.getSystemService(Context.ALARM_SERVICE) as AlarmManager }
 
@@ -81,79 +77,25 @@ internal class AndroidNotifier(
                             "notification permission (Manifest.permission.POST_NOTIFICATIONS) in your activity"
                 )
         }
-        val notificationManager = context.notificationManager ?: return
-        val pendingIntent = getPendingIntent(builder.payloadData, builder.id)
-        notificationChannelFactory.createChannels()
+        if (context.notificationManager == null) return
 
-        if (isScheduledNotification(builder.scheduledAt)) {
-            scheduleNotificationAlarm(builder)
+        val fireTime = resolveFireTime(builder.scheduledAt)
+        if (fireTime != null) {
+            notificationChannelFactory.createChannels()
+            scheduleNotificationAlarm(builder, fireTime)
             return
         }
 
-        scope.launch {
-            val imageBitmap = builder.image?.asBitmap()
-            val notification = NotificationCompat.Builder(
-                context,
-                androidNotificationConfiguration.notificationChannelData.id
-            ).apply {
-                setChannelId(androidNotificationConfiguration.notificationChannelData.id)
-                setContentTitle(builder.title)
-                setContentText(builder.body)
-                imageBitmap?.let {
-                    setLargeIcon(it)
-                    setStyle(
-                        NotificationCompat.BigPictureStyle()
-                            .bigPicture(it)
-                            .bigLargeIcon(null as Bitmap?)
-                    )
-                }
-                setSmallIcon(androidNotificationConfiguration.notificationIconResId)
-                setAutoCancel(true)
-                setOnlyAlertOnce(true)
-                setContentIntent(pendingIntent)
-                androidNotificationConfiguration.notificationIconColorResId?.let {
-                    color = ContextCompat.getColor(context, it)
-                }
-
-                // Add action buttons
-                builder.actions.forEach { action ->
-                    val actionPendingIntent =
-                        createActionPendingIntent(
-                            actionId = action.id,
-                            notificationId = builder.id,
-                            payload = builder.payloadData
-                        )
-
-                    val actionBuilder = NotificationCompat.Action.Builder(
-                        0,
-                        action.title,
-                        actionPendingIntent
-                    )
-
-                    if (action.allowsTextInput) {
-                        val remoteInput = androidx.core.app.RemoteInput.Builder(EXTRA_REMOTE_INPUT)
-                            .setLabel(action.inputLabel ?: "Enter value")
-                            .build()
-
-                        actionBuilder.addRemoteInput(remoteInput)
-                    }
-
-                    addAction(actionBuilder.build())
-                }
-
-            }.build()
-            notificationManager.notify(builder.id, notification)
-        }
-
-
+        scope.launch { poster.post(builder) }
     }
 
     override fun remove(id: Int) {
         val notificationManager = context.notificationManager ?: return
 
 
-        // Cancel any scheduled alarm
-        val intent = Intent(ACTION_SCHEDULED_NOTIFICATION_FIRED)
+        // Cancel any scheduled alarm. The intent must match the scheduled one
+        // (action + component) for FLAG_NO_CREATE to find the PendingIntent.
+        val intent = scheduledAlarmIntent()
         val pendingIntent = PendingIntent.getBroadcast(
             context,
             id,
@@ -174,8 +116,9 @@ internal class AndroidNotifier(
         notificationManager.cancelAll()
     }
 
-    private fun isScheduledNotification(scheduledAt: Long): Boolean {
-        if (scheduledAt == 0L) return false
+    /** Absolute fire time for a future [scheduledAt], or null to show immediately. */
+    private fun resolveFireTime(scheduledAt: Long): Long? {
+        if (scheduledAt == 0L) return null
         val currentTime = System.currentTimeMillis()
 
         // Handle relative timing: if fireAt is a small value (less than a reasonable timestamp),
@@ -186,15 +129,18 @@ internal class AndroidNotifier(
             scheduledAt
         }
 
-        return actualFireTime > currentTime
+        return actualFireTime.takeIf { it > currentTime }
     }
 
-    private fun scheduleNotificationAlarm(request: NotifierBuilder) {
-        val intent = Intent(context, NotificationReceiver::class.java).apply {
-            action = ACTION_SCHEDULED_NOTIFICATION_FIRED
+    private fun scheduledAlarmIntent(): Intent =
+        Intent(context, NotificationReceiver::class.java).setAction(ACTION_SCHEDULED_NOTIFICATION_FIRED)
+
+    private fun scheduleNotificationAlarm(request: NotifierBuilder, fireTime: Long) {
+        val intent = scheduledAlarmIntent().apply {
             putExtra(EXTRA_ACTION_ID, ACTION_SCHEDULED_NOTIFICATION_FIRED)
             putExtra(EXTRA_NOTIFICATION_ID, request.id)
             request.payloadData.forEach { putExtra(it.key, it.value) }
+            ScheduledNotificationIntent.putNotification(this, request, androidNotificationConfiguration)
         }
 
         val pendingIntent = PendingIntent.getBroadcast(
@@ -205,84 +151,21 @@ internal class AndroidNotifier(
         )
 
         try {
-            alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                request.scheduledAt,
-                pendingIntent
-            )
-            Log.d("AndroidNotificationScheduler", "Scheduled notification ${request.id} for ${request.scheduledAt}")
+            if (canScheduleExactAlarms()) {
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, fireTime, pendingIntent)
+            } else {
+                // Without SCHEDULE_EXACT_ALARM / USE_EXACT_ALARM (API 31+) only inexact alarms are allowed.
+                alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, fireTime, pendingIntent)
+            }
+            Log.d("AndroidNotificationScheduler", "Scheduled notification ${request.id} for $fireTime")
         } catch (e: SecurityException) {
             Log.e("AndroidNotificationScheduler", "Failed to schedule exact alarm", e)
             // Fallback to inexact alarm
-            alarmManager.set(AlarmManager.RTC_WAKEUP, request.scheduledAt, pendingIntent)
+            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, fireTime, pendingIntent)
         }
     }
 
-
-    private fun getPendingIntent(payloadData: Map<String, String>, id: Int): PendingIntent? {
-        val intent = getLauncherActivityIntent()?.apply {
-            putExtra(ACTION_NOTIFICATION_CLICK, ACTION_NOTIFICATION_CLICK)
-            payloadData.forEach { putExtra(it.key, it.value) }
-            val urlData = payloadData.getOrDefault(Notifier.KEY_URL, null)
-            urlData?.let { setData(Uri.parse(urlData)) }
-        }
-        intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-
-        val flags = PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-
-
-        return PendingIntent.getActivity(context, id, intent, flags)
-    }
-
-    private fun getLauncherActivityIntent(): Intent? {
-        val packageManager = context.applicationContext.packageManager
-        return packageManager.getLaunchIntentForPackage(context.applicationContext.packageName)
-    }
-
-    private fun createActionPendingIntent(
-        actionId: String,
-        notificationId: Int,
-        payload: Map<String, String>
-    ): PendingIntent {
-
-        val intent = Intent(context, NotificationReceiver::class.java).apply {
-            action = ACTION_NOTIFICATION_ACTION
-            putExtra(EXTRA_ACTION_ID, actionId)
-            putExtra(EXTRA_NOTIFICATION_ID, notificationId)
-            payload.forEach { putExtra(it.key, it.value) }
-        }
-
-
-        val flags = PendingIntent.FLAG_UPDATE_CURRENT or FLAG_MUTABLE
-        return PendingIntent.getBroadcast(context, (actionId + notificationId).hashCode(), intent, flags)
-    }
-
-    private suspend fun NotificationImage?.asBitmap(): Bitmap? {
-        return withContext(Dispatchers.IO) {
-            try {
-                when (this@asBitmap) {
-                    null -> null
-                    is NotificationImage.Url -> {
-                        URL(url).openStream().buffered().use { inputStream ->
-                            BitmapFactory.decodeStream(inputStream)
-                        }
-                    }
-
-                    is NotificationImage.File -> {
-                        BitmapFactory.decodeFile(path)
-                    }
-                }
-            } catch (e: Exception) {
-                if (e is CancellationException) throw e
-                Log.e(
-                    "AndroidNotifier",
-                    "Error while processing notification image. Ensure correct path or internet connection.",
-                    e
-                )
-                null
-            }
-        }
-    }
-
+    private fun canScheduleExactAlarms(): Boolean =
+        Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()
 
 }

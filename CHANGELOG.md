@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- Android: scheduled local notifications (`scheduledAt` in the future) are now actually
+  displayed when the alarm fires. Previously `NotificationReceiver` only emitted the
+  `EVENT_SCHEDULED_NOTIFICATION_FIRED_INTERNAL` action and never posted the notification.
+  The title, body, payload, image, actions and Android configuration are stored in the alarm
+  intent, so the notification is posted even when the alarm fires in a cold process before
+  `KMPNotifier.initialize`. The `onAction` event is still emitted after posting — apps that
+  re-posted the notification from that callback as a workaround should remove that code.
+- Android: `remove(id)` now cancels a pending scheduled alarm. The cancel intent did not match
+  the scheduled one, so the alarm was never found.
+- Android: relative `scheduledAt` values (milliseconds from now) are now scheduled at the
+  correct time instead of firing immediately.
+- Android: on API 31+ without `SCHEDULE_EXACT_ALARM` / `USE_EXACT_ALARM`, scheduling checks
+  `AlarmManager.canScheduleExactAlarms()` and uses an inexact `setAndAllowWhileIdle` alarm
+  instead of throwing and logging a `SecurityException`.
+
 ## [2.0.1] - 2026-08-14
 
 ### Changed

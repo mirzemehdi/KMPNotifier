@@ -21,13 +21,6 @@ object AppInitializer {
                 println("Action triggered: $actionMessage")
                 val localNotifier = KMPNotifier.localNotifier
 
-                if (actionId == "com.mmk.kmpnotifier.EVENT_SCHEDULED_NOTIFICATION_FIRED_INTERNAL") {
-                    localNotifier.notify {
-                        id = notificationId
-                        title = "Showing scheduled notification"
-                        body = "Notification triggered on notification '$notificationId' with payload: $payload"
-                    }
-                }
                 if (actionId == "CUSTOM_SNOOZE") {
                     localNotifier.removeAll()
                 }
