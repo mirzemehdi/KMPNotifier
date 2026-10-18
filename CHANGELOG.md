@@ -15,7 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   The title, body, payload, image, actions and Android configuration are stored in the alarm
   intent, so the notification is posted even when the alarm fires in a cold process before
   `KMPNotifier.initialize`. The `onAction` event is still emitted after posting — apps that
-  re-posted the notification from that callback as a workaround should remove that code.
+  re-posted the notification from that callback as a workaround must remove that code
+  (on both Android and iOS, which now emits the event too).
 - Android: `remove(id)` now cancels a pending scheduled alarm. The cancel intent did not match
   the scheduled one, so the alarm was never found.
 - Android: relative `scheduledAt` values (milliseconds from now) are now scheduled at the
@@ -23,6 +24,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Android: on API 31+ without `SCHEDULE_EXACT_ALARM` / `USE_EXACT_ALARM`, scheduling checks
   `AlarmManager.canScheduleExactAlarms()` and uses an inexact `setAndAllowWhileIdle` alarm
   instead of throwing and logging a `SecurityException`.
+- iOS: the scheduled-fired `onAction` event (`EVENT_SCHEDULED_NOTIFICATION_FIRED_INTERNAL`) is
+  now emitted when a scheduled local notification is presented while the app is in the
+  foreground, matching Android. (iOS shows scheduled notifications itself, so the event cannot
+  fire while the app is in the background.)
+- iOS: scheduled notifications use `UNCalendarNotificationTrigger` for the absolute fire date
+  instead of an interval computed at scheduling time; immediate notifications are delivered
+  without a 1-second delay.
+- iOS: action-button categories are registered before the notification request is added (the
+  buttons could be missing on immediate notifications), and replace a previous category for
+  the same id instead of accumulating duplicates.
+- iOS: `NotificationImage.File` images are copied before attaching — the system moves
+  attachment files into its own store, so the caller's file was deleted.
+- iOS: image attachments get the correct file extension (PNG / JPEG / GIF detected from the
+  data) instead of always `.jpg`, so non-JPEG images are no longer rejected.
 
 ## [2.0.1] - 2026-08-14
 
