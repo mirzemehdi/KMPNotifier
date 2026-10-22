@@ -312,7 +312,7 @@ Every builder property:
 | `payloadData` | `Map<String, String>` | `{}` | Delivered back on click and action events. |
 | `image` | `NotificationImage?` | `null` | `Url` or `File`; android & ios only. |
 | `actions` | `List<NotificationAction>` | `[]` | Action buttons; android & ios only. |
-| `scheduledAt` | `Long` | `0L` | Epoch millis to fire; `0` shows immediately. android & ios only. |
+| `scheduledAt` | `Long` | `0L` | Epoch millis to fire (values below `1_000_000_000_000` are treated as millis from now); `0` or a past time shows immediately. android & ios only. |
 
 There is also a `payload { }` sub-DSL if you prefer building the map inline:
 
@@ -341,7 +341,7 @@ notifier.notify(id = 100, title = "Hi", body = "Quick notification")
 
 #### Schedule a notification
 
-Set `scheduledAt` to the **epoch milliseconds** at which the notification should fire. Supported on **Android** (via `AlarmManager`) and **iOS** (via `UNTimeIntervalNotificationTrigger`). On desktop and web the value is ignored and the notification shows immediately.
+Set `scheduledAt` to the **epoch milliseconds** at which the notification should fire. Supported on **Android** (via `AlarmManager`) and **iOS** (via `UNCalendarNotificationTrigger`). The notification is shown by the system even if your app is in the background or has been killed (not force-stopped). On desktop and web the value is ignored and the notification shows immediately.
 
 ```kotlin
 // fire 1 minute from now
@@ -359,7 +359,9 @@ Cancel a scheduled (not-yet-fired) notification the same way you remove a shown 
 KMPNotifier.localNotifier.remove(777)
 ```
 
-> **Android exact alarms:** the library uses an exact alarm and falls back to an inexact one if the OS denies exact scheduling. There is no repeating-notification API.
+> **Android exact alarms:** on Android 12+ (API 31) exact alarms need the `SCHEDULE_EXACT_ALARM` or `USE_EXACT_ALARM` permission (Google Play restricts `USE_EXACT_ALARM` to alarm/calendar apps). The library uses an exact alarm when `AlarmManager.canScheduleExactAlarms()` allows it, otherwise an inexact one — fine for reminders, but it may fire a few minutes late. There is no repeating-notification API.
+
+When a scheduled notification fires, `onAction` (see [Notification click & action listener](#notification-click--action-listener)) is called with `actionId == "com.mmk.kmpnotifier.EVENT_SCHEDULED_NOTIFICATION_FIRED_INTERNAL"`. On Android this happens whenever the alarm fires; on iOS only while the app is in the foreground. The library shows the notification itself — don't post it again from this callback.
 
 #### Action buttons (and inline text input)
 
