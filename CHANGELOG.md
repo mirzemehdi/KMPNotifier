@@ -36,8 +36,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the same id instead of accumulating duplicates. (#181)
 - iOS: `NotificationImage.File` images are copied before attaching — the system moves
   attachment files into its own store, so the caller's file was deleted. (#181)
-- iOS: image attachments get the correct file extension (PNG / JPEG / GIF detected from the
-  data) instead of always `.jpg`, so non-JPEG images are no longer rejected. (#181)
+- iOS: image attachments get a file extension matching their content (PNG / JPEG / GIF
+  detected from the data) instead of always `.jpg`. (#181)
 
 ## [2.0.1] - 2026-08-14
 
