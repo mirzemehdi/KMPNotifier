@@ -11,11 +11,13 @@ import android.os.Looper
 import androidx.test.core.app.ApplicationProvider
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import com.mmk.kmpnotifier.permission.PermissionUtil
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
+import org.robolectric.shadows.ShadowAlarmManager
 import org.robolectric.annotation.Config
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -57,6 +59,9 @@ class AndroidNotifierTest {
             },
         )
     }
+
+    @After
+    fun tearDown() = ShadowAlarmManager.reset()
 
     private fun registerLauncherActivity() {
         val componentName = ComponentName(context.packageName, "com.mmk.kmpnotifier.TestLauncherActivity")
@@ -148,5 +153,93 @@ class AndroidNotifierTest {
 
         assertEquals(0, postedNotifications().size)
         assertEquals(1, shadowOf(alarmManager).scheduledAlarms.size)
+    }
+
+    private fun scheduleInOneMinute(block: NotifierBuilder.() -> Unit = {}) {
+        notifier.notify {
+            id = 20
+            title = "Two gentle minutes?"
+            body = "Your plant is waiting."
+            payloadData = mapOf("type" to "reminder")
+            scheduledAt = System.currentTimeMillis() + 60_000L
+            block()
+        }
+    }
+
+    private fun fireScheduledAlarm() {
+        val alarm = shadowOf(alarmManager).scheduledAlarms.single()
+        val intent = shadowOf(alarm.operation).savedIntent
+        NotificationReceiver().onReceive(context, intent)
+        idleMainLooper()
+    }
+
+    @Test
+    fun scheduledAlarmPostsNotificationWhenFired() {
+        scheduleInOneMinute {
+            actions = listOf(NotificationAction(id = "snooze", title = "Snooze"))
+        }
+        idleMainLooper()
+
+        fireScheduledAlarm()
+
+        val notification = postedNotifications().single()
+        assertEquals("Two gentle minutes?", notification.extras.getString(Notification.EXTRA_TITLE))
+        assertEquals("Your plant is waiting.", notification.extras.getString(Notification.EXTRA_TEXT))
+        assertEquals(configuration.notificationChannelData.id, notification.channelId)
+        assertEquals("Snooze", notification.actions.single().title)
+    }
+
+    @Test
+    fun scheduledNotificationClickCarriesPayload() {
+        scheduleInOneMinute()
+        idleMainLooper()
+
+        fireScheduledAlarm()
+
+        val clickIntent = shadowOf(postedNotifications().single().contentIntent).savedIntent
+        assertEquals("reminder", clickIntent.getStringExtra("type"))
+    }
+
+    @Test
+    fun relativeScheduledAtSchedulesAlarmInTheFuture() {
+        val before = System.currentTimeMillis()
+        notifier.notify {
+            id = 21
+            title = "Relative"
+            scheduledAt = 60_000L
+        }
+
+        val alarm = shadowOf(alarmManager).scheduledAlarms.single()
+        assertTrue(alarm.triggerAtMs >= before + 60_000L)
+    }
+
+    @Test
+    fun removeCancelsScheduledAlarm() {
+        scheduleInOneMinute()
+        assertEquals(1, shadowOf(alarmManager).scheduledAlarms.size)
+
+        notifier.remove(20)
+
+        assertEquals(0, shadowOf(alarmManager).scheduledAlarms.size)
+    }
+
+    @Test
+    fun usesExactAlarmWhenAllowed() {
+        ShadowAlarmManager.setCanScheduleExactAlarms(true)
+        scheduleInOneMinute()
+
+        val alarm = shadowOf(alarmManager).scheduledAlarms.single()
+        assertEquals(ShadowAlarmManager.WINDOW_EXACT, alarm.windowLengthMs)
+        assertTrue(alarm.isAllowWhileIdle)
+    }
+
+    @Test
+    fun fallsBackToInexactAlarmWithoutExactAlarmPermission() {
+        ShadowAlarmManager.setCanScheduleExactAlarms(false)
+        scheduleInOneMinute()
+
+        val alarm = shadowOf(alarmManager).scheduledAlarms.single()
+        assertTrue(alarm.windowLengthMs != ShadowAlarmManager.WINDOW_EXACT)
+        assertTrue(alarm.isAllowWhileIdle)
     }
 }

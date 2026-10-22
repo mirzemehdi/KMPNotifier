@@ -11,19 +11,14 @@ import com.mmk.kmpnotifier.internal.NotifierInternals
 import com.mmk.kmpnotifier.logger.currentLogger
 import com.mmk.kmpnotifier.notification.configuration.NotificationPlatformConfiguration
 import com.mmk.kmpnotifier.permission.PermissionUtil
-import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import platform.Foundation.NSData
-import platform.Foundation.NSDate
-import platform.Foundation.NSTemporaryDirectory
 import platform.Foundation.NSURL
 import platform.Foundation.dataWithContentsOfURL
-import platform.Foundation.timeIntervalSince1970
-import platform.Foundation.writeToURL
 import platform.UserNotifications.UNAuthorizationOptionAlert
 import platform.UserNotifications.UNAuthorizationOptionBadge
 import platform.UserNotifications.UNAuthorizationOptionSound
@@ -37,13 +32,13 @@ import platform.UserNotifications.UNNotificationPresentationOptions
 import platform.UserNotifications.UNNotificationRequest
 import platform.UserNotifications.UNNotificationResponse
 import platform.UserNotifications.UNNotificationSound
-import platform.UserNotifications.UNNotificationTrigger
 import platform.UserNotifications.UNTextInputNotificationResponse
-import platform.UserNotifications.UNTimeIntervalNotificationTrigger
 import platform.UserNotifications.UNUserNotificationCenter
 import platform.UserNotifications.UNUserNotificationCenterDelegateProtocol
 import platform.darwin.NSObject
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import kotlin.random.Random
 
 
@@ -95,7 +90,8 @@ internal class IosNotifier(
         val builder = NotifierBuilder().apply(block)
         permissionUtil.askNotificationPermission {
             scope.launch {
-                // Register action category if actions are provided
+                // Register the action category before adding the request, so the buttons are
+                // known when the notification is presented.
                 if (builder.actions.isNotEmpty()) {
                     registerActionCategory(builder.id, builder.actions)
                 }
@@ -136,7 +132,7 @@ internal class IosNotifier(
         return "com.mmk.kmpnotifier.actions.$notificationId"
     }
 
-    private fun registerActionCategory(notificationId: Int, actions: List<NotificationAction>) {
+    private suspend fun registerActionCategory(notificationId: Int, actions: List<NotificationAction>) {
         val iosActions = actions.map { it.toIosAction() }
         val category = UNNotificationCategory.categoryWithIdentifier(
             identifier = actionCategoryId(notificationId),
@@ -144,41 +140,16 @@ internal class IosNotifier(
             intentIdentifiers = emptyList<String>(),
             options = 0u
         )
-        // Get existing categories and add the new one
-        notificationCenter.getNotificationCategoriesWithCompletionHandler { existingCategories ->
-            @Suppress("UNCHECKED_CAST")
-            val updatedCategories = (existingCategories as? Set<UNNotificationCategory>)
-                .orEmpty()
-                .toMutableSet()
-            updatedCategories.add(category)
-            notificationCenter.setNotificationCategories(updatedCategories)
+        // Get existing categories and replace any previous one for this notification id
+        val existingCategories = suspendCoroutine { continuation ->
+            notificationCenter.getNotificationCategoriesWithCompletionHandler { continuation.resume(it) }
         }
+        val updatedCategories = existingCategories.orEmpty()
+            .filterIsInstance<UNNotificationCategory>()
+            .filterNot { it.identifier == category.identifier }
+            .toSet() + category
+        notificationCenter.setNotificationCategories(updatedCategories)
     }
-
-    private fun createTrigger(scheduledAt: Long): UNNotificationTrigger {
-        if (scheduledAt == 0L) {
-            return UNTimeIntervalNotificationTrigger.triggerWithTimeInterval(1.0, false)
-        }
-
-        val currentTimeMs = (NSDate().timeIntervalSince1970 * 1000).toLong()
-
-        // Handle relative timing: if scheduledAt is a small value (less than a reasonable timestamp),
-        // treat it as milliseconds from now
-        val actualFireTimeMs = if (scheduledAt < 1000000000000L) {
-            currentTimeMs + scheduledAt
-        } else {
-            scheduledAt
-        }
-
-        val delayMs = actualFireTimeMs - currentTimeMs
-        if (delayMs <= 0) {
-            return UNTimeIntervalNotificationTrigger.triggerWithTimeInterval(1.0, false)
-        }
-
-        val delaySeconds = delayMs / 1000.0
-        return UNTimeIntervalNotificationTrigger.triggerWithTimeInterval(delaySeconds, false)
-    }
-
 
     override fun remove(id: Int) {
         val identifier = listOf(id.toString())
@@ -200,37 +171,18 @@ internal class IosNotifier(
         setSound(notificationSound)
     }
 
-    @OptIn(ExperimentalForeignApi::class)
     private suspend fun NotificationImage.toNotificationAttachment(): UNNotificationAttachment? {
         return withContext(Dispatchers.IO) {
             try {
-                when (this@toNotificationAttachment) {
-                    is NotificationImage.Url -> {
-                        val nsUrl = NSURL.URLWithString(url) ?: return@withContext null
-                        val data = NSData.dataWithContentsOfURL(nsUrl)
-                        val tempDirectory = NSTemporaryDirectory()
-                        val tempFilePath =
-                            tempDirectory + "/notification_image_${Random.nextInt()}.jpg"
-                        val tempFileUrl = NSURL.fileURLWithPath(tempFilePath)
-                        data?.writeToURL(tempFileUrl, true)
-                        UNNotificationAttachment.attachmentWithIdentifier(
-                            "notification_image",
-                            tempFileUrl,
-                            null,
-                            null
-                        )
-                    }
-
-                    is NotificationImage.File -> {
-                        val fileUrl = NSURL.fileURLWithPath(path)
-                        UNNotificationAttachment.attachmentWithIdentifier(
-                            "notification_image",
-                            fileUrl,
-                            null,
-                            null
-                        )
-                    }
+                val sourceUrl = when (this@toNotificationAttachment) {
+                    is NotificationImage.Url -> NSURL.URLWithString(url)
+                    is NotificationImage.File -> NSURL.fileURLWithPath(path)
+                } ?: return@withContext null
+                val data = NSData.dataWithContentsOfURL(sourceUrl) ?: run {
+                    currentLogger.log("Could not load notification image: $sourceUrl")
+                    return@withContext null
                 }
+                createImageAttachment(data, extensionHint = sourceUrl.pathExtension)
             } catch (e: Exception) {
                 if (e is CancellationException) throw e
                 currentLogger.log("Error creating notification attachment: $e")
@@ -283,8 +235,18 @@ internal class IosNotifier(
             willPresentNotification: UNNotification,
             withCompletionHandler: (UNNotificationPresentationOptions) -> Unit,
         ) {
-            val notificationContent = willPresentNotification.request.content
+            val request = willPresentNotification.request
+            val notificationContent = request.content
             emitPushEventsIfRemote(notificationContent)
+            // Parity with Android, which emits this when the scheduled alarm fires. iOS delivers
+            // scheduled notifications itself, so this is only observable while in the foreground.
+            if (!notificationContent.isRemoteNotification() && request.trigger.isScheduledLocalTrigger()) {
+                NotifierEventHub.emitAction(
+                    actionId = IOS_ACTION_SCHEDULED_FIRED,
+                    notificationId = request.identifier.toIntOrNull() ?: 0,
+                    payload = notificationContent.userInfo.asPayloadData()
+                )
+            }
             if (shouldShowNotification(notificationContent)) {
                 withCompletionHandler(IOS_PRESENTATION_OPTIONS)
             } else {
