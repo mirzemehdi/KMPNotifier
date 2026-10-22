@@ -5,6 +5,40 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.2] - 2026-10-22
+
+### Fixed
+
+- Android: scheduled local notifications (`scheduledAt` in the future) are now actually
+  displayed when the alarm fires. Previously `NotificationReceiver` only emitted the
+  `EVENT_SCHEDULED_NOTIFICATION_FIRED_INTERNAL` action and never posted the notification.
+  The title, body, payload, image, actions and Android configuration are stored in the alarm
+  intent, so the notification is posted even when the alarm fires in a cold process before
+  `KMPNotifier.initialize`. The `onAction` event is still emitted after posting — apps that
+  re-posted the notification from that callback as a workaround must remove that code
+  (on both Android and iOS, which now emits the event too). (#181)
+- Android: `remove(id)` now cancels a pending scheduled alarm. The cancel intent did not match
+  the scheduled one, so the alarm was never found. (#181)
+- Android: relative `scheduledAt` values (milliseconds from now) are now scheduled at the
+  correct time instead of firing immediately. (#181)
+- Android: on API 31+ without `SCHEDULE_EXACT_ALARM` / `USE_EXACT_ALARM`, scheduling checks
+  `AlarmManager.canScheduleExactAlarms()` and uses an inexact `setAndAllowWhileIdle` alarm
+  instead of throwing and logging a `SecurityException`. (#181)
+- iOS: the scheduled-fired `onAction` event (`EVENT_SCHEDULED_NOTIFICATION_FIRED_INTERNAL`) is
+  now emitted when a scheduled local notification is presented while the app is in the
+  foreground, matching Android. (iOS shows scheduled notifications itself, so the event cannot
+  fire while the app is in the background.) (#181)
+- iOS: scheduled notifications use `UNCalendarNotificationTrigger` for the absolute fire date
+  instead of an interval computed at scheduling time; immediate notifications are delivered
+  without a 1-second delay. (#181)
+- iOS: action-button categories are registered before the notification request is added (the
+  buttons could be missing on immediate notifications), and replace a previous category for
+  the same id instead of accumulating duplicates. (#181)
+- iOS: `NotificationImage.File` images are copied before attaching — the system moves
+  attachment files into its own store, so the caller's file was deleted. (#181)
+- iOS: image attachments get a file extension matching their content (PNG / JPEG / GIF
+  detected from the data) instead of always `.jpg`. (#181)
+
 ## [2.0.1] - 2026-08-14
 
 ### Changed
