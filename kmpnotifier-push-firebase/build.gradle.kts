@@ -20,7 +20,10 @@ kotlin {
             // against this minimum version, and firebase-ios-sdk keeps ObjC ABI compatibility
             // within a major. An exact pin makes this library the version bottleneck for every
             // consumer that needs a newer SDK feature (e.g. FID registration in 12.16.0).
-            version = from("12.14.0"),
+            // A closed range rather than from(): from() caps below the next major (13.0.0),
+            // which blocks consumers on firebase-ios-sdk 13 (e.g. GitLive 3.0.0-beta1, 13.1.1+).
+            // The library only uses long-stable FIRMessaging APIs, unchanged in 13.x.
+            version = range("12.14.0", "13.999.999"),
             products = listOf(product("FirebaseMessaging")),
             importedClangModules = listOf("FirebaseMessaging"),
         )
