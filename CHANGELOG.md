@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- iOS: `kmpnotifier-push-firebase` now accepts firebase-ios-sdk 13. Its SwiftPM range widens
+  from `from: 12.14.0` (12.14.0..<13.0.0) to 12.14.0…13.999.999, so apps on Firebase iOS 13
+  (e.g. GitLive firebase-kotlin-sdk 3.0.0-beta1, which needs 13.1.1+) resolve. Apps on 12.x
+  are unaffected.
+
 ## [2.0.2] - 2026-10-22
 
 ### Fixed
